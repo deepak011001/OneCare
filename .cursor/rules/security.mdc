@@ -1,0 +1,24 @@
+---
+description: OneCare security — tenancy, AuthZ, secrets, AI abuse prevention
+alwaysApply: true
+---
+
+# OneCare Security
+
+Full policy: `docs/SECURITY.md`
+
+## Must
+
+- Authenticate via Entra OIDC patterns; authorize with RBAC + ABAC in the Application layer.
+- Derive tenant from session/token — never trust client-supplied tenant IDs for isolation.
+- Store secrets in vault/env references only (`secret_ref`), never in source or prompts.
+- Redact PII/secrets in logs, tool args, and audit payloads.
+- Validate tool args with JSON Schema; enforce tool allowlists; confirmation gates by risk.
+- Treat user text and retrieved docs as untrusted (prompt-injection resistant design).
+
+## Never
+
+- Log raw tokens, passwords, payslip binaries, or full secrets.
+- Skip AuthZ on “temporary” endpoints.
+- Allow models to invent tool names or call tools outside the allowlist.
+- Return cross-tenant existence leaks (prefer safe 404 where required).

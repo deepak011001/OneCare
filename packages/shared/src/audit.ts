@@ -1,0 +1,16 @@
+export const AUDIT_ACTIONS = {
+  USER_LOGIN: 'user.login',
+  USER_LOGOUT: 'user.logout',
+  TOKEN_REFRESH: 'auth.token.refresh',
+  TOKEN_REUSE_DETECTED: 'auth.token.reuse_detected',
+  SESSION_REVOKED: 'auth.session.revoked',
+  PERMISSION_DENIED: 'authz.permission_denied',
+  ROLE_ASSIGNED: 'rbac.role.assigned',
+  PERMISSION_CHANGED: 'rbac.permission.changed',
+  PROFILE_UPDATED: 'user.profile.updated',
+  TENANT_CREATED: 'tenant.created',
+} as const;
+
+export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];
+
+export type AuditResult = 'success' | 'failure' | 'denied';

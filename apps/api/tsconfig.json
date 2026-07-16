@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "types": ["node"]
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/config" },
+    { "path": "../../packages/telemetry" },
+    { "path": "../../packages/auth" },
+    { "path": "../../packages/database" },
+    { "path": "../../packages/security" },
+    { "path": "../../packages/cache" },
+    { "path": "../../packages/events" },
+    { "path": "../../packages/mcp" },
+    { "path": "../../packages/ai" },
+    { "path": "../../packages/workflows" }
+  ]
+}

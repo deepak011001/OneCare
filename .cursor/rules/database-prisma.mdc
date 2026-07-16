@@ -1,0 +1,23 @@
+---
+description: Prisma and PostgreSQL schema — tenancy, audit, soft delete, pgvector
+globs: "**/*.prisma,**/migrations/**/*,**/schema.prisma"
+alwaysApply: false
+---
+
+# Database / Prisma
+
+Follow `docs/DATABASE.md` and `docs/SECURITY.md`.
+
+## Must
+
+- UUID PKs; `tenant_id` on tenant-owned tables; composite indexes leading with `tenant_id`.
+- Audit fields: `created_at`, `updated_at`, `created_by`, `updated_by`.
+- Soft deletes via `deleted_at` where recovery/audit matters.
+- Version prompts, workflow definitions, and similar configs — never silent overwrite.
+- Store `secret_ref`, never raw secrets.
+- Knowledge chunks: embeddings + ACL metadata; queries always filter tenant + ACL.
+- Forward-only migrations; repository helpers enforce tenant scope.
+
+## Never
+
+Duplicate source-of-truth columns · client-trusted `tenant_id` filters as sole security · Prisma in Domain layer.

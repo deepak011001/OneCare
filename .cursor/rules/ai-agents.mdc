@@ -1,0 +1,27 @@
+---
+description: Multi-agent runtime, LangGraph, MCP tools, and connector boundaries
+globs: "**/agents/**/*,**/mcp-servers/**/*,**/knowledge/**/*"
+alwaysApply: false
+---
+
+# AI Agents & MCP
+
+Follow `docs/AI_AGENTS.md`, `docs/MCP.md`, `docs/WORKFLOWS.md`.
+
+## Agents
+
+- Master Orchestrator plans/routes; domain agents own tools — no god prompt.
+- Config-driven `AgentDefinition`: prompts versioned, tool allowlists, budgets, flags.
+- Structured plan JSON schema-validated before execution.
+- Risk policy: low auto; medium+ confirmation; critical via workflow approval.
+- Durable approvals belong in Workflow Engine — not LLM memory.
+
+## MCP
+
+- Vendor-agnostic tool names (`applyLeave`, not `kekaApplyLeave`).
+- Credentials injected by gateway from vault — never from the model.
+- Log redacted tool calls with latency/status; timeouts + circuit breakers required.
+
+## Never
+
+Invent tools · silent mutating calls · business logic only inside a vendor adapter with no workflow visibility.

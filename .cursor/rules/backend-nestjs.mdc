@@ -1,0 +1,30 @@
+---
+description: NestJS backend feature modules, use cases, and API shape
+globs: apps/api/**/*.{ts,tsx},**/modules/**/*.{ts,tsx},**/*.controller.ts,**/*.module.ts
+alwaysApply: false
+---
+
+# Backend (NestJS)
+
+Follow `docs/API_STANDARDS.md` and `docs/CODING_GUIDELINES.md`.
+
+## Layout
+
+`modules/<feature>/{presentation,application,domain,infrastructure}`
+
+- Controllers: validate DTOs, call use cases, map errors — no business rules.
+- Use cases: authorize, orchestrate ports, audit.
+- Repositories/MCP adapters live in infrastructure only.
+
+## API
+
+- Versioned `/v1` · problem+json errors · correlation IDs · Idempotency-Key on mutating POSTs.
+- Never return Prisma entities raw — map to response DTOs.
+
+## Example
+
+```typescript
+// ✅ use case + port
+await this.applyLeave.execute(cmd, ctx);
+// ❌ Prisma inside controller
+```

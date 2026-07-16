@@ -1,0 +1,22 @@
+# OneCare Documentation Index
+
+Living **source of truth** for product, architecture, and engineering. Cursor rules in `.cursor/rules/` point here — keep docs authoritative.
+
+| Document | Purpose |
+|----------|---------|
+| [BRD.md](./BRD.md) | Business requirements & KPIs |
+| [PRD.md](./PRD.md) | Product requirements & journeys |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture & folder layout |
+| [AI_AGENTS.md](./AI_AGENTS.md) | Multi-agent platform |
+| [MCP.md](./MCP.md) | Model Context Protocol & tool contracts |
+| [DATABASE.md](./DATABASE.md) | PostgreSQL / Prisma / pgvector |
+| [API_STANDARDS.md](./API_STANDARDS.md) | HTTP/WS API conventions |
+| [CODING_GUIDELINES.md](./CODING_GUIDELINES.md) | TypeScript / Nest / Next standards |
+| [SECURITY.md](./SECURITY.md) | Security architecture |
+| [UI_GUIDELINES.md](./UI_GUIDELINES.md) | Enterprise UI/UX |
+| [WORKFLOWS.md](./WORKFLOWS.md) | Workflow engine |
+| [INTEGRATIONS.md](./INTEGRATIONS.md) | Connectors & protocols |
+| [ROADMAP.md](./ROADMAP.md) | Milestone delivery plan |
+| [CURSOR_RULES.md](./CURSOR_RULES.md) | How Cursor must use these docs |
+
+ADRs (when added): `docs/adr/`.

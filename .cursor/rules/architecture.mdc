@@ -1,0 +1,25 @@
+---
+description: OneCare architecture — Clean Architecture layers and modular boundaries
+alwaysApply: true
+---
+
+# OneCare Architecture
+
+Full spec: `docs/ARCHITECTURE.md`
+
+## Layers
+
+`Presentation → Application → Domain ← Infrastructure → Integrations (MCP)`
+
+- Domain has zero imports from Nest, Prisma, Next, or OpenAI SDKs.
+- Application orchestrates use cases via ports; Infrastructure implements ports (DI).
+- Feature folders under `modules/<feature>/` with presentation | application | domain | infrastructure.
+- Design each module so it can become a microservice later — no cross-feature table access.
+
+## Patterns
+
+Repository · DI · Domain events / outbox · Feature flags · Typed config (Zod)
+
+## Prefer
+
+Modular monolith first; extract workers/MCP servers at clear boundaries (`docs/ROADMAP.md`).

@@ -1,0 +1,35 @@
+---
+description: OneCare core — docs hierarchy, standing orders, architect-first delivery
+alwaysApply: true
+---
+
+# OneCare Core
+
+You are building **OneCare** — an Enterprise Agentic AI Platform (“One Place. Every Answer.”), not a demo chatbot.
+
+## Source of truth
+
+Read and follow `/docs` before implementing. Start with:
+
+- `docs/ARCHITECTURE.md`
+- `docs/CODING_GUIDELINES.md`
+- `docs/ROADMAP.md`
+- `docs/CURSOR_RULES.md`
+
+Then open topic docs (AI, MCP, Security, UI, Database) as needed.
+
+## Standing orders
+
+1. Architect first: explain structure, dependencies, tradeoffs, and risks before large changes.
+2. Ship milestone slices only — each must compile and be production-patterned.
+3. Clean Architecture + feature modules; no business logic in controllers or React components.
+4. Multi-agent only — never one monolithic AI.
+5. Enterprise side effects via MCP tools — not vendor SDKs inside agents.
+6. Multi-tenant everywhere (`tenant_id` + TenantContext).
+7. Everything configurable — no hardcoded secrets, tenants, models, or flags.
+8. If the user’s ask creates tech debt or violates SOLID/DDD, propose a better approach first.
+9. Update `/docs` when architecture or contracts change.
+
+## Never
+
+Spaghetti modules · secrets in repo · Prisma/LLM SDKs in Domain · cross-tenant queries · demo-only architecture.

@@ -1,0 +1,22 @@
+---
+description: Next.js frontend — enterprise UI, React Query, Zustand boundaries
+globs: apps/web/**/*.{ts,tsx},**/features/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Frontend (Next.js)
+
+Follow `docs/UI_GUIDELINES.md` and `docs/CODING_GUIDELINES.md`.
+
+## Must
+
+- App Router; Server Components default; Client Components for interactivity.
+- React Query for server data; Zustand for UI/ephemeral state only.
+- Loading, empty, error, and skeleton states on async views.
+- Role-aware nav; `PermissionGate` for privileged actions.
+- Chat: stream + plan + confirmation for medium+ risk tools; citations for RAG.
+- Use design tokens / Shadcn variants — no one-off hex sprawl.
+
+## Avoid
+
+Decorative card grids in heroes · business logic in components · raw scattered `fetch` · Inter/purple AI cliché as default brand.

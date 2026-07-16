@@ -1,0 +1,23 @@
+{
+  "name": "@onecare/workers",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src --max-warnings=0",
+    "test": "node -e \"process.exit(0)\"",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@onecare/config": "workspace:*",
+    "@onecare/shared": "workspace:*",
+    "@onecare/telemetry": "workspace:*",
+    "@onecare/workflows": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  }
+}

@@ -1,0 +1,21 @@
+---
+description: HTTP API controllers and DTOs — envelopes, errors, authz annotations
+globs: "**/*.controller.ts,**/dto/**/*.ts,**/presentation/**/*.ts"
+alwaysApply: false
+---
+
+# API Controllers & DTOs
+
+Follow `docs/API_STANDARDS.md`.
+
+## Must
+
+- `/v1` prefix; declare permissions on routes.
+- Validate input at the edge; reject unexpected fields where feasible.
+- Success `{ data, meta }`; errors as problem+json with `correlationId` + stable `code`.
+- Idempotency-Key on leave apply/cancel and similar mutating POSTs.
+- Map domain errors in a central filter — no stack traces to clients.
+
+## Never
+
+Business rules in controllers · unbounded list endpoints · 200 OK with error strings as the only signal.
