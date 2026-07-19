@@ -5,13 +5,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { PageContainer, PageHeader } from '@/components/ui/page';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 
-export function PlaceholderPage({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
+export function PlaceholderPage({ title, description }: { title: string; description: string }) {
   return (
     <PageContainer>
       <Breadcrumb items={[{ label: 'App', href: '/app/dashboard' }, { label: title }]} />

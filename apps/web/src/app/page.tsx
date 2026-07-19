@@ -13,13 +13,20 @@ export default function LandingPage() {
         <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-[hsl(172_55%_62%)]">
           Enterprise Agentic AI
         </p>
-        <h1 className="font-display text-5xl font-semibold tracking-tight sm:text-6xl">{brand.name}</h1>
+        <h1 className="font-display text-5xl font-semibold tracking-tight sm:text-6xl">
+          {brand.name}
+        </h1>
         <p className="mt-4 max-w-xl text-xl text-white/85">{brand.tagline}</p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Button asChild size="lg">
             <Link href="/login">Sign in</Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10">
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="border-white/30 bg-transparent text-white hover:bg-white/10"
+          >
             <Link href="/app/dashboard">Open workspace</Link>
           </Button>
         </div>

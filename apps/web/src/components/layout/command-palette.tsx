@@ -2,7 +2,13 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useUiStore } from '@/stores/ui-store';
 import { APP_NAV, filterNavByPermissions } from '@/features/navigation/nav-config';
@@ -32,7 +38,8 @@ export function CommandPalette() {
         <DialogHeader>
           <DialogTitle>Command palette</DialogTitle>
           <DialogDescription>
-            Placeholder for M2. Future milestones will connect this to OneCare AI search and actions.
+            Placeholder for M2. Future milestones will connect this to OneCare AI search and
+            actions.
           </DialogDescription>
         </DialogHeader>
         <Input placeholder="Type a command…" aria-label="Command search" autoFocus />

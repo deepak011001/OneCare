@@ -2,16 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import {
-  Bell,
-  ChevronsLeft,
-  ChevronsRight,
-  Menu,
-  Moon,
-  Search,
-  Sun,
-  Monitor,
-} from 'lucide-react';
+import { Bell, ChevronsLeft, ChevronsRight, Menu, Moon, Search, Sun, Monitor } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 import { api } from '@/lib/api/client';
@@ -84,7 +75,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {!sidebarCollapsed ? (
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">OneCare</p>
-              <p className="truncate text-xs text-muted-foreground">{tenant?.displayName ?? 'Workspace'}</p>
+              <p className="truncate text-xs text-muted-foreground">
+                {tenant?.displayName ?? 'Workspace'}
+              </p>
             </div>
           ) : null}
         </div>
@@ -138,7 +131,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             onClick={toggleSidebar}
             aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            {sidebarCollapsed ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
+            {sidebarCollapsed ? (
+              <ChevronsRight className="h-4 w-4" />
+            ) : (
+              <ChevronsLeft className="h-4 w-4" />
+            )}
             {!sidebarCollapsed ? 'Collapse' : null}
           </Button>
         </div>
@@ -189,7 +186,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <Search className="h-5 w-5" />
             </Button>
-            <Button type="button" variant="ghost" size="icon" aria-label="Notifications (coming soon)">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Notifications (coming soon)"
+            >
               <Bell className="h-5 w-5" />
             </Button>
 
@@ -217,7 +219,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button type="button" variant="ghost" className="gap-2 px-2" aria-label="Account menu">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="gap-2 px-2"
+                  aria-label="Account menu"
+                >
                   <Avatar className="h-8 w-8">
                     <AvatarFallback>{initials(principal?.displayName ?? 'U')}</AvatarFallback>
                   </Avatar>
@@ -230,11 +237,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
                     <span>{principal?.displayName}</span>
-                    <span className="text-xs font-normal text-muted-foreground">{principal?.email}</span>
+                    <span className="text-xs font-normal text-muted-foreground">
+                      {principal?.email}
+                    </span>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push('/app/settings')}>Profile & settings</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/app/settings')}>
+                  Profile & settings
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => void handleLogout()}>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -67,14 +67,20 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           {authMode === 'entra' ? (
-            <Button type="button" className="w-full" disabled={loading} onClick={() => void loginMicrosoft()}>
+            <Button
+              type="button"
+              className="w-full"
+              disabled={loading}
+              onClick={() => void loginMicrosoft()}
+            >
               {loading ? <Spinner className="text-primary-foreground" /> : null}
               Sign in with Microsoft
             </Button>
           ) : (
             <>
               <p className="text-sm text-muted-foreground">
-                Development authentication (API <code>AUTH_MODE=development</code>). Select a seeded user.
+                Development authentication (API <code>AUTH_MODE=development</code>). Select a seeded
+                user.
               </p>
               <label className="block space-y-2 text-sm">
                 <span className="font-medium">Email</span>

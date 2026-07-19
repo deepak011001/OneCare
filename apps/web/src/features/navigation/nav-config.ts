@@ -123,9 +123,7 @@ export function filterNavByPermissions(
 ): NavItem[] {
   return items
     .map((item) => {
-      const children = item.children
-        ? filterNavByPermissions(item.children, hasAny)
-        : undefined;
+      const children = item.children ? filterNavByPermissions(item.children, hasAny) : undefined;
       const allowed =
         !item.permissions || item.permissions.length === 0 || hasAny(item.permissions);
       if (!allowed) {

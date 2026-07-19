@@ -9,7 +9,10 @@ export function Table({ className, ...props }: React.HTMLAttributes<HTMLTableEle
   );
 }
 
-export function TableHeader({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) {
+export function TableHeader({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLTableSectionElement>) {
   return <thead className={cn('[&_tr]:border-b', className)} {...props} />;
 }
 
@@ -18,12 +21,20 @@ export function TableBody({ className, ...props }: React.HTMLAttributes<HTMLTabl
 }
 
 export function TableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) {
-  return <tr className={cn('border-b transition-colors hover:bg-muted/50', className)} {...props} />;
+  return (
+    <tr className={cn('border-b transition-colors hover:bg-muted/50', className)} {...props} />
+  );
 }
 
 export function TableHead({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <th className={cn('h-12 px-4 text-left align-middle font-medium text-muted-foreground', className)} {...props} />
+    <th
+      className={cn(
+        'h-12 px-4 text-left align-middle font-medium text-muted-foreground',
+        className,
+      )}
+      {...props}
+    />
   );
 }
 

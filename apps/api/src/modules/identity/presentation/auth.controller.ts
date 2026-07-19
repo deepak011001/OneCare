@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-  Query,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { PERMISSIONS } from '@onecare/auth';
 import type { OneCareEnv } from '@onecare/config';
@@ -41,7 +32,10 @@ export class AuthController {
   ) {
     if (this.env.AUTH_MODE === 'development') {
       if (!email) {
-        throw new DomainError('VALIDATION', 'email query parameter is required in development mode');
+        throw new DomainError(
+          'VALIDATION',
+          'email query parameter is required in development mode',
+        );
       }
       const result = await this.identity.developmentLogin({
         email,
@@ -84,7 +78,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     if (this.env.AUTH_MODE !== 'development') {
-      throw new DomainError('AUTH_MODE_INVALID', 'POST /v1/auth/login is only for AUTH_MODE=development');
+      throw new DomainError(
+        'AUTH_MODE_INVALID',
+        'POST /v1/auth/login is only for AUTH_MODE=development',
+      );
     }
     if (!body.email) {
       throw new DomainError('VALIDATION', 'email is required');
@@ -192,7 +189,10 @@ export class AuthController {
   }
 
   @Get('me')
-  me(@Req() req: AuthenticatedRequest & RequestWithContext, @CurrentPrincipal() principal: AuthPrincipal) {
+  me(
+    @Req() req: AuthenticatedRequest & RequestWithContext,
+    @CurrentPrincipal() principal: AuthPrincipal,
+  ) {
     return {
       data: toPrincipalDto(principal),
       meta: { correlationId: req.correlationId, requestId: req.requestId },
@@ -226,7 +226,10 @@ export class AuthController {
 export class UsersController {
   @Get('me')
   @RequirePermissions(PERMISSIONS.EMPLOYEE_READ)
-  me(@Req() req: AuthenticatedRequest & RequestWithContext, @CurrentPrincipal() principal: AuthPrincipal) {
+  me(
+    @Req() req: AuthenticatedRequest & RequestWithContext,
+    @CurrentPrincipal() principal: AuthPrincipal,
+  ) {
     return {
       data: toPrincipalDto(principal),
       meta: { correlationId: req.correlationId, requestId: req.requestId },

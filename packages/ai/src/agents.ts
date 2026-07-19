@@ -40,11 +40,7 @@ export interface AgentDefinition {
 }
 
 export type AgentRunStatus =
-  | 'completed'
-  | 'needs_input'
-  | 'needs_confirmation'
-  | 'failed'
-  | 'delegated';
+  'completed' | 'needs_input' | 'needs_confirmation' | 'failed' | 'delegated';
 
 export interface AgentResult {
   readonly status: AgentRunStatus;
@@ -55,8 +51,5 @@ export interface AgentResult {
 
 export interface AgentPort {
   readonly definition: AgentDefinition;
-  run(input: {
-    readonly message: string;
-    readonly context: RequestContext;
-  }): Promise<AgentResult>;
+  run(input: { readonly message: string; readonly context: RequestContext }): Promise<AgentResult>;
 }

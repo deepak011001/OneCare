@@ -1,12 +1,5 @@
 export type ConnectorProtocol =
-  | 'rest'
-  | 'graphql'
-  | 'soap'
-  | 'webhook'
-  | 'scim'
-  | 'smtp'
-  | 'sftp'
-  | 'browser';
+  'rest' | 'graphql' | 'soap' | 'webhook' | 'scim' | 'smtp' | 'sftp' | 'browser';
 
 export type ConnectorHealth = 'healthy' | 'degraded' | 'down' | 'unknown';
 

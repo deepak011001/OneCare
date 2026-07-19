@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  type CanActivate,
-  type ExecutionContext,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, type CanActivate, type ExecutionContext, Inject } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { SessionPort, TokenPort } from '@onecare/auth';
 import type { OneCareEnv } from '@onecare/config';

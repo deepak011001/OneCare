@@ -8,11 +8,11 @@ services:
       POSTGRES_PASSWORD: onecare
       POSTGRES_DB: onecare
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - onecare_pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U onecare -d onecare"]
+      test: ['CMD-SHELL', 'pg_isready -U onecare -d onecare']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -22,11 +22,11 @@ services:
     container_name: onecare-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - onecare_redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 10

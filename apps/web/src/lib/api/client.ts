@@ -1,4 +1,10 @@
-import type { ApiEnvelope, AuthLoginResponse, AuthPrincipal, RoleDto, TenantSummary } from './types';
+import type {
+  ApiEnvelope,
+  AuthLoginResponse,
+  AuthPrincipal,
+  RoleDto,
+  TenantSummary,
+} from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001';
 
@@ -67,11 +73,7 @@ async function refreshAccessToken(): Promise<boolean> {
   return true;
 }
 
-async function request<T>(
-  path: string,
-  init: RequestInit = {},
-  retry = true,
-): Promise<T> {
+async function request<T>(path: string, init: RequestInit = {}, retry = true): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set('Accept', 'application/json');
   if (init.body && !headers.has('Content-Type')) {
@@ -106,9 +108,9 @@ export const api = {
   getCurrentTenant: () => request<ApiEnvelope<TenantSummary>>('/v1/tenants/current'),
   listRoles: () => request<ApiEnvelope<RoleDto[]>>('/v1/roles'),
   listPermissions: () =>
-    request<ApiEnvelope<Array<{ id: string; code: string; module: string; description: string | null }>>>(
-      '/v1/permissions',
-    ),
+    request<
+      ApiEnvelope<Array<{ id: string; code: string; module: string; description: string | null }>>
+    >('/v1/permissions'),
   loginDevelopment: async (email: string, rememberMe = false) => {
     const result = await request<ApiEnvelope<AuthLoginResponse>>('/v1/auth/login', {
       method: 'POST',

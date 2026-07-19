@@ -10,7 +10,9 @@ export default function MaintenancePage() {
             Placeholder page for planned maintenance windows. Not wired to feature flags yet.
           </CardDescription>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">OneCare · One Place. Every Answer.</CardContent>
+        <CardContent className="text-sm text-muted-foreground">
+          OneCare · One Place. Every Answer.
+        </CardContent>
       </Card>
     </main>
   );

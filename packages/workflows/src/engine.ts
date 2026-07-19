@@ -1,12 +1,7 @@
 import type { TenantId, UserId } from '@onecare/shared';
 
 export type WorkflowInstanceStatus =
-  | 'created'
-  | 'running'
-  | 'waiting'
-  | 'completed'
-  | 'cancelled'
-  | 'failed';
+  'created' | 'running' | 'waiting' | 'completed' | 'cancelled' | 'failed';
 
 export interface WorkflowDefinitionRef {
   readonly code: string;
