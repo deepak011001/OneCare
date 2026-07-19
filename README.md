@@ -64,21 +64,26 @@ Start at [`docs/README.md`](./docs/README.md). Cursor agents: see [`AGENTS.md`](
 
 ## Milestone
 
-Current: **M1 Identity & Security** — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+Current: **M2 Application Shell** — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
-### Local auth smoke (development mode)
+### API + database (M1)
 
 ```bash
-cp .env.example .env   # AUTH_MODE=development
+cp .env.example .env
 pnpm docker:up
 pnpm db:deploy && pnpm db:seed
 pnpm --filter @onecare/api dev
-
-# Login as seeded employee
-curl -X POST http://localhost:3001/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"employee@demo.onecare.local\"}"
 ```
+
+### Local web shell (M2)
+
+```bash
+pnpm --filter @onecare/web dev
+# open http://localhost:3000
+# sign in with a seeded development user (API must be running on :3001)
+```
+
+Set `NEXT_PUBLIC_API_BASE_URL` and optionally `NEXT_PUBLIC_AUTH_MODE=entra` in `.env`.
 
 ## License
 

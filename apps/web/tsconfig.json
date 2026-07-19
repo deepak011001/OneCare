@@ -11,9 +11,11 @@
     "composite": false,
     "declaration": false,
     "declarationMap": false,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["vitest/globals", "node"],
     "strict": true,
     "skipLibCheck": true,
     "isolatedModules": true,

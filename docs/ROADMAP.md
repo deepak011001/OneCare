@@ -74,14 +74,16 @@ M0 Foundations
 
 **Outcome:** Usable product shell without full AI.
 
-- NestJS (or agreed backend) Clean Architecture skeleton
-- Next.js app: Landing, Login, Dashboard, Chat shell, Settings
-- React Query + Zustand patterns per `CODING_GUIDELINES.md`
-- Shadcn UI + Tailwind; dark mode; a11y baseline
-- Health checks; structured logging
-- WebSocket/SSE gateway stub for chat streaming
+- Next.js app shell: Landing, Login, Dashboard, Settings, permission-aware navigation
+- React Query + Zustand (auth/ui only)
+- Tailwind + shadcn-style primitives; light/dark/system theme
+- Typed API client with Bearer auth + refresh retry against M1 `/v1` APIs
+- Placeholder routes for AI / ESS / MSS / Knowledge / Admin (no business logic)
+- Accessibility baseline + error pages (401/403/404/500/offline/maintenance)
 
-**Exit criteria:** Authenticated user navigates all shell routes; API health green.
+**Exit criteria:** Authenticated user navigates shell routes; dashboard loads `/v1/auth/me` + `/v1/tenants/current`.
+
+**Status:** Implemented in `apps/web`.
 
 ---
 

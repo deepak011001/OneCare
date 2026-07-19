@@ -85,11 +85,13 @@ Follow enterprise landing discipline:
 
 ---
 
-## 6. App Shell
+## App shell (M2)
 
-- Persistent left nav (collapsible) + top bar (tenant, search, notifications, user)  
-- Content max-width for readability on ultra-wide  
-- Chat may use wider canvas  
+- Routes live under `/app/*` with collapsible sidebar + top bar.
+- Nav items are filtered by RBAC permissions returned from `/v1/auth/me`.
+- Theme: light / dark / system via `next-themes` (persisted).
+- Command palette (`Ctrl/Cmd+K`) is a UI placeholder for future AI search.
+- Cross-origin SPA auth uses Bearer tokens from login/refresh responses (not cross-site cookies).
 
 ---
 
