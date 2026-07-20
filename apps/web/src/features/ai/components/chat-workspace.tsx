@@ -30,7 +30,6 @@ export function ChatWorkspace() {
   const plan = useChatStore((s) => s.plan);
   const pendingConfirmation = useChatStore((s) => s.pendingConfirmation);
   const toolStatus = useChatStore((s) => s.toolStatus);
-  const suggestedReplies = useChatStore((s) => s.suggestedReplies);
   const streaming = useChatStore((s) => s.streaming);
   const error = useChatStore((s) => s.error);
   const setConversations = useChatStore((s) => s.setConversations);
@@ -41,7 +40,6 @@ export function ChatWorkspace() {
   const setPlan = useChatStore((s) => s.setPlan);
   const setPendingConfirmation = useChatStore((s) => s.setPendingConfirmation);
   const setToolStatus = useChatStore((s) => s.setToolStatus);
-  const setSuggestedReplies = useChatStore((s) => s.setSuggestedReplies);
   const setStreaming = useChatStore((s) => s.setStreaming);
   const setError = useChatStore((s) => s.setError);
   const resetActive = useChatStore((s) => s.resetActive);
@@ -122,10 +120,6 @@ export function ChatWorkspace() {
           const status = String(data.status ?? '');
           if (status) setToolStatus(`Tool ${String(data.name ?? '')}: ${status}`);
         },
-        onSuggestedReplies: (replies) => setSuggestedReplies(replies),
-        onClarification: () => {
-          setToolStatus('Waiting for clarification');
-        },
         onDelta: (delta) => {
           assistant += delta;
           updateStreamingAssistant(assistant);
@@ -160,7 +154,6 @@ export function ChatWorkspace() {
     if (!options?.skipUserMessage) {
       setPendingConfirmation(null);
       setToolStatus(null);
-      setSuggestedReplies([]);
       appendMessage({ id: `user-${Date.now()}`, role: 'user', content: message });
     }
     updateStreamingAssistant('');
@@ -209,7 +202,7 @@ export function ChatWorkspace() {
               <div>
                 <p className="text-lg font-medium">Ask OneCare</p>
                 <p className="text-sm text-muted-foreground">
-                  Leave capability with clarification, confirmation, and MCP tool execution.
+                  Mock LLM streaming with live MCP tool execution for leave reads.
                 </p>
               </div>
               <SuggestedPrompts onSelect={(prompt) => void sendMessage(prompt)} />
@@ -255,21 +248,6 @@ export function ChatWorkspace() {
                 })();
               }}
             />
-          ) : null}
-          {suggestedReplies.length > 0 && !streaming ? (
-            <div className="flex flex-wrap gap-2">
-              {suggestedReplies.map((reply) => (
-                <Button
-                  key={reply}
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => void sendMessage(reply)}
-                >
-                  {reply}
-                </Button>
-              ))}
-            </div>
           ) : null}
           {streaming ? <TypingIndicator /> : null}
           {error ? <p className="text-sm text-destructive">{error}</p> : null}

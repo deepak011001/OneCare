@@ -51,17 +51,13 @@ export class McpToolExecutor implements ToolExecutorPort {
     }
 
     if (policy.decision === 'require_confirmation') {
-      const summaryOverride =
-        typeof input.context.attributes.confirmationSummary === 'string'
-          ? String(input.context.attributes.confirmationSummary)
-          : buildConfirmationSummary(input.toolName, input.arguments);
       const confirmationInput: CreateConfirmationInput = {
         tenantId: input.context.tenantId,
         userId: input.context.userId,
         connectorId: input.connectorId,
         toolName: input.toolName,
         arguments: input.arguments,
-        summary: summaryOverride,
+        summary: buildConfirmationSummary(input.toolName, input.arguments),
       };
       const confirmation = await this.deps.confirmations.create(confirmationInput);
       return {

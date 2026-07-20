@@ -30,8 +30,7 @@ export interface ExecutionPlanView {
 
 export const SUGGESTED_PROMPTS = [
   'What is my leave balance?',
-  'Apply casual leave tomorrow',
-  'Show my leave history',
-  'Which leave types are available?',
-  'What holidays are coming this month?',
+  'How do I request time off?',
+  'Summarize our travel policy',
+  'Help me draft an IT ticket',
 ] as const;

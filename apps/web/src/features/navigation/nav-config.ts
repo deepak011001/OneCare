@@ -42,7 +42,8 @@ export const APP_NAV: readonly NavItem[] = [
     label: 'Employee Services',
     href: '/app/employee',
     icon: Briefcase,
-    permissions: ['employee.read', 'leave.read'],
+    permissions: ['employee.read'],
+    placeholder: true,
   },
   {
     id: 'manager',

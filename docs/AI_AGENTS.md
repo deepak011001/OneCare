@@ -20,7 +20,7 @@
 | Agent | Responsibility | Typical Tools (MCP) |
 |-------|----------------|---------------------|
 | Master Orchestrator | Intent classification, planning, routing, synthesis | (meta) agent invocation, memory read |
-| ESS Agent (`employee`) | Employee self-service | leave, profile, attendance (read) — **contract:** [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md) |
+| ESS Agent | Employee self-service | leave, profile, attendance (read) |
 | MSS Agent | Manager actions | approvals, team leave/attendance |
 | HR Agent | HR cases & policies | HRIS tools, knowledge handoff |
 | Payroll Agent | Payslips, salary history | payroll MCP |

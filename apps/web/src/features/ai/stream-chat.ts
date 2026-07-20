@@ -11,8 +11,6 @@ export type StreamHandlers = {
     confirmationId?: string;
     summary?: string;
   }) => void;
-  onClarification?: (data: { question: string; missing?: string[] }) => void;
-  onSuggestedReplies?: (replies: string[]) => void;
   onTool?: (data: Record<string, unknown>) => void;
   onDone?: (data: { conversationId: string }) => void;
   onError?: (message: string) => void;
@@ -106,15 +104,6 @@ export async function streamAiChat(input: {
         }
         if (evt.event === 'tool') {
           input.handlers.onTool?.(payload);
-        }
-        if (evt.event === 'clarification') {
-          input.handlers.onClarification?.({
-            question: String(payload.question ?? ''),
-            ...(Array.isArray(payload.missing) ? { missing: payload.missing.map(String) } : {}),
-          });
-        }
-        if (evt.event === 'suggested_replies' && Array.isArray(payload.replies)) {
-          input.handlers.onSuggestedReplies?.(payload.replies.map(String));
         }
         if (evt.event === 'delta' && typeof payload.text === 'string') {
           input.handlers.onDelta?.(payload.text);

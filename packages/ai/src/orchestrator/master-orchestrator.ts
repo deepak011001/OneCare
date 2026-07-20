@@ -8,19 +8,11 @@ import type { MemoryFacade } from '@onecare/memory';
 import type { ExecutionPlan, PlannerPort } from '@onecare/planner';
 import type { PromptRegistryPort } from '@onecare/prompts';
 import type { ToolRegistryPort, ToolExecutorPort } from '@onecare/tools';
-import type { LeaveCapability, LeaveSlots } from '@onecare/ess-leave';
-import {
-  createLeaveCapability,
-  formatLeaveAssistantMessage,
-  isLeaveRelatedMessage,
-} from '@onecare/ess-leave';
 import type { AgentRegistryPort } from '../agents/registry';
 import { estimateCostUsd, type AiObservabilityPort, type AiObservation } from '../observability';
 import type { LlmProviderPort } from '../providers/types';
 import type { StreamEvent } from '../streaming/types';
 import type { ChatRequest, ChatResult, OrchestratorPort, PlanRequest } from './types';
-
-const LEAVE_SLOTS_MEMORY_KEY = 'leave.slots';
 
 export interface MasterOrchestratorDeps {
   readonly conversations: ConversationStorePort;
@@ -32,7 +24,6 @@ export interface MasterOrchestratorDeps {
   readonly llm: LlmProviderPort;
   readonly observability: AiObservabilityPort;
   readonly toolExecutor?: ToolExecutorPort;
-  readonly leaveCapability?: LeaveCapability;
   readonly resolveConfirmationApproved?: (
     tenantId: string,
     userId: string,
@@ -188,320 +179,84 @@ export class MasterOrchestrator implements OrchestratorPort {
         .join(', ') ?? 'none';
 
     const toolResultSummaries: string[] = [];
-    let leaveAssistantOverride: string | null = null;
-    let skipLlm = false;
 
-    const leaveCapability = this.deps.leaveCapability ?? createLeaveCapability();
-    const useLeaveCapability =
-      Boolean(this.deps.toolExecutor) &&
-      (primary?.agentId === 'employee' || isLeaveRelatedMessage(input.message)) &&
-      (primary?.intent?.startsWith('employee.leave') ||
-        isLeaveRelatedMessage(input.message) ||
-        Boolean(input.approvedToolConfirmations));
-
-    if (useLeaveCapability && this.deps.toolExecutor) {
-      const priorRecord = await this.deps.memory.conversation.load(
-        {
-          tenantId: String(input.context.tenantId),
-          conversationId: String(conversation.id),
-        },
-        LEAVE_SLOTS_MEMORY_KEY,
-      );
-      const priorSlots = (priorRecord?.value as LeaveSlots | null) ?? {};
-
-      let balances: Array<{ leaveType: string; available: number }> | undefined;
-      let leaveTypes: string[] | undefined;
-      let holidays: Array<{ date: string; name: string }> | undefined;
-
-      const balanceTool = this.deps.tools.get('leaveBalance');
-      if (balanceTool?.implemented) {
-        const balanceResult = await this.deps.toolExecutor.execute({
-          toolName: 'leaveBalance',
-          connectorId: balanceTool.connectorId,
-          arguments: {},
-          context: {
-            tenantId: input.context.tenantId,
-            userId: input.context.userId,
-            correlationId: input.context.correlationId,
-            roles: input.context.roles,
-            permissions: input.context.permissions,
-            attributes: input.context.attributes,
-          },
-          confirmationApproved: true,
-        });
-        if (balanceResult.ok && balanceResult.data && typeof balanceResult.data === 'object') {
-          balances = (balanceResult.data as { balances?: typeof balances }).balances;
-        }
-      }
-      const typesTool = this.deps.tools.get('leaveTypes');
-      if (typesTool?.implemented) {
-        const typesResult = await this.deps.toolExecutor.execute({
-          toolName: 'leaveTypes',
-          connectorId: typesTool.connectorId,
-          arguments: {},
-          context: {
-            tenantId: input.context.tenantId,
-            userId: input.context.userId,
-            correlationId: input.context.correlationId,
-            roles: input.context.roles,
-            permissions: input.context.permissions,
-            attributes: input.context.attributes,
-          },
-          confirmationApproved: true,
-        });
-        if (typesResult.ok && typesResult.data && typeof typesResult.data === 'object') {
-          const raw =
-            (typesResult.data as { types?: Array<{ name: string } | string> }).types ?? [];
-          leaveTypes = raw.map((t) => (typeof t === 'string' ? t : t.name));
-        }
-      }
-      const holidayTool = this.deps.tools.get('holidayCalendar');
-      if (holidayTool?.implemented) {
-        const now = new Date();
-        const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-        const holidayResult = await this.deps.toolExecutor.execute({
-          toolName: 'holidayCalendar',
-          connectorId: holidayTool.connectorId,
-          arguments: { month },
-          context: {
-            tenantId: input.context.tenantId,
-            userId: input.context.userId,
-            correlationId: input.context.correlationId,
-            roles: input.context.roles,
-            permissions: input.context.permissions,
-            attributes: input.context.attributes,
-          },
-          confirmationApproved: true,
-        });
-        if (holidayResult.ok && holidayResult.data && typeof holidayResult.data === 'object') {
-          holidays = (holidayResult.data as { holidays?: typeof holidays }).holidays;
-        }
-      }
-
-      const outcome = leaveCapability.process({
-        message: input.message,
-        priorSlots,
-        ...(balances ? { balances } : {}),
-        ...(leaveTypes ? { leaveTypes } : {}),
-        ...(holidays ? { holidays } : {}),
-      });
-
-      if (
-        outcome.kind === 'clarify' ||
-        outcome.kind === 'invalid' ||
-        outcome.kind === 'unsupported'
-      ) {
-        await this.deps.memory.conversation.save(
-          {
-            tenantId: String(input.context.tenantId),
-            conversationId: String(conversation.id),
-          },
-          LEAVE_SLOTS_MEMORY_KEY,
-          outcome.kind === 'clarify' ? outcome.slots : priorSlots,
-        );
-        if (outcome.kind === 'clarify') {
-          onEvent({
-            type: 'clarification',
-            sequence: 0,
-            data: {
-              question: outcome.question,
-              missing: outcome.missing,
-              intent: outcome.intent,
-            },
-          });
-          if (outcome.suggestedReplies?.length) {
-            onEvent({
-              type: 'suggested_replies',
-              sequence: 0,
-              data: { replies: outcome.suggestedReplies },
-            });
-          }
-        }
-        leaveAssistantOverride = formatLeaveAssistantMessage(outcome);
-        skipLlm = true;
-      } else if (outcome.kind === 'ready') {
-        await this.deps.memory.conversation.save(
-          {
-            tenantId: String(input.context.tenantId),
-            conversationId: String(conversation.id),
-          },
-          LEAVE_SLOTS_MEMORY_KEY,
-          outcome.slots,
-        );
-
-        const tool = this.deps.tools.get(outcome.toolName);
-        if (!tool?.implemented) {
-          leaveAssistantOverride = 'That leave action is not available yet.';
-          skipLlm = true;
-        } else {
-          const confirmationId = input.approvedToolConfirmations?.[outcome.toolName];
-          let confirmationApproved = false;
-          if (confirmationId && this.deps.resolveConfirmationApproved) {
-            confirmationApproved = await this.deps.resolveConfirmationApproved(
-              String(input.context.tenantId),
-              String(input.context.userId),
-              confirmationId,
-            );
-          }
-
-          const execution = await this.deps.toolExecutor.execute({
-            toolName: outcome.toolName,
-            connectorId: tool.connectorId,
-            arguments: outcome.arguments,
-            context: {
-              tenantId: input.context.tenantId,
-              userId: input.context.userId,
-              correlationId: input.context.correlationId,
-              roles: input.context.roles,
-              permissions: input.context.permissions,
-              attributes: {
-                ...input.context.attributes,
-                ...(outcome.confirmationSummary
-                  ? { confirmationSummary: outcome.confirmationSummary }
-                  : {}),
-              },
-            },
-            confirmationApproved,
-          });
-
-          if (execution.decision === 'confirmation_required') {
-            onEvent({
-              type: 'confirmation_required',
-              sequence: 0,
-              data: {
-                toolName: outcome.toolName,
-                connectorId: tool.connectorId,
-                confirmationId: execution.confirmationId,
-                summary: outcome.confirmationSummary ?? execution.errorMessage,
-                arguments: outcome.arguments,
-              },
-            });
-            onEvent({
-              type: 'tool',
-              sequence: 0,
-              data: {
-                name: outcome.toolName,
-                status: 'pending_confirmation',
-                confirmationId: execution.confirmationId,
-              },
-            });
-            leaveAssistantOverride =
-              outcome.confirmationSummary ?? 'Please confirm this leave action to continue.';
-            skipLlm = true;
-          } else {
-            onEvent({
-              type: 'tool',
-              sequence: 0,
-              data: {
-                name: outcome.toolName,
-                status: execution.ok ? 'completed' : 'failed',
-                ...(execution.data !== undefined ? { result: execution.data } : {}),
-                ...(execution.errorMessage ? { errorMessage: execution.errorMessage } : {}),
-                latencyMs: execution.latencyMs,
-              },
-            });
-            if (execution.ok) {
-              await this.deps.memory.conversation.save(
-                {
-                  tenantId: String(input.context.tenantId),
-                  conversationId: String(conversation.id),
-                },
-                LEAVE_SLOTS_MEMORY_KEY,
-                {},
-              );
-              leaveAssistantOverride = formatLeaveAssistantMessage(outcome, execution.data);
-              toolResultSummaries.push(
-                `${outcome.toolName}: ${JSON.stringify(execution.data ?? {})}`,
-              );
-              skipLlm = true;
-            } else {
-              leaveAssistantOverride =
-                execution.errorMessage ??
-                'I could not complete that leave request. Please try again.';
-              skipLlm = true;
-            }
-          }
-        }
-      }
-    } else {
-      for (const toolName of primary?.toolNames ?? []) {
-        const tool = this.deps.tools.get(toolName);
-        if (!tool || !tool.implemented || !this.deps.toolExecutor) {
-          onEvent({
-            type: 'tool',
-            sequence: 0,
-            data: {
-              name: toolName,
-              status: 'skipped',
-              reason: tool?.implemented === false ? 'placeholder_only' : 'unavailable',
-            },
-          });
-          continue;
-        }
-
-        const confirmationId = input.approvedToolConfirmations?.[toolName];
-        let confirmationApproved = false;
-        if (confirmationId && this.deps.resolveConfirmationApproved) {
-          confirmationApproved = await this.deps.resolveConfirmationApproved(
-            String(input.context.tenantId),
-            String(input.context.userId),
-            confirmationId,
-          );
-        }
-
-        const execution = await this.deps.toolExecutor.execute({
-          toolName,
-          connectorId: tool.connectorId,
-          arguments: {},
-          context: {
-            tenantId: input.context.tenantId,
-            userId: input.context.userId,
-            correlationId: input.context.correlationId,
-            roles: input.context.roles,
-            permissions: input.context.permissions,
-            attributes: input.context.attributes,
-          },
-          confirmationApproved,
-        });
-
-        if (execution.decision === 'confirmation_required') {
-          onEvent({
-            type: 'confirmation_required',
-            sequence: 0,
-            data: {
-              toolName,
-              connectorId: tool.connectorId,
-              confirmationId: execution.confirmationId,
-              summary: execution.errorMessage,
-            },
-          });
-          onEvent({
-            type: 'tool',
-            sequence: 0,
-            data: {
-              name: toolName,
-              status: 'pending_confirmation',
-              confirmationId: execution.confirmationId,
-            },
-          });
-          continue;
-        }
-
+    for (const toolName of primary?.toolNames ?? []) {
+      const tool = this.deps.tools.get(toolName);
+      if (!tool || !tool.implemented || !this.deps.toolExecutor) {
         onEvent({
           type: 'tool',
           sequence: 0,
           data: {
             name: toolName,
-            status: execution.ok ? 'completed' : 'failed',
-            ...(execution.data !== undefined ? { result: execution.data } : {}),
-            ...(execution.errorMessage ? { errorMessage: execution.errorMessage } : {}),
-            latencyMs: execution.latencyMs,
+            status: 'skipped',
+            reason: tool?.implemented === false ? 'placeholder_only' : 'unavailable',
           },
         });
+        continue;
+      }
 
-        if (execution.ok && execution.data !== undefined) {
-          toolResultSummaries.push(`${toolName}: ${JSON.stringify(execution.data)}`);
-        }
+      const confirmationId = input.approvedToolConfirmations?.[toolName];
+      let confirmationApproved = false;
+      if (confirmationId && this.deps.resolveConfirmationApproved) {
+        confirmationApproved = await this.deps.resolveConfirmationApproved(
+          String(input.context.tenantId),
+          String(input.context.userId),
+          confirmationId,
+        );
+      }
+
+      const execution = await this.deps.toolExecutor.execute({
+        toolName,
+        connectorId: tool.connectorId,
+        arguments: {},
+        context: {
+          tenantId: input.context.tenantId,
+          userId: input.context.userId,
+          correlationId: input.context.correlationId,
+          roles: input.context.roles,
+          permissions: input.context.permissions,
+          attributes: input.context.attributes,
+        },
+        confirmationApproved,
+      });
+
+      if (execution.decision === 'confirmation_required') {
+        onEvent({
+          type: 'confirmation_required',
+          sequence: 0,
+          data: {
+            toolName,
+            connectorId: tool.connectorId,
+            confirmationId: execution.confirmationId,
+            summary: execution.errorMessage,
+          },
+        });
+        onEvent({
+          type: 'tool',
+          sequence: 0,
+          data: {
+            name: toolName,
+            status: 'pending_confirmation',
+            confirmationId: execution.confirmationId,
+          },
+        });
+        continue;
+      }
+
+      onEvent({
+        type: 'tool',
+        sequence: 0,
+        data: {
+          name: toolName,
+          status: execution.ok ? 'completed' : 'failed',
+          ...(execution.data !== undefined ? { result: execution.data } : {}),
+          ...(execution.errorMessage ? { errorMessage: execution.errorMessage } : {}),
+          latencyMs: execution.latencyMs,
+        },
+      });
+
+      if (execution.ok && execution.data !== undefined) {
+        toolResultSummaries.push(`${toolName}: ${JSON.stringify(execution.data)}`);
       }
     }
 
@@ -527,35 +282,26 @@ export class MasterOrchestrator implements OrchestratorPort {
     });
 
     try {
-      if (skipLlm && leaveAssistantOverride) {
-        assistantText = leaveAssistantOverride;
-        for (const word of leaveAssistantOverride.split(/(\s+)/)) {
-          if (!word) continue;
-          onEvent({ type: 'delta', sequence: 0, data: { text: word } });
+      for await (const chunk of this.deps.llm.stream({
+        model,
+        messages: completionMessages,
+        ...(signal ? { signal } : {}),
+      })) {
+        if (signal?.aborted) {
+          onEvent({ type: 'cancelled', sequence: 0, data: { reason: 'client_aborted' } });
+          break;
         }
-        completionTokens = Math.ceil(assistantText.length / 4);
-      } else {
-        for await (const chunk of this.deps.llm.stream({
-          model,
-          messages: completionMessages,
-          ...(signal ? { signal } : {}),
-        })) {
-          if (signal?.aborted) {
-            onEvent({ type: 'cancelled', sequence: 0, data: { reason: 'client_aborted' } });
-            break;
-          }
-          if (chunk.type === 'delta' && chunk.text) {
-            assistantText += chunk.text;
-            onEvent({ type: 'delta', sequence: 0, data: { text: chunk.text } });
-          }
-          if (chunk.type === 'done') {
-            model = chunk.model ?? model;
-            promptTokens = chunk.usage?.promptTokens ?? promptTokens;
-            completionTokens = chunk.usage?.completionTokens ?? completionTokens;
-          }
-          if (chunk.type === 'error') {
-            throw new Error(chunk.errorMessage ?? 'LLM stream error');
-          }
+        if (chunk.type === 'delta' && chunk.text) {
+          assistantText += chunk.text;
+          onEvent({ type: 'delta', sequence: 0, data: { text: chunk.text } });
+        }
+        if (chunk.type === 'done') {
+          model = chunk.model ?? model;
+          promptTokens = chunk.usage?.promptTokens ?? promptTokens;
+          completionTokens = chunk.usage?.completionTokens ?? completionTokens;
+        }
+        if (chunk.type === 'error') {
+          throw new Error(chunk.errorMessage ?? 'LLM stream error');
         }
       }
     } catch (error) {

@@ -5,8 +5,6 @@ export const PERMISSIONS = {
   LEAVE_APPLY: 'leave.apply',
   LEAVE_APPROVE: 'leave.approve',
   LEAVE_CANCEL: 'leave.cancel',
-  LEAVE_READ: 'leave.read',
-  HOLIDAY_READ: 'holiday.read',
   ATTENDANCE_VIEW: 'attendance.view',
   ATTENDANCE_REGULARIZE: 'attendance.regularize',
   PAYROLL_VIEW: 'payroll.view',

@@ -12,9 +12,6 @@
     { "path": "../prompts" },
     { "path": "../memory" },
     { "path": "../planner" },
-    { "path": "../tools" },
-    { "path": "../confirmations" },
-    { "path": "../policies" },
-    { "path": "../ess-leave" }
+    { "path": "../tools" }
   ]
 }

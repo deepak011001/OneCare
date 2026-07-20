@@ -8,84 +8,14 @@ interface RouteRule {
   readonly toolNames?: readonly string[];
   readonly risk?: PlanStep['risk'];
   readonly requiresConfirmation?: boolean;
-  readonly priority?: number;
 }
 
-/**
- * Routing table only — domain validation/clarification lives in capabilities (e.g. ess-leave).
- * More specific leave rules are listed first (higher priority wins when multiple match).
- */
 const ROUTES: readonly RouteRule[] = [
-  {
-    agentId: 'employee',
-    intent: 'employee.leave.cancel',
-    patterns: [/\bcancel\b.*\bleave\b/i, /\bleave\b.*\bcancel\b/i],
-    toolNames: ['cancelLeave'],
-    risk: 'medium',
-    requiresConfirmation: true,
-    priority: 100,
-  },
-  {
-    agentId: 'employee',
-    intent: 'employee.leave.apply',
-    patterns: [
-      /\bapply\b.*\bleave\b/i,
-      /\bneed\s+leave\b/i,
-      /\btake\s+leave\b/i,
-      /\bbook\s+leave\b/i,
-      /\brequest\s+leave\b/i,
-    ],
-    toolNames: ['applyLeave'],
-    risk: 'medium',
-    requiresConfirmation: true,
-    priority: 95,
-  },
-  {
-    agentId: 'employee',
-    intent: 'employee.leave.types',
-    patterns: [/\bleave types?\b/i, /\bwhich leave\b/i, /\bavailable leave types?\b/i],
-    toolNames: ['leaveTypes'],
-    priority: 90,
-  },
-  {
-    agentId: 'employee',
-    intent: 'employee.leave.holidays',
-    patterns: [/\bholidays?\b/i, /\bpublic holiday\b/i],
-    toolNames: ['holidayCalendar'],
-    priority: 88,
-  },
-  {
-    agentId: 'employee',
-    intent: 'employee.leave.history',
-    patterns: [
-      /\bleave history\b/i,
-      /\brecent leave\b/i,
-      /\bleave requests?\b/i,
-      /\bleave\b.*\bapproved\b/i,
-      /\bleave\b.*\bstatus\b/i,
-    ],
-    toolNames: ['leaveHistory'],
-    priority: 85,
-  },
-  {
-    agentId: 'employee',
-    intent: 'employee.leave.balance',
-    patterns: [
-      /\bleave balance\b/i,
-      /\bhow many leaves?\b/i,
-      /\bhow much leave\b/i,
-      /\benough\b.*\bleave\b/i,
-      /\bleaves? (do i|i) have\b/i,
-    ],
-    toolNames: ['leaveBalance'],
-    priority: 80,
-  },
   {
     agentId: 'employee',
     intent: 'employee.self_service',
     patterns: [/leave/i, /balance/i, /attendance/i, /payslip/i, /my profile/i],
     toolNames: ['leaveBalance', 'attendance'],
-    priority: 40,
   },
   {
     agentId: 'manager',
@@ -94,26 +24,22 @@ const ROUTES: readonly RouteRule[] = [
     toolNames: ['approveRequest'],
     risk: 'medium',
     requiresConfirmation: true,
-    priority: 70,
   },
   {
     agentId: 'hr',
     intent: 'hr.case',
     patterns: [/hr policy/i, /hr case/i, /onboarding/i],
-    priority: 50,
   },
   {
     agentId: 'knowledge',
     intent: 'knowledge.search',
     patterns: [/policy/i, /handbook/i, /how do i/i, /search knowledge/i, /in the wiki/i],
     toolNames: ['searchKnowledge'],
-    priority: 45,
   },
   {
     agentId: 'finance',
     intent: 'finance.query',
     patterns: [/expense/i, /invoice/i, /reimburse/i],
-    priority: 40,
   },
   {
     agentId: 'it',
@@ -121,19 +47,16 @@ const ROUTES: readonly RouteRule[] = [
     patterns: [/password/i, /laptop/i, /ticket/i, /access request/i],
     risk: 'medium',
     requiresConfirmation: true,
-    priority: 40,
   },
   {
     agentId: 'recruitment',
     intent: 'recruitment.query',
     patterns: [/candidate/i, /hiring/i, /job req/i],
-    priority: 40,
   },
   {
     agentId: 'learning',
     intent: 'learning.query',
     patterns: [/course/i, /training/i, /learning/i],
-    priority: 40,
   },
   {
     agentId: 'notification',
@@ -142,7 +65,6 @@ const ROUTES: readonly RouteRule[] = [
     toolNames: ['sendNotification'],
     risk: 'medium',
     requiresConfirmation: true,
-    priority: 40,
   },
   {
     agentId: 'workflow',
@@ -150,7 +72,6 @@ const ROUTES: readonly RouteRule[] = [
     patterns: [/workflow/i, /long running/i],
     risk: 'high',
     requiresConfirmation: true,
-    priority: 40,
   },
 ];
 
@@ -159,20 +80,11 @@ export class HeuristicPlanner implements PlannerPort {
   async plan(input: PlannerInput): Promise<ExecutionPlan> {
     const matched = ROUTES.filter((route) =>
       route.patterns.some((pattern) => pattern.test(input.message)),
-    ).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
-
-    // Prefer single best leave/employee route when multiple employee leave signals fire
-    const primary = matched[0];
-    const stepsSource =
-      primary && primary.agentId === 'employee' && primary.intent.startsWith('employee.leave.')
-        ? [primary]
-        : matched.length > 0
-          ? matched
-          : null;
+    );
 
     const steps: PlanStep[] =
-      stepsSource !== null
-        ? stepsSource.map((route, index) => ({
+      matched.length > 0
+        ? matched.map((route, index) => ({
             id: `step-${index + 1}`,
             agentId: route.agentId,
             intent: route.intent,
@@ -181,7 +93,7 @@ export class HeuristicPlanner implements PlannerPort {
             risk: route.risk ?? 'low',
             status: 'pending' as const,
             ...(route.toolNames ? { toolNames: route.toolNames } : {}),
-            ...(stepsSource.length > 1 ? { parallelGroup: 'future' } : {}),
+            ...(matched.length > 1 ? { parallelGroup: 'future' } : {}),
           }))
         : [
             {
