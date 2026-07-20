@@ -1,5 +1,5 @@
 {
-  "name": "@onecare/telemetry",
+  "name": "@onecare/feature-flags",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -11,9 +11,7 @@
       "default": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -22,6 +20,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@onecare/database": "workspace:*",
     "@onecare/shared": "workspace:*"
   },
   "devDependencies": {

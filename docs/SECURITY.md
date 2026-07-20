@@ -66,7 +66,7 @@ Permission matrices maintained in DB seeds + Admin UI — not hardcoded in React
 | Secrets | Azure Key Vault (or equivalent); `secret_ref` in DB |
 | Backups | Encrypted; access-controlled restore |
 
-**PII masking** in logs: emails partially redacted; tokens never logged; payslip URLs signed & short-lived.
+**PII masking** in logs: emails partially redacted; phones masked; tokens/cookies/Authorization/salary never logged; payslip URLs signed & short-lived. See [`OBSERVABILITY.md`](./OBSERVABILITY.md).
 
 ---
 

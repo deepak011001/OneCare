@@ -1,3 +1,4 @@
+import type { ConversationStorePort } from '@onecare/conversations';
 import { InMemoryConversationStore } from '@onecare/conversations';
 import { createInMemoryFacade } from '@onecare/memory';
 import { HeuristicPlanner } from '@onecare/planner';
@@ -18,6 +19,7 @@ import { createEmployeeCapabilityRegistry, createLeaveCapability } from '@onecar
 import { createAttendanceCapability } from '@onecare/ess-attendance';
 import { createKnowledgeCapability } from '@onecare/ess-knowledge';
 import { createDefaultAgentRegistry } from './agents/registry';
+import { createDefaultAiHardening, type AiHardeningPorts } from './hardening';
 import { InMemoryAiObservability } from './observability';
 import {
   createMasterOrchestrator,
@@ -33,8 +35,9 @@ export interface AiRuntime {
   readonly prompts: ReturnType<typeof createDefaultPromptRegistry>;
   readonly providers: ReturnType<typeof createDefaultLlmProviderRegistry>;
   readonly observability: InMemoryAiObservability;
-  readonly conversations: InMemoryConversationStore;
+  readonly conversations: ConversationStorePort;
   readonly employeeCapabilities: CapabilityRegistry;
+  readonly hardening: AiHardeningPorts;
   getLastOrchestrationDiagnostics(): OrchestrationDiagnostics | null;
 }
 
@@ -48,6 +51,8 @@ export interface AiRuntimeIntegrationOptions {
 export interface CreateAiRuntimeOptions {
   readonly providerId?: LlmProviderId;
   readonly integration?: AiRuntimeIntegrationOptions;
+  readonly conversations?: ConversationStorePort;
+  readonly hardening?: AiHardeningPorts;
 }
 
 function buildToolRegistry(integration?: AiRuntimeIntegrationOptions) {
@@ -70,7 +75,8 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
   const agents = createDefaultAgentRegistry();
   const tools = buildToolRegistry(options?.integration);
   const prompts = createDefaultPromptRegistry();
-  const conversations = new InMemoryConversationStore();
+  const conversations = options?.conversations ?? new InMemoryConversationStore();
+  const hardening = options?.hardening ?? createDefaultAiHardening();
   const memory = createInMemoryFacade();
   const observability = new InMemoryAiObservability();
   const knowledgeCapability = createKnowledgeCapability();
@@ -152,6 +158,7 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
     observability,
     conversations,
     employeeCapabilities,
+    hardening,
     getLastOrchestrationDiagnostics: () => lastOrchestrationDiagnostics,
   };
 }

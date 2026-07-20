@@ -28,4 +28,28 @@ describe('loadEnv auth guards', () => {
       }),
     );
   });
+
+  it('rejects placeholder MCP token in production', () => {
+    assert.throws(() =>
+      loadEnv({
+        ...base,
+        NODE_ENV: 'production',
+        AUTH_MODE: 'entra',
+        ENTRA_TENANT_ID: 't',
+        ENTRA_CLIENT_ID: 'c',
+        ENTRA_CLIENT_SECRET: 's',
+        ENTRA_REDIRECT_URI: 'https://api.example/v1/auth/callback',
+        MCP_GATEWAY_AUTH_TOKEN: 'change-me-local-only',
+      }),
+    );
+  });
+
+  it('defaults conversation store to memory', () => {
+    const env = loadEnv({
+      ...base,
+      NODE_ENV: 'development',
+      AUTH_MODE: 'development',
+    });
+    assert.equal(env.CONVERSATION_STORE, 'memory');
+  });
 });

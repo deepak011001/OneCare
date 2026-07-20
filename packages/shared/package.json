@@ -18,7 +18,7 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings=0",
-    "test": "node --import tsx --test src/result.test.ts",
+    "test": "node --import tsx --test src/**/*.test.ts",
     "clean": "rimraf dist"
   },
   "devDependencies": {

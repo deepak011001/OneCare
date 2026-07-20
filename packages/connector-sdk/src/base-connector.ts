@@ -1,3 +1,4 @@
+import { withRetry, withTimeout, DEFAULT_RETRY } from '@onecare/shared';
 import type {
   ConnectorHealthReport,
   ConnectorSecrets,
@@ -7,12 +8,21 @@ import type {
   EnterpriseConnector,
 } from './types';
 
+export interface ConnectorRuntimeOptions {
+  readonly timeoutMs?: number;
+  readonly maxRetries?: number;
+}
+
 export abstract class BaseEnterpriseConnector implements EnterpriseConnector {
   abstract readonly metadata: EnterpriseConnector['metadata'];
   abstract readonly auth: EnterpriseConnector['auth'];
   abstract readonly capabilities: EnterpriseConnector['capabilities'];
 
   protected secrets: ConnectorSecrets | null = null;
+  protected runtime: ConnectorRuntimeOptions = {
+    timeoutMs: 15_000,
+    maxRetries: 2,
+  };
 
   async initialize(secrets: ConnectorSecrets): Promise<void> {
     this.secrets = secrets;
@@ -20,6 +30,11 @@ export abstract class BaseEnterpriseConnector implements EnterpriseConnector {
 
   async shutdown(): Promise<void> {
     this.secrets = null;
+  }
+
+  /** Optional runtime tuning without changing connector business behavior. */
+  configureRuntime(options: ConnectorRuntimeOptions): void {
+    this.runtime = { ...this.runtime, ...options };
   }
 
   abstract health(): Promise<ConnectorHealthReport>;
@@ -44,13 +59,33 @@ export abstract class BaseEnterpriseConnector implements EnterpriseConnector {
       };
     }
     try {
-      const data = await this.invokeTool(tool, request);
+      const timeoutMs = this.runtime.timeoutMs ?? 15_000;
+      const maxRetries = this.runtime.maxRetries ?? 2;
+      const data = await withRetry(
+        () => withTimeout(this.invokeTool(tool, request), timeoutMs, 'CONNECTOR_TIMEOUT'),
+        {
+          ...DEFAULT_RETRY,
+          maxAttempts: Math.max(1, maxRetries + 1),
+          shouldRetry: (error) => {
+            if (error instanceof ConnectorInvocationError) return error.retryable;
+            if (error instanceof Error && error.message === 'CONNECTOR_TIMEOUT') return true;
+            return DEFAULT_RETRY.shouldRetry?.(error, 1) ?? false;
+          },
+        },
+      );
       return { ok: true, data, latencyMs: Date.now() - started };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'connector_error';
       const code =
-        error instanceof ConnectorInvocationError ? error.code : 'CONNECTOR_EXECUTION_FAILED';
-      const retryable = error instanceof ConnectorInvocationError ? error.retryable : false;
+        error instanceof ConnectorInvocationError
+          ? error.code
+          : message === 'CONNECTOR_TIMEOUT'
+            ? 'CONNECTOR_TIMEOUT'
+            : 'CONNECTOR_EXECUTION_FAILED';
+      const retryable =
+        error instanceof ConnectorInvocationError
+          ? error.retryable
+          : message === 'CONNECTOR_TIMEOUT';
       return {
         ok: false,
         latencyMs: Date.now() - started,

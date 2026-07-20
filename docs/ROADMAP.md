@@ -173,6 +173,18 @@ M0 Foundations
 
 **Exit criteria:** Multi-intent leave+attendance+knowledge turns work with parallel reads, sequential writes, partial failure, and merged responses; framework/MCP/planner unchanged; lint/typecheck/tests green.
 
+### M5.5 — Production Readiness & Platform Hardening
+
+**Outcome:** Enterprise-grade reliability/security/ops **without** new business capabilities.
+
+- Health live/ready/dependencies; structured logs + PII redaction; Problem Details errors  
+- Shared retry/circuit/bulkhead; connector timeouts; feature flags + kill switches  
+- Conversation persistence schema + store port; AI prompt/safety/token hooks  
+- CI gates expanded; docs: PRODUCTION_READINESS, OPERATIONS, OBSERVABILITY, TESTING_STRATEGY, FEATURE_FLAGS, PROMPT_MANAGEMENT  
+- Contract: [`PRODUCTION_READINESS.md`](./PRODUCTION_READINESS.md)
+
+**Exit criteria:** Typecheck/lint/tests green; no Employee feature regressions; production env validation rejects unsafe defaults.
+
 ---
 
 ### M6 — Knowledge Platform (Enterprise RAG)

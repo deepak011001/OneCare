@@ -82,3 +82,10 @@ export interface AppendMessageInput {
   readonly toolResults?: readonly ToolResult[];
   readonly metadata?: MessageMetadata;
 }
+
+export interface ListConversationsInput {
+  readonly tenantId: string;
+  readonly userId: string;
+  readonly limit?: number;
+  readonly cursor?: string;
+}

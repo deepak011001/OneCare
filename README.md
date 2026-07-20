@@ -67,18 +67,19 @@ pnpm lint
 | `@onecare/ess-attendance` | Employee attendance capability (clock in/out, history, regularization) |
 | `@onecare/ess-knowledge` | Employee knowledge capability (retrieval abstraction, classification, attribution) |
 | `@onecare/ess-orchestration` | Cross-capability orchestration (multi-intent graph, merged clarify/confirm/respond) |
+| `@onecare/feature-flags` | Feature flags, capability gates, kill switches |
 | `@onecare/workflows` | Workflow engine contracts |
 | `@onecare/integrations` | Integration adapter ports |
-| `@onecare/telemetry` | Logging, AI metrics hooks & OpenTelemetry |
+| `@onecare/telemetry` | Logging, PII redaction, AI/MCP metrics & OpenTelemetry ports |
 | `@onecare/ui` | Shared UI primitives |
 
 ## Documentation
 
-Start at [`docs/README.md`](./docs/README.md). Cursor agents: see [`AGENTS.md`](./AGENTS.md) and [`docs/CURSOR_RULES.md`](./docs/CURSOR_RULES.md).
+Start at [`docs/README.md`](./docs/README.md). Cursor agents: see [`AGENTS.md`](./AGENTS.md) and [`docs/CURSOR_RULES.md`](./docs/CURSOR_RULES.md). Production hardening: [`docs/PRODUCTION_READINESS.md`](./docs/PRODUCTION_READINESS.md).
 
 ## Milestone
 
-Current: **M5 Employee Agent** (Leave + Attendance + Knowledge) — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+Current: **M5.5 Production Readiness** (on M5 Employee Agent) — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ### API + database (M1)
 

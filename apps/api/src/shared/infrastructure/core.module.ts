@@ -2,8 +2,14 @@ import { Global, Module } from '@nestjs/common';
 import { loadEnv } from '@onecare/config';
 import { createPrismaClient } from '@onecare/database';
 import { InProcessEventBus } from '@onecare/events';
+import { InMemoryFeatureFlagService } from '@onecare/feature-flags';
 import { NoOpMfaChallengePort } from '@onecare/security';
-import { createSafeLogger } from '@onecare/telemetry';
+import {
+  createSafeLogger,
+  InMemoryMetrics,
+  NoOpTracer,
+  PlatformMetrics,
+} from '@onecare/telemetry';
 import { InMemoryCachePort } from '@onecare/cache';
 import { RbacPermissionChecker } from '@onecare/auth';
 import { APP_TOKENS } from '../tokens';
@@ -52,6 +58,18 @@ const env = loadEnv();
     { provide: APP_TOKENS.AUDIT_PORT, useClass: PrismaAuditService },
     { provide: APP_TOKENS.PERMISSION_CHECKER, useClass: RbacPermissionChecker },
     { provide: APP_TOKENS.MFA_PORT, useClass: NoOpMfaChallengePort },
+    {
+      provide: APP_TOKENS.FEATURE_FLAGS,
+      useFactory: () => new InMemoryFeatureFlagService(),
+    },
+    { provide: APP_TOKENS.TRACER, useFactory: () => new NoOpTracer() },
+    {
+      provide: APP_TOKENS.METRICS,
+      useFactory: () => {
+        const metrics = new InMemoryMetrics();
+        return new PlatformMetrics(metrics);
+      },
+    },
     IdentityService,
     AuthGuard,
     PermissionsGuard,
@@ -68,6 +86,9 @@ const env = loadEnv();
     APP_TOKENS.AUDIT_PORT,
     APP_TOKENS.PERMISSION_CHECKER,
     APP_TOKENS.MFA_PORT,
+    APP_TOKENS.FEATURE_FLAGS,
+    APP_TOKENS.TRACER,
+    APP_TOKENS.METRICS,
     IdentityService,
     AuthGuard,
     PermissionsGuard,

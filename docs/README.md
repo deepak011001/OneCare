@@ -12,6 +12,12 @@ Living **source of truth** for product, architecture, and engineering. Cursor ru
 | [EMPLOYEE_CAPABILITY_FRAMEWORK.md](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) | Reusable ESS capability interface, registry, pipelines |
 | [KNOWLEDGE_CAPABILITY.md](./KNOWLEDGE_CAPABILITY.md) | Employee knowledge capability — retrieval abstraction, intents, APIs |
 | [CROSS_CAPABILITY_ORCHESTRATION.md](./CROSS_CAPABILITY_ORCHESTRATION.md) | Multi-intent Employee Agent orchestration — graph, merge, partial failure |
+| [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md) | M5.5 production hardening overview |
+| [OPERATIONS.md](./OPERATIONS.md) | Runtime ops, probes, playbooks |
+| [OBSERVABILITY.md](./OBSERVABILITY.md) | Logs, metrics, tracing ports |
+| [TESTING_STRATEGY.md](./TESTING_STRATEGY.md) | Test layers and critical paths |
+| [FEATURE_FLAGS.md](./FEATURE_FLAGS.md) | Flags, kill switches, rollout gates |
+| [PROMPT_MANAGEMENT.md](./PROMPT_MANAGEMENT.md) | Prompt registry and AI hardening hooks |
 | [MCP.md](./MCP.md) | Model Context Protocol & tool contracts |
 | [DATABASE.md](./DATABASE.md) | PostgreSQL / Prisma / pgvector |
 | [API_STANDARDS.md](./API_STANDARDS.md) | HTTP/WS API conventions |

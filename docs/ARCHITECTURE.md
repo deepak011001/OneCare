@@ -163,11 +163,14 @@ Each module must be extractable: own Nest module, own DB schema namespace/tables
 | AuthN | Entra OIDC → JWT + Redis session |
 | AuthZ | RBAC + ABAC policy engine (central) |
 | Tenancy | `tenant_id` on rows; middleware sets TenantContext |
-| Config | Env + DB feature flags; Zod-validated at boot |
+| Config | Env + DB feature flags (`@onecare/feature-flags`); Zod-validated at boot ([`FEATURE_FLAGS.md`](./FEATURE_FLAGS.md)) |
 | Validation | DTO validation at edges; domain invariants inside |
-| Errors | Typed domain/application errors → problem+json |
+| Errors | Typed errors → Problem Details ([`PRODUCTION_READINESS.md`](./PRODUCTION_READINESS.md)) |
+| Observability | Structured logs, OTEL ports, platform metrics ([`OBSERVABILITY.md`](./OBSERVABILITY.md)) |
+| Resilience | Shared retry / circuit / bulkhead / timeouts |
 | Events | Outbox pattern for reliable domain event publish |
 | Idempotency | Idempotency keys on mutating APIs & tool calls |
+| Ops | Health live/ready/dependencies ([`OPERATIONS.md`](./OPERATIONS.md)) |
 
 ---
 
