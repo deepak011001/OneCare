@@ -23,15 +23,9 @@ function scoreDocument(doc: KnowledgeDocument, query: KnowledgeSearchQuery): num
   let score = 0;
   const faqText = (doc.faqs ?? []).join(' ');
   const hay = tokenize(
-    [
-      doc.title,
-      doc.summary,
-      doc.body,
-      ...doc.topics,
-      ...doc.tags,
-      doc.section ?? '',
-      faqText,
-    ].join(' '),
+    [doc.title, doc.summary, doc.body, ...doc.topics, ...doc.tags, doc.section ?? '', faqText].join(
+      ' ',
+    ),
   );
   const queryLower = query.text.toLowerCase();
 

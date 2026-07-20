@@ -119,7 +119,9 @@ export async function createEnterpriseKnowledgePlatform(
           body: [
             d.summary,
             d.body,
-            (d.faqs ?? []).length ? `Common questions:\n${(d.faqs ?? []).map((q) => `- ${q}`).join('\n')}` : '',
+            (d.faqs ?? []).length
+              ? `Common questions:\n${(d.faqs ?? []).map((q) => `- ${q}`).join('\n')}`
+              : '',
             d.topics.join(', '),
           ]
             .filter(Boolean)

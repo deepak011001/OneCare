@@ -88,8 +88,19 @@ export const KNOWLEDGE_TAXONOMY: readonly TaxonomyNode[] = [
     domain: 'hr',
     category: 'exit',
     label: 'Exit',
-    keywords: ['resignation', 'exit', 'last working day', 'quit', 'notice period', 'leaving company'],
-    examples: ['How does resignation work?', 'What happens if I resign?', 'What is the notice period?'],
+    keywords: [
+      'resignation',
+      'exit',
+      'last working day',
+      'quit',
+      'notice period',
+      'leaving company',
+    ],
+    examples: [
+      'How does resignation work?',
+      'What happens if I resign?',
+      'What is the notice period?',
+    ],
   },
   {
     domain: 'hr',

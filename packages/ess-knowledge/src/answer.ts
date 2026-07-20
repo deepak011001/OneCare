@@ -90,15 +90,7 @@ function composeProfessionalHrAnswer(input: {
   }
 
   const detail = doc.body.trim();
-  return [
-    `Here is what **${doc.title}** covers:`,
-    '',
-    lead,
-    '',
-    detail,
-    '',
-    closing,
-  ].join('\n');
+  return [`Here is what **${doc.title}** covers:`, '', lead, '', detail, '', closing].join('\n');
 }
 
 function trimQuestion(text: string): string {
@@ -198,9 +190,7 @@ export function buildKnowledgeAnswer(input: {
   const multiIntent = parts.length > 1;
   const text = parts
     .map((part, index) => {
-      const header = multiIntent
-        ? `### ${index + 1}. ${part.title ?? 'Answer'}\n`
-        : '';
+      const header = multiIntent ? `### ${index + 1}. ${part.title ?? 'Answer'}\n` : '';
       return `${header}${part.text}`;
     })
     .join('\n\n');
