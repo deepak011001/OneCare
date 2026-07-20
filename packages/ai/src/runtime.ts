@@ -12,7 +12,8 @@ import {
 import type { McpGatewayService } from '@onecare/mcp';
 import type { InMemoryConfirmationStore } from '@onecare/confirmations';
 import type { PolicyEngine } from '@onecare/policies';
-import { createLeaveCapability } from '@onecare/ess-leave';
+import type { CapabilityRegistry } from '@onecare/ess-capability';
+import { createEmployeeCapabilityRegistry, createLeaveCapability } from '@onecare/ess-leave';
 import { createDefaultAgentRegistry } from './agents/registry';
 import { InMemoryAiObservability } from './observability';
 import {
@@ -30,6 +31,7 @@ export interface AiRuntime {
   readonly providers: ReturnType<typeof createDefaultLlmProviderRegistry>;
   readonly observability: InMemoryAiObservability;
   readonly conversations: InMemoryConversationStore;
+  readonly employeeCapabilities: CapabilityRegistry;
 }
 
 export interface AiRuntimeIntegrationOptions {
@@ -67,6 +69,10 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
   const conversations = new InMemoryConversationStore();
   const memory = createInMemoryFacade();
   const observability = new InMemoryAiObservability();
+  const employeeCapabilities = createEmployeeCapabilityRegistry();
+  const leaveCapability =
+    (employeeCapabilities.get('ess.leave') as
+      ReturnType<typeof createLeaveCapability> | undefined) ?? createLeaveCapability();
 
   const toolExecutor =
     options?.integration &&
@@ -88,46 +94,32 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
       }
     : undefined;
 
+  const baseDeps = {
+    conversations,
+    memory,
+    planner: new HeuristicPlanner(),
+    agents,
+    tools,
+    prompts,
+    llm,
+    observability,
+    leaveCapability,
+  };
+
   let orchestrator: MasterOrchestrator;
   if (toolExecutor && resolveConfirmationApproved) {
     orchestrator = createMasterOrchestrator({
-      conversations,
-      memory,
-      planner: new HeuristicPlanner(),
-      agents,
-      tools,
-      prompts,
-      llm,
-      observability,
+      ...baseDeps,
       toolExecutor,
       resolveConfirmationApproved,
-      leaveCapability: createLeaveCapability(),
     });
   } else if (toolExecutor) {
     orchestrator = createMasterOrchestrator({
-      conversations,
-      memory,
-      planner: new HeuristicPlanner(),
-      agents,
-      tools,
-      prompts,
-      llm,
-      observability,
+      ...baseDeps,
       toolExecutor,
-      leaveCapability: createLeaveCapability(),
     });
   } else {
-    orchestrator = createMasterOrchestrator({
-      conversations,
-      memory,
-      planner: new HeuristicPlanner(),
-      agents,
-      tools,
-      prompts,
-      llm,
-      observability,
-      leaveCapability: createLeaveCapability(),
-    });
+    orchestrator = createMasterOrchestrator(baseDeps);
   }
 
   return {
@@ -138,5 +130,6 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
     providers,
     observability,
     conversations,
+    employeeCapabilities,
   };
 }

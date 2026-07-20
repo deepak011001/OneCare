@@ -5,5 +5,5 @@
     "rootDir": "src"
   },
   "include": ["src/**/*"],
-  "references": [{ "path": "../shared" }, { "path": "../ess-capability" }]
+  "references": [{ "path": "../shared" }]
 }

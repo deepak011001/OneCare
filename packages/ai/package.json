@@ -24,6 +24,7 @@
   "dependencies": {
     "@onecare/confirmations": "workspace:*",
     "@onecare/conversations": "workspace:*",
+    "@onecare/ess-capability": "workspace:*",
     "@onecare/ess-leave": "workspace:*",
     "@onecare/mcp": "workspace:*",
     "@onecare/memory": "workspace:*",

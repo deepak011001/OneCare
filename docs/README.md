@@ -9,6 +9,7 @@ Living **source of truth** for product, architecture, and engineering. Cursor ru
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture & folder layout |
 | [AI_AGENTS.md](./AI_AGENTS.md) | Multi-agent platform |
 | [EMPLOYEE_AGENT.md](./EMPLOYEE_AGENT.md) | Employee (ESS) agent contract — intents, tools, confirmations |
+| [EMPLOYEE_CAPABILITY_FRAMEWORK.md](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) | Reusable ESS capability interface, registry, pipelines |
 | [MCP.md](./MCP.md) | Model Context Protocol & tool contracts |
 | [DATABASE.md](./DATABASE.md) | PostgreSQL / Prisma / pgvector |
 | [API_STANDARDS.md](./API_STANDARDS.md) | HTTP/WS API conventions |

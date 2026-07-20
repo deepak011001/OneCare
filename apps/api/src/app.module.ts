@@ -4,6 +4,7 @@ import { CoreModule } from './shared/infrastructure/core.module';
 import { IdentityModule } from './modules/identity/identity.module';
 import { McpModule } from './modules/mcp/mcp.module';
 import { LeaveModule } from './modules/leave/leave.module';
+import { EmployeeCapabilitiesModule } from './modules/employee-capabilities/employee-capabilities.module';
 import { AiModule } from './modules/ai/ai.module';
 import { HealthController } from './health.controller';
 import { GlobalExceptionFilter } from './shared/presentation/global-exception.filter';
@@ -12,7 +13,14 @@ import { correlationMiddleware } from './shared/presentation/correlation.middlew
 import { RateLimitMiddleware } from './shared/presentation/rate-limit.middleware';
 
 @Module({
-  imports: [CoreModule, IdentityModule, McpModule, AiModule, LeaveModule],
+  imports: [
+    CoreModule,
+    IdentityModule,
+    McpModule,
+    AiModule,
+    LeaveModule,
+    EmployeeCapabilitiesModule,
+  ],
   controllers: [HealthController],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },

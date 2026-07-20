@@ -319,6 +319,9 @@ importers:
       '@onecare/conversations':
         specifier: workspace:*
         version: link:../conversations
+      '@onecare/ess-capability':
+        specifier: workspace:*
+        version: link:../ess-capability
       '@onecare/ess-leave':
         specifier: workspace:*
         version: link:../ess-leave
@@ -425,8 +428,21 @@ importers:
         specifier: ^4.19.2
         version: 4.23.1
 
+  packages/ess-capability:
+    dependencies:
+      '@onecare/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.1
+
   packages/ess-leave:
     dependencies:
+      '@onecare/ess-capability':
+        specifier: workspace:*
+        version: link:../ess-capability
       '@onecare/shared':
         specifier: workspace:*
         version: link:../shared

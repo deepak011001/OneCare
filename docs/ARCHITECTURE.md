@@ -181,12 +181,15 @@ User message
   → Chat Application (persist message)
   → Orchestrator Agent (plan)
   → Domain Agent (ESS/IT/…)
+       → Capability Registry (ESS) → EmployeeCapability
   → Policy check (RBAC/ABAC + confirmation)
   → MCP Tool invocation
   → Persist tool result + audit + cost
   → Stream response to client
   → Emit domain events (Notification, Analytics)
 ```
+
+ESS domain logic lives in `@onecare/ess-capability` + capability packages (e.g. `@onecare/ess-leave`) — see [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md).
 
 ### 6.2 Knowledge Query
 
