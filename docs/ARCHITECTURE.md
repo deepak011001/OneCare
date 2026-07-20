@@ -100,7 +100,11 @@ onecare/
 │   ├── memory/              # Conversation / user / session / agent memory ports
 │   ├── planner/             # Execution plan abstraction (single/multi-agent)
 │   ├── tools/               # Tool registry (interfaces + placeholders)
-│   ├── mcp/                 # MCP tool types & gateway port
+│   ├── mcp/                 # MCP gateway, connector registry, resilience
+│   ├── connector-sdk/       # Connector contract (auth, tools, lifecycle)
+│   ├── connectors/          # Vendor connectors (Keka, …)
+│   ├── policies/            # Execution policies (RBAC, confirmation, rate limits)
+│   ├── confirmations/       # Confirmation tokens / store
 │   ├── workflows/           # Workflow engine ports
 │   ├── integrations/        # Connector registry ports
 │   ├── telemetry/           # Structured logging, PII redaction, OTel hooks

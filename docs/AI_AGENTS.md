@@ -65,7 +65,9 @@ Additional specialized agents may be added; register in Admin + config.
 5. Enforce global policies (risk, budget, PII)  
 6. Merge results into a user-facing outcome  
 
-**Orchestrator must not** call enterprise APIs directly — only via domain agents / tools.
+**M4:** Tool registry entries include rich metadata and route to `@onecare/mcp` for execution. The heuristic **planner is unchanged**; side-effecting tools honor `@onecare/confirmations` + `@onecare/policies` before the gateway calls a connector.
+
+**Orchestrator must not** call enterprise APIs directly — only via MCP tools / connectors.
 
 ---
 

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { HealthController } from './health.controller';
+import { McpGatewayController } from './mcp-gateway.controller';
 
 @Module({
-  controllers: [HealthController],
+  controllers: [McpGatewayController],
 })
 export class AppModule {}

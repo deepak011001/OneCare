@@ -151,6 +151,26 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ message, ...(conversationId ? { conversationId } : {}) }),
     }),
+  approveMcpConfirmation: (confirmationId: string) =>
+    request<ApiEnvelope<{ id: string; status: string; toolName: string }>>(
+      `/v1/mcp/confirmations/${confirmationId}/approve`,
+      { method: 'POST', body: JSON.stringify({}) },
+    ),
+  cancelMcpConfirmation: (confirmationId: string) =>
+    request<ApiEnvelope<{ id: string; status: string }>>(
+      `/v1/mcp/confirmations/${confirmationId}/cancel`,
+      { method: 'POST', body: JSON.stringify({}) },
+    ),
+  executeMcpTool: (body: {
+    connectorId: string;
+    toolName: string;
+    arguments?: Record<string, unknown>;
+    confirmationId?: string;
+  }) =>
+    request<ApiEnvelope<{ ok: boolean; data?: unknown; errorMessage?: string }>>('/v1/mcp/execute', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
 };
 
 export function getApiBaseUrl(): string {

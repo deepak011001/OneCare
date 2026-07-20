@@ -22,7 +22,10 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@onecare/confirmations": "workspace:*",
+    "@onecare/connector-sdk": "workspace:*",
     "@onecare/mcp": "workspace:*",
+    "@onecare/policies": "workspace:*",
     "@onecare/shared": "workspace:*"
   },
   "devDependencies": {

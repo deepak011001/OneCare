@@ -17,6 +17,8 @@ const PERMISSIONS = [
   { code: 'admin.role.manage', module: 'admin', description: 'Manage roles' },
   { code: 'admin.audit.read', module: 'admin', description: 'Read audit logs' },
   { code: 'mcp.execute', module: 'mcp', description: 'Execute MCP tools' },
+  { code: 'mcp.connectors.read', module: 'mcp', description: 'List MCP connectors' },
+  { code: 'mcp.tools.read', module: 'mcp', description: 'List MCP tools' },
   { code: 'workflow.execute', module: 'workflow', description: 'Execute workflows' },
   { code: 'rbac.role.read', module: 'rbac', description: 'List roles' },
   { code: 'rbac.permission.read', module: 'rbac', description: 'List permissions' },
@@ -46,6 +48,9 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'ai.agents.read',
     'ai.tools.read',
     'ai.models.read',
+    'mcp.execute',
+    'mcp.connectors.read',
+    'mcp.tools.read',
   ],
   Manager: [
     'employee.read',
@@ -65,6 +70,9 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'ai.agents.read',
     'ai.tools.read',
     'ai.models.read',
+    'mcp.execute',
+    'mcp.connectors.read',
+    'mcp.tools.read',
   ],
   HR: [
     'employee.read',

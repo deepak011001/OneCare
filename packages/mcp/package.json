@@ -18,10 +18,17 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings=0",
-    "test": "node -e \"process.exit(0)\"",
+    "test": "node --import tsx --test src/**/*.test.ts",
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@onecare/confirmations": "workspace:*",
+    "@onecare/connectors": "workspace:*",
+    "@onecare/connector-sdk": "workspace:*",
+    "@onecare/policies": "workspace:*",
     "@onecare/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
   }
 }

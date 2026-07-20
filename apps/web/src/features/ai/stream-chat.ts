@@ -5,6 +5,13 @@ export type StreamHandlers = {
   onConversation?: (data: { conversationId: string; title: string }) => void;
   onPlan?: (plan: ExecutionPlanView) => void;
   onDelta?: (text: string) => void;
+  onConfirmationRequired?: (data: {
+    toolName: string;
+    connectorId: string;
+    confirmationId?: string;
+    summary?: string;
+  }) => void;
+  onTool?: (data: Record<string, unknown>) => void;
   onDone?: (data: { conversationId: string }) => void;
   onError?: (message: string) => void;
 };
@@ -31,6 +38,7 @@ export async function streamAiChat(input: {
   message: string;
   conversationId?: string | null;
   accessToken: string | null;
+  approvedToolConfirmations?: Record<string, string>;
   signal?: AbortSignal;
   handlers: StreamHandlers;
 }): Promise<void> {
@@ -45,6 +53,9 @@ export async function streamAiChat(input: {
       message: input.message,
       stream: true,
       ...(input.conversationId ? { conversationId: input.conversationId } : {}),
+      ...(input.approvedToolConfirmations
+        ? { approvedToolConfirmations: input.approvedToolConfirmations }
+        : {}),
     }),
     ...(input.signal ? { signal: input.signal } : {}),
   });
@@ -80,6 +91,19 @@ export async function streamAiChat(input: {
         }
         if (evt.event === 'plan') {
           input.handlers.onPlan?.(payload as unknown as ExecutionPlanView);
+        }
+        if (evt.event === 'confirmation_required') {
+          if (typeof payload.confirmationId === 'string') {
+            input.handlers.onConfirmationRequired?.({
+              toolName: String(payload.toolName ?? ''),
+              connectorId: String(payload.connectorId ?? ''),
+              confirmationId: payload.confirmationId,
+              ...(typeof payload.summary === 'string' ? { summary: payload.summary } : {}),
+            });
+          }
+        }
+        if (evt.event === 'tool') {
+          input.handlers.onTool?.(payload);
         }
         if (evt.event === 'delta' && typeof payload.text === 'string') {
           input.handlers.onDelta?.(payload.text);
