@@ -24,6 +24,11 @@
     { "path": "../../packages/events" },
     { "path": "../../packages/mcp" },
     { "path": "../../packages/ai" },
+    { "path": "../../packages/conversations" },
+    { "path": "../../packages/prompts" },
+    { "path": "../../packages/memory" },
+    { "path": "../../packages/planner" },
+    { "path": "../../packages/tools" },
     { "path": "../../packages/workflows" }
   ]
 }

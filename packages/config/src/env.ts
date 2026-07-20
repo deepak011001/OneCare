@@ -58,6 +58,11 @@ export const envSchema = z
     ENTRA_REDIRECT_URI: z.preprocess(emptyToUndefined, z.string().url().optional()),
     ENTRA_SCOPES: z.string().default('openid profile email offline_access'),
     OTEL_EXPORTER_OTLP_ENDPOINT: z.preprocess(emptyToUndefined, z.string().url().optional()),
+    AI_PROVIDER: z.enum(['mock', 'openai', 'azure-openai', 'anthropic']).default('mock'),
+    AI_DEFAULT_MODEL: z.string().default('mock-onecare-v1'),
+    AI_MAX_TOKENS: z.coerce.number().int().positive().default(1024),
+    AI_TEMPERATURE: z.coerce.number().min(0).max(2).default(0.2),
+    AI_STREAM_CHUNK_DELAY_MS: z.coerce.number().int().nonnegative().default(8),
   })
   .superRefine((env, ctx) => {
     if (env.NODE_ENV === 'production' && env.AUTH_MODE === 'development') {

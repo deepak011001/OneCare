@@ -35,7 +35,7 @@ export const APP_NAV: readonly NavItem[] = [
     label: 'OneCare AI',
     href: '/app/ai',
     icon: Sparkles,
-    placeholder: true,
+    permissions: ['ai.chat'],
   },
   {
     id: 'employee',

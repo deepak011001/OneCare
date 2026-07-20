@@ -35,6 +35,12 @@ GET    /v1/users/me
 GET    /v1/tenants/current
 GET    /v1/roles
 GET    /v1/permissions
+GET    /v1/ai/agents
+GET    /v1/ai/tools
+GET    /v1/ai/models
+GET    /v1/ai/conversations
+POST   /v1/ai/chat
+POST   /v1/ai/plan
 GET    /v1/me
 GET    /v1/conversations
 ```

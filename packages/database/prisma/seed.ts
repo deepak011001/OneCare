@@ -22,6 +22,11 @@ const PERMISSIONS = [
   { code: 'rbac.permission.read', module: 'rbac', description: 'List permissions' },
   { code: 'tenant.read', module: 'tenant', description: 'Read current tenant' },
   { code: 'auth.session.revoke', module: 'auth', description: 'Revoke sessions' },
+  { code: 'ai.chat', module: 'ai', description: 'Chat with OneCare AI' },
+  { code: 'ai.plan', module: 'ai', description: 'Request AI execution plans' },
+  { code: 'ai.agents.read', module: 'ai', description: 'List AI agents' },
+  { code: 'ai.tools.read', module: 'ai', description: 'List AI tools' },
+  { code: 'ai.models.read', module: 'ai', description: 'List AI models' },
 ] as const;
 
 const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
@@ -36,6 +41,11 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'tenant.read',
     'rbac.role.read',
     'rbac.permission.read',
+    'ai.chat',
+    'ai.plan',
+    'ai.agents.read',
+    'ai.tools.read',
+    'ai.models.read',
   ],
   Manager: [
     'employee.read',
@@ -50,6 +60,11 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'tenant.read',
     'rbac.role.read',
     'rbac.permission.read',
+    'ai.chat',
+    'ai.plan',
+    'ai.agents.read',
+    'ai.tools.read',
+    'ai.models.read',
   ],
   HR: [
     'employee.read',
@@ -66,6 +81,11 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'tenant.read',
     'rbac.role.read',
     'rbac.permission.read',
+    'ai.chat',
+    'ai.plan',
+    'ai.agents.read',
+    'ai.tools.read',
+    'ai.models.read',
   ],
   Finance: [
     'employee.read',
@@ -74,6 +94,11 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'tenant.read',
     'rbac.role.read',
     'rbac.permission.read',
+    'ai.chat',
+    'ai.plan',
+    'ai.agents.read',
+    'ai.tools.read',
+    'ai.models.read',
   ],
   IT: [
     'employee.read',
@@ -83,6 +108,11 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'tenant.read',
     'rbac.role.read',
     'rbac.permission.read',
+    'ai.chat',
+    'ai.plan',
+    'ai.agents.read',
+    'ai.tools.read',
+    'ai.models.read',
   ],
   Recruiter: [
     'employee.read',
@@ -90,6 +120,11 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'tenant.read',
     'rbac.role.read',
     'rbac.permission.read',
+    'ai.chat',
+    'ai.plan',
+    'ai.agents.read',
+    'ai.tools.read',
+    'ai.models.read',
   ],
   LearningAdmin: [
     'employee.read',
@@ -98,6 +133,11 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'tenant.read',
     'rbac.role.read',
     'rbac.permission.read',
+    'ai.chat',
+    'ai.plan',
+    'ai.agents.read',
+    'ai.tools.read',
+    'ai.models.read',
   ],
   SystemAdmin: [
     'employee.read',
@@ -119,6 +159,11 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'rbac.role.read',
     'rbac.permission.read',
     'auth.session.revoke',
+    'ai.chat',
+    'ai.plan',
+    'ai.agents.read',
+    'ai.tools.read',
+    'ai.models.read',
   ],
   SuperAdmin: [], // SuperAdmin bypasses RBAC checks in engine
 };

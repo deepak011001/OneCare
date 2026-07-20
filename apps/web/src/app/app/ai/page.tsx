@@ -1,10 +1,19 @@
-import { PlaceholderPage } from '@/components/layout/placeholder-page';
+'use client';
+
+import { Suspense } from 'react';
+import { ChatWorkspace } from '@/features/ai/components/chat-workspace';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function AiPage() {
   return (
-    <PlaceholderPage
-      title="OneCare AI"
-      description="Conversational work surface. AI orchestration arrives in M3+."
-    />
+    <Suspense
+      fallback={
+        <div className="flex h-64 items-center justify-center">
+          <Spinner />
+        </div>
+      }
+    >
+      <ChatWorkspace />
+    </Suspense>
   );
 }

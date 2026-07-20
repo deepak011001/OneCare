@@ -131,6 +131,26 @@ export const api = {
     }
   },
   health: () => request<ApiEnvelope<{ status: string; service: string }>>('/v1/health'),
+  listAiAgents: () => request<ApiEnvelope<unknown[]>>('/v1/ai/agents'),
+  listAiTools: () => request<ApiEnvelope<unknown[]>>('/v1/ai/tools'),
+  listAiModels: () => request<ApiEnvelope<unknown[]>>('/v1/ai/models'),
+  listAiConversations: () =>
+    request<
+      ApiEnvelope<Array<{ id: string; title: string; updatedAt: string; messageCount: number }>>
+    >('/v1/ai/conversations'),
+  getAiConversation: (id: string) =>
+    request<
+      ApiEnvelope<{
+        id: string;
+        title: string;
+        messages: Array<{ id: string; role: string; content: string; createdAt: string }>;
+      }>
+    >(`/v1/ai/conversations/${id}`),
+  planAi: (message: string, conversationId?: string) =>
+    request<ApiEnvelope<unknown>>('/v1/ai/plan', {
+      method: 'POST',
+      body: JSON.stringify({ message, ...(conversationId ? { conversationId } : {}) }),
+    }),
 };
 
 export function getApiBaseUrl(): string {

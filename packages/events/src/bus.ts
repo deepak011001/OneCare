@@ -37,4 +37,8 @@ export const DOMAIN_EVENTS = {
   TOKEN_REUSE_DETECTED: 'TokenReuseDetected',
   AUDIT_WRITTEN: 'AuditWritten',
   PERMISSION_DENIED: 'PermissionDenied',
+  AI_CHAT_STARTED: 'AiChatStarted',
+  AI_PLAN_CREATED: 'AiPlanCreated',
+  AI_AGENT_INVOKED: 'AiAgentInvoked',
+  AI_STREAM_COMPLETED: 'AiStreamCompleted',
 } as const;
