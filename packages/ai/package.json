@@ -28,6 +28,7 @@
     "@onecare/ess-capability": "workspace:*",
     "@onecare/ess-knowledge": "workspace:*",
     "@onecare/ess-leave": "workspace:*",
+    "@onecare/ess-orchestration": "workspace:*",
     "@onecare/mcp": "workspace:*",
     "@onecare/memory": "workspace:*",
     "@onecare/planner": "workspace:*",

@@ -31,6 +31,23 @@ export class AiService {
     return this.runtime.providers.listModels();
   }
 
+  getOrchestrationDiagnostics() {
+    return this.runtime.getLastOrchestrationDiagnostics();
+  }
+
+  async auditOrchestrationDiagnostics(context: RequestContext) {
+    await this.audit.write({
+      tenantId: String(context.tenantId),
+      userId: String(context.userId),
+      sessionId: String(context.sessionId),
+      action: AUDIT_ACTIONS.AI_ORCHESTRATION,
+      resource: 'ai.orchestration.diagnostics',
+      result: 'success',
+      correlationId: String(context.correlationId),
+      requestId: String(context.requestId),
+    });
+  }
+
   listConversations(context: RequestContext) {
     return this.orchestrator.listConversations(String(context.tenantId), String(context.userId));
   }

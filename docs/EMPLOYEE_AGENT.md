@@ -121,6 +121,7 @@ Capabilities are coarse product claims implemented via the **Employee Capability
 2. The agent never “acts as” another employee via LLM-supplied IDs.
 3. Vendor mapping (email → HRIS employee id) happens in MCP / connector identity propagation — not in prompts.
 4. New ESS domains **implement `EmployeeCapability` and register** — do not duplicate leave’s clarify/validate/confirm logic.
+5. Multi-intent turns are coordinated by **Cross Capability Orchestration** ([`CROSS_CAPABILITY_ORCHESTRATION.md`](./CROSS_CAPABILITY_ORCHESTRATION.md)) — employees never see capability boundaries.
 
 ---
 

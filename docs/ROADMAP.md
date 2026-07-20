@@ -149,7 +149,7 @@ M0 Foundations
 
 **Exit criteria:** Employee can check balance, clarify apply/cancel, confirm writes, and see leave widgets; lint/typecheck/tests green.
 
-**Status:** Slice 1 (Leave) + Framework + Slice 3 (Knowledge) on M5 release line. Attendance may land via separate PR.
+**Status:** Slice 1 (Leave) + Framework + Attendance + Slice 3 (Knowledge) + Slice 4 (Cross Capability Orchestration) on M5 release line.
 
 ### M5 Slice 3 — Employee Knowledge Capability
 
@@ -161,6 +161,17 @@ M0 Foundations
 - Contract: [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md)
 
 **Exit criteria:** Natural-language policy/how-to questions answer with sources (or explicit no-source); follow-ups and multi-question prompts work; lint/typecheck/tests green.
+
+### M5 Slice 4 — Cross Capability Orchestration
+
+**Outcome:** One AI that coordinates unlimited ESS capabilities in a single conversation.
+
+- `@onecare/ess-orchestration`: intent split, registry selection, execution graph, merged clarify/confirm/respond
+- Master Orchestrator bridge; admin diagnostics `GET /v1/ai/orchestration/diagnostics`
+- Chat progress + merged confirmation UX (no capability leakage)
+- Contract: [`CROSS_CAPABILITY_ORCHESTRATION.md`](./CROSS_CAPABILITY_ORCHESTRATION.md)
+
+**Exit criteria:** Multi-intent leave+attendance+knowledge turns work with parallel reads, sequential writes, partial failure, and merged responses; framework/MCP/planner unchanged; lint/typecheck/tests green.
 
 ---
 

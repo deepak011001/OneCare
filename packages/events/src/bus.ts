@@ -51,4 +51,5 @@ export const DOMAIN_EVENTS = {
   ATTENDANCE_REGULARIZED: 'AttendanceRegularized',
   KNOWLEDGE_SEARCHED: 'KnowledgeSearched',
   KNOWLEDGE_ANSWERED: 'KnowledgeAnswered',
+  AI_ORCHESTRATION_COMPLETED: 'AiOrchestrationCompleted',
 } as const;

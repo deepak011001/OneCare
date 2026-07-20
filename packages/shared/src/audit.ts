@@ -29,6 +29,7 @@ export const AUDIT_ACTIONS = {
   KNOWLEDGE_SEARCH: 'knowledge.search',
   KNOWLEDGE_VIEW: 'knowledge.view',
   KNOWLEDGE_VIEW_DENIED: 'knowledge.view.denied',
+  AI_ORCHESTRATION: 'ai.orchestration',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];

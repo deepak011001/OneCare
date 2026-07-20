@@ -34,6 +34,11 @@ const PERMISSIONS = [
   { code: 'ai.agents.read', module: 'ai', description: 'List AI agents' },
   { code: 'ai.tools.read', module: 'ai', description: 'List AI tools' },
   { code: 'ai.models.read', module: 'ai', description: 'List AI models' },
+  {
+    code: 'ai.orchestration.diagnostics',
+    module: 'ai',
+    description: 'View cross-capability orchestration diagnostics (admin)',
+  },
 ] as const;
 
 const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
@@ -193,6 +198,7 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
     'ai.agents.read',
     'ai.tools.read',
     'ai.models.read',
+    'ai.orchestration.diagnostics',
   ],
   SuperAdmin: [], // SuperAdmin bypasses RBAC checks in engine
 };

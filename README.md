@@ -66,6 +66,7 @@ pnpm lint
 | `@onecare/ess-leave` | Employee leave capability (intents, dates, validation, clarify/confirm) |
 | `@onecare/ess-attendance` | Employee attendance capability (clock in/out, history, regularization) |
 | `@onecare/ess-knowledge` | Employee knowledge capability (retrieval abstraction, classification, attribution) |
+| `@onecare/ess-orchestration` | Cross-capability orchestration (multi-intent graph, merged clarify/confirm/respond) |
 | `@onecare/workflows` | Workflow engine contracts |
 | `@onecare/integrations` | Integration adapter ports |
 | `@onecare/telemetry` | Logging, AI metrics hooks & OpenTelemetry |

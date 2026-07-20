@@ -115,12 +115,20 @@ export function ChatWorkspace() {
               toolName: data.toolName,
               connectorId: data.connectorId,
               ...(data.summary ? { summary: data.summary } : {}),
+              ...(data.confirmationIds ? { confirmationIds: data.confirmationIds } : {}),
             });
           }
         },
         onTool: (data) => {
           const status = String(data.status ?? '');
-          if (status) setToolStatus(`Tool ${String(data.name ?? '')}: ${status}`);
+          if (status === 'pending_confirmation') {
+            setToolStatus('Waiting for your confirmation');
+          } else if (status) {
+            setToolStatus('Working on your request…');
+          }
+        },
+        onOrchestrationProgress: (data) => {
+          if (data.message) setToolStatus(data.message);
         },
         onSuggestedReplies: (replies) => setSuggestedReplies(replies),
         onClarification: () => {
@@ -195,7 +203,7 @@ export function ChatWorkspace() {
         <header className="border-b border-border px-4 py-3">
           <h1 className="text-base font-semibold">OneCare AI</h1>
           <p className="text-xs text-muted-foreground">
-            Planner routes to agents; leave tools execute via MCP when configured.
+            Ask anything — leave, attendance, policies, or combinations in one message.
           </p>
           {toolStatus ? <p className="mt-1 text-xs text-muted-foreground">{toolStatus}</p> : null}
           {planLabel ? (
@@ -209,7 +217,7 @@ export function ChatWorkspace() {
               <div>
                 <p className="text-lg font-medium">Ask OneCare</p>
                 <p className="text-sm text-muted-foreground">
-                  Leave capability with clarification, confirmation, and MCP tool execution.
+                  OneCare coordinates leave, attendance, and knowledge in a single conversation.
                 </p>
               </div>
               <SuggestedPrompts onSelect={(prompt) => void sendMessage(prompt)} />
@@ -225,15 +233,18 @@ export function ChatWorkspace() {
                 void (async () => {
                   setConfirmBusy(true);
                   try {
-                    await api.approveMcpConfirmation(pendingConfirmation.confirmationId);
+                    const ids =
+                      pendingConfirmation.confirmationIds &&
+                      Object.keys(pendingConfirmation.confirmationIds).length > 0
+                        ? pendingConfirmation.confirmationIds
+                        : {
+                            [pendingConfirmation.toolName]: pendingConfirmation.confirmationId,
+                          };
+                    for (const confirmationId of Object.values(ids)) {
+                      await api.approveMcpConfirmation(confirmationId);
+                    }
                     setPendingConfirmation(null);
-                    await sendMessage(
-                      lastMessageRef.current,
-                      {
-                        [pendingConfirmation.toolName]: pendingConfirmation.confirmationId,
-                      },
-                      { skipUserMessage: true },
-                    );
+                    await sendMessage(lastMessageRef.current, ids, { skipUserMessage: true });
                   } catch (err) {
                     setError(err instanceof Error ? err.message : 'Confirmation failed');
                   } finally {
@@ -245,7 +256,14 @@ export function ChatWorkspace() {
                 void (async () => {
                   setConfirmBusy(true);
                   try {
-                    await api.cancelMcpConfirmation(pendingConfirmation.confirmationId);
+                    const ids =
+                      pendingConfirmation.confirmationIds &&
+                      Object.keys(pendingConfirmation.confirmationIds).length > 0
+                        ? Object.values(pendingConfirmation.confirmationIds)
+                        : [pendingConfirmation.confirmationId];
+                    for (const confirmationId of ids) {
+                      await api.cancelMcpConfirmation(confirmationId);
+                    }
                     setPendingConfirmation(null);
                   } catch (err) {
                     setError(err instanceof Error ? err.message : 'Cancel failed');

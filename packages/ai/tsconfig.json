@@ -18,6 +18,7 @@
     { "path": "../ess-capability" },
     { "path": "../ess-leave" },
     { "path": "../ess-attendance" },
-    { "path": "../ess-knowledge" }
+    { "path": "../ess-knowledge" },
+    { "path": "../ess-orchestration" }
   ]
 }

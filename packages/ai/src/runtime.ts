@@ -13,6 +13,7 @@ import type { McpGatewayService } from '@onecare/mcp';
 import type { InMemoryConfirmationStore } from '@onecare/confirmations';
 import type { PolicyEngine } from '@onecare/policies';
 import type { CapabilityRegistry } from '@onecare/ess-capability';
+import type { OrchestrationDiagnostics } from '@onecare/ess-orchestration';
 import { createEmployeeCapabilityRegistry, createLeaveCapability } from '@onecare/ess-leave';
 import { createAttendanceCapability } from '@onecare/ess-attendance';
 import { createKnowledgeCapability } from '@onecare/ess-knowledge';
@@ -34,6 +35,7 @@ export interface AiRuntime {
   readonly observability: InMemoryAiObservability;
   readonly conversations: InMemoryConversationStore;
   readonly employeeCapabilities: CapabilityRegistry;
+  getLastOrchestrationDiagnostics(): OrchestrationDiagnostics | null;
 }
 
 export interface AiRuntimeIntegrationOptions {
@@ -85,6 +87,8 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
       | ReturnType<typeof createAttendanceCapability>
       | undefined) ?? createAttendanceCapability();
 
+  let lastOrchestrationDiagnostics: OrchestrationDiagnostics | null = null;
+
   const toolExecutor =
     options?.integration &&
     (options.integration.toolExecutor ??
@@ -114,9 +118,13 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
     prompts,
     llm,
     observability,
+    employeeCapabilities,
     leaveCapability,
     attendanceCapability,
     knowledgeCapability,
+    onOrchestrationDiagnostics: (diagnostics: OrchestrationDiagnostics) => {
+      lastOrchestrationDiagnostics = diagnostics;
+    },
   };
 
   let orchestrator: MasterOrchestrator;
@@ -144,5 +152,6 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
     observability,
     conversations,
     employeeCapabilities,
+    getLastOrchestrationDiagnostics: () => lastOrchestrationDiagnostics,
   };
 }
