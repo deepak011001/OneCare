@@ -31,6 +31,7 @@ export const PERMISSIONS = {
   AI_AGENTS_READ: 'ai.agents.read',
   AI_TOOLS_READ: 'ai.tools.read',
   AI_MODELS_READ: 'ai.models.read',
+  AI_ORCHESTRATION_DIAGNOSTICS: 'ai.orchestration.diagnostics',
 } as const;
 
 export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

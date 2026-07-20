@@ -189,7 +189,7 @@ User message
   → Emit domain events (Notification, Analytics)
 ```
 
-ESS domain logic lives in `@onecare/ess-capability` + capability packages (e.g. `@onecare/ess-leave`, `@onecare/ess-knowledge`) — see [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) and [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md).
+ESS domain logic lives in `@onecare/ess-capability` + capability packages (e.g. `@onecare/ess-leave`, `@onecare/ess-knowledge`) — see [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) and [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md). Multi-intent coordination is `@onecare/ess-orchestration` — see [`CROSS_CAPABILITY_ORCHESTRATION.md`](./CROSS_CAPABILITY_ORCHESTRATION.md).
 
 ### 6.2 Knowledge Query
 

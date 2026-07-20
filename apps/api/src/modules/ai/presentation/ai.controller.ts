@@ -40,6 +40,17 @@ export class AiController {
     };
   }
 
+  @Get('orchestration/diagnostics')
+  @RequirePermissions(PERMISSIONS.AI_ORCHESTRATION_DIAGNOSTICS)
+  async orchestrationDiagnostics(@Req() req: AuthenticatedRequest) {
+    const data = this.ai.getOrchestrationDiagnostics();
+    await this.ai.auditOrchestrationDiagnostics(req.requestContext!);
+    return {
+      data,
+      meta: { correlationId: req.correlationId, requestId: req.requestId },
+    };
+  }
+
   @Get('conversations')
   @RequirePermissions(PERMISSIONS.AI_CHAT)
   async listConversations(@Req() req: AuthenticatedRequest) {

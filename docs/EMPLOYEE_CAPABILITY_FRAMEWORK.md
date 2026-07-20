@@ -2,7 +2,7 @@
 
 **Status:** Living Document — Source of Truth  
 **Audience:** Cursor agents, ESS feature authors  
-**Related:** [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md) · [`AI_AGENTS.md`](./AI_AGENTS.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`MCP.md`](./MCP.md)
+**Related:** [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md) · [`AI_AGENTS.md`](./AI_AGENTS.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`MCP.md`](./MCP.md) · [`CROSS_CAPABILITY_ORCHESTRATION.md`](./CROSS_CAPABILITY_ORCHESTRATION.md)
 
 ---
 
@@ -14,10 +14,11 @@ Leave (`@onecare/ess-leave`) is the reference implementation. Attendance (`@onec
 
 ```
 User → Master Orchestrator → Employee Agent
-         → Capability Registry
-              → EmployeeCapability (interface)
-                   → Leave | Attendance | Payroll | …
-                        → Tool Registry → MCP Gateway → Connector
+         → Cross Capability Orchestrator (`@onecare/ess-orchestration`)
+              → Capability Registry
+                   → EmployeeCapability (interface)
+                        → Leave | Attendance | Knowledge | …
+                             → Tool Registry → MCP Gateway → Connector
 ```
 
 ---
@@ -27,6 +28,7 @@ User → Master Orchestrator → Employee Agent
 | Package | Role |
 |---------|------|
 | `@onecare/ess-capability` | Interface, registry, entities, validation, clarification, confirmation draft, response helpers, telemetry, runner |
+| `@onecare/ess-orchestration` | Cross-capability planning, execution graph, merged clarify/confirm/respond |
 | `@onecare/ess-leave` | Leave capability implementing the interface |
 | `@onecare/ess-attendance` | Attendance capability implementing the interface |
 | `@onecare/ess-knowledge` | Knowledge capability — retrieval abstraction, hierarchical classification, source attribution |

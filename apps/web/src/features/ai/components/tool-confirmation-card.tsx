@@ -8,6 +8,7 @@ export type PendingConfirmation = {
   toolName: string;
   connectorId: string;
   summary?: string;
+  confirmationIds?: Record<string, string>;
 };
 
 type Props = {
@@ -20,8 +21,8 @@ type Props = {
 export function ToolConfirmationCard({ pending, busy, onApprove, onCancel }: Props) {
   return (
     <Card className="border-amber-500/40 bg-amber-500/5 p-4">
-      <p className="text-sm font-medium">Confirm tool execution</p>
-      <p className="mt-1 text-xs text-muted-foreground">
+      <p className="text-sm font-medium">Confirm action</p>
+      <p className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">
         {pending.summary ?? `${pending.toolName} via ${pending.connectorId}`}
       </p>
       <div className="mt-3 flex gap-2">
