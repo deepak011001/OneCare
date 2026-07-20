@@ -17,6 +17,7 @@ import {
   type ValidationResult,
 } from '@onecare/ess-capability';
 import { formatKnowledgeAnswerMessage, buildKnowledgeAnswer } from './answer';
+import { understandKnowledgeQuery } from './query-understanding';
 import { needsKnowledgeClarification } from './clarification';
 import {
   asKnowledgeSlots,
@@ -368,9 +369,9 @@ export class KnowledgeCapability implements EmployeeCapability {
         'Popular / trending questions',
       ],
       limitations: [
-        'Not production RAG — uses a replaceable retrieval abstraction (stub store today).',
-        'Does not invent sources; says when no document is found.',
-        'Does not approve leave or call HRIS vendors.',
+        'Answers come from the Enterprise Knowledge Platform with source attribution; I will not invent policies.',
+        'If no document is found, I say so explicitly instead of guessing.',
+        'Does not approve leave or call HRIS vendors directly — writes go through MCP with confirmation.',
       ],
       requiredPermissions: [...this.requiredPermissions],
     };
@@ -484,14 +485,36 @@ export class KnowledgeCapability implements EmployeeCapability {
 
     const hitsByRequest = new Map<string, readonly KnowledgeSearchHit[]>();
     for (const request of requests) {
-      const result = await this.retrieval.search({
-        text: request.text,
-        ...(request.classification.domain ? { domain: request.classification.domain } : {}),
-        ...(request.classification.category ? { category: request.classification.category } : {}),
-        ...(request.classification.topic ? { topics: [request.classification.topic] } : {}),
+      const understood = understandKnowledgeQuery(request.text);
+      const topics = [
+        ...(request.classification.topic ? [request.classification.topic] : []),
+        ...understood.expandedTerms.slice(0, 4),
+      ];
+
+      const searchBase = {
+        text: understood.retrievalText,
+        ...(topics.length ? { topics } : {}),
         ...(slots.country ? { country: slots.country } : {}),
         limit: 5,
+      };
+
+      // Prefer classified domain/category, then fall back unfiltered for paraphrase recall
+      let result = await this.retrieval.search({
+        ...searchBase,
+        ...(request.classification.domain && request.classification.domain !== 'general'
+          ? { domain: request.classification.domain }
+          : {}),
+        ...(request.classification.category && request.classification.category !== 'help'
+          ? { category: request.classification.category }
+          : {}),
       });
+
+      if (result.hits.length === 0 || (result.hits[0]?.score ?? 0) < 6) {
+        const broad = await this.retrieval.search(searchBase);
+        if ((broad.hits[0]?.score ?? 0) > (result.hits[0]?.score ?? 0)) {
+          result = broad;
+        }
+      }
 
       // Follow-up: boost related docs from prior context when classification is weak
       let hits = result.hits;

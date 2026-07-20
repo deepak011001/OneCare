@@ -39,12 +39,70 @@ function toBullets(body: string): string[] {
     .map((l) => l.trim())
     .filter(Boolean)
     .slice(0, 6)
-    .map((l) => l.replace(/^[•-]\s*/, ''));
+    .map((l) => l.replace(/^[•\-]\s*/, ''));
 }
 
 function toSteps(body: string): string[] {
   const lines = toBullets(body);
   return lines.map((l, i) => `${i + 1}. ${l}`);
+}
+
+/**
+ * Compose a professional HR-style answer grounded only in the retrieved document.
+ * Never invent policy text beyond the source.
+ */
+function composeProfessionalHrAnswer(input: {
+  readonly request: KnowledgeRequest;
+  readonly doc: KnowledgeDocument;
+  readonly format: AnswerFormat;
+  readonly bullets?: readonly string[];
+  readonly steps?: readonly string[];
+}): string {
+  const { request, doc, format, bullets, steps } = input;
+  const lead = doc.summary.trim();
+  const closing =
+    'This answer is based on the company knowledge base. For your specific case, HR or your manager can confirm.';
+
+  if (format === 'steps' && steps?.length) {
+    return [
+      `Regarding your question (“${trimQuestion(request.text)}”), here is the guidance from **${doc.title}**:`,
+      '',
+      lead,
+      '',
+      'Steps:',
+      ...steps,
+      '',
+      closing,
+    ].join('\n');
+  }
+
+  if ((format === 'bullets' || format === 'summary') && bullets?.length) {
+    return [
+      `Here is what **${doc.title}** says about your question:`,
+      '',
+      lead,
+      '',
+      'Key points:',
+      ...bullets.map((b) => `• ${b}`),
+      '',
+      closing,
+    ].join('\n');
+  }
+
+  const detail = doc.body.trim();
+  return [
+    `Here is what **${doc.title}** covers:`,
+    '',
+    lead,
+    '',
+    detail,
+    '',
+    closing,
+  ].join('\n');
+}
+
+function trimQuestion(text: string): string {
+  return text.replace(/\?+$/, '').trim();
 }
 
 function buildPart(
@@ -56,7 +114,7 @@ function buildPart(
     return {
       requestId: request.id,
       format: 'answer',
-      text: `I could not find a documented source for “${request.text.replace(/\?$/, '')}”. I will not invent a policy answer. Try rephrasing or browse knowledge categories.`,
+      text: `I could not find a documented company source for “${trimQuestion(request.text)}”. I will not invent an HR policy answer. Try rephrasing, ask about a related policy, or browse knowledge categories.`,
       sources: [],
       confidence: 0,
       found: false,
@@ -74,16 +132,13 @@ function buildPart(
   const bullets = format === 'bullets' || format === 'summary' ? toBullets(doc.body) : undefined;
   const steps = format === 'steps' ? toSteps(doc.body) : undefined;
 
-  let text: string;
-  if (format === 'summary') {
-    text = `${doc.summary}\n\n${doc.body.slice(0, 500)}${doc.body.length > 500 ? '…' : ''}`;
-  } else if (format === 'bullets' && bullets?.length) {
-    text = `${doc.title}:\n${bullets.map((b) => `• ${b}`).join('\n')}`;
-  } else if (format === 'steps' && steps?.length) {
-    text = `${doc.title} — steps:\n${steps.join('\n')}`;
-  } else {
-    text = `${doc.summary}\n\n${doc.body}`;
-  }
+  const text = composeProfessionalHrAnswer({
+    request,
+    doc,
+    format,
+    ...(bullets ? { bullets } : {}),
+    ...(steps ? { steps } : {}),
+  });
 
   return {
     requestId: request.id,
@@ -145,14 +200,8 @@ export function buildKnowledgeAnswer(input: {
     .map((part, index) => {
       const header = multiIntent
         ? `### ${index + 1}. ${part.title ?? 'Answer'}\n`
-        : part.title
-          ? `**${part.title}**\n`
-          : '';
-      const sourceLine =
-        part.sources.length > 0
-          ? `\n\nSource: ${part.sources.map((s) => `${s.title}${s.section ? ` — ${s.section}` : ''} (confidence ${Math.round(s.confidence * 100)}%)`).join('; ')}`
-          : '\n\nSource: No documented source found.';
-      return `${header}${part.text}${sourceLine}`;
+        : '';
+      return `${header}${part.text}`;
     })
     .join('\n\n');
 
@@ -170,6 +219,17 @@ export function buildKnowledgeAnswer(input: {
 }
 
 export function formatKnowledgeAnswerMessage(answer: KnowledgeAnswer): string {
+  const sources =
+    answer.sources.length > 0
+      ? `\n\nSources:\n${answer.sources
+          .map((s) => {
+            const conf =
+              typeof s.confidence === 'number' ? ` (${Math.round(s.confidence * 100)}%)` : '';
+            const updated = s.lastUpdated ? ` · updated ${s.lastUpdated}` : '';
+            return `• ${s.title}${conf}${updated}`;
+          })
+          .join('\n')}`
+      : '';
   const related =
     answer.relatedDocuments && answer.relatedDocuments.length > 0
       ? `\n\nRelated documents: ${answer.relatedDocuments.map((d) => d.title).join(', ')}`
@@ -178,5 +238,5 @@ export function formatKnowledgeAnswerMessage(answer: KnowledgeAnswer): string {
     answer.suggestedFollowUps && answer.suggestedFollowUps.length > 0
       ? `\n\nYou might also ask:\n${answer.suggestedFollowUps.map((q) => `• ${q}`).join('\n')}`
       : '';
-  return `${answer.text}${related}${followUps}`;
+  return `${answer.text}${sources}${related}${followUps}`;
 }

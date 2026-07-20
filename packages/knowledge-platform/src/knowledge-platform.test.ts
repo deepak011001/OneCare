@@ -217,6 +217,76 @@ describe('citation model', () => {
   });
 });
 
+describe('M6.6 ESS knowledge scenarios', () => {
+  it('grounds leave policy and WFH questions with citations', async () => {
+    const platform = await createEnterpriseKnowledgePlatform({
+      tenantId: 'acme',
+      seedStubCorpus: true,
+    });
+    for (const q of [
+      'What is our leave policy?',
+      'Explain the work from home policy.',
+      'What happens if I resign?',
+    ]) {
+      const result = await platform.retrieval.search({
+        tenantId: 'acme',
+        text: q,
+        limit: 3,
+      });
+      // Unknown/resign may miss — leave/WFH must hit
+      if (q.toLowerCase().includes('leave') || q.toLowerCase().includes('home')) {
+        assert.ok(result.hits.length > 0, `expected hits for: ${q}`);
+        assert.ok(result.hits[0]!.document.id);
+        assert.ok(result.hits[0]!.document.title);
+      }
+    }
+  });
+
+  it('enforces ACL on restricted documents during hybrid search', async () => {
+    const platform = await createEnterpriseKnowledgePlatform({
+      tenantId: 'acl-t',
+      seedStubCorpus: false,
+    });
+    const source = {
+      id: 'hr-private',
+      tenantId: 'acl-t',
+      name: 'Restricted',
+      connectorType: 'markdown' as const,
+      enabled: true,
+      options: {
+        visibility: 'restricted',
+        roles: ['hr_admin'],
+        documents: [
+          {
+            externalId: 'secret-comp',
+            title: 'Executive Comp Policy',
+            body: 'Confidential compensation bands.',
+            lastModified: '2026-01-01',
+          },
+        ],
+      },
+    };
+    await platform.sources.upsert(source);
+    await platform.ingestion.sync({ tenantId: 'acl-t', source, mode: 'full' });
+
+    const denied = await platform.hybridSearch.search({
+      tenantId: 'acl-t',
+      text: 'compensation bands',
+      principal: { tenantId: 'acl-t', roles: ['employee'] },
+      limit: 5,
+    });
+    assert.equal(denied.hits.length, 0);
+
+    const allowed = await platform.hybridSearch.search({
+      tenantId: 'acl-t',
+      text: 'compensation bands',
+      principal: { tenantId: 'acl-t', roles: ['hr_admin'] },
+      limit: 5,
+    });
+    assert.ok(allowed.hits.length > 0);
+  });
+});
+
 describe('normalizer fingerprint stability', () => {
   it('changes fingerprint when body changes', () => {
     const source: KnowledgeSourceConfig = {

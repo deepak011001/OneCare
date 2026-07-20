@@ -1,3 +1,4 @@
+export * from './query-understanding';
 export * from './types';
 export * from './taxonomy';
 export * from './intents';

@@ -1,7 +1,7 @@
 import type { IntentSegment } from './types';
 
 const SEGMENT_SPLIT =
-  /\n+|\?(?=\s|$)|(?:^|\s+)(?:and|also|plus|then)\s+(?=(?:how|what|where|who|can|do|does|show|am|is|are|i\s+have|tell)\b)/i;
+  /\n+|\?(?=\s|$)|(?:^|\s+)(?:and|also|plus|then)\s+(?=(?:how|what|where|who|can|do|does|show|am|is|are|i\s+have|tell|my)\b|(?:attendance|leave|holiday|holidays|policy|wfh|reimburs|balance)\b)/i;
 
 /**
  * Split a natural-language message into capability-sized intent segments.

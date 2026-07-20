@@ -116,7 +116,14 @@ export async function createEnterpriseKnowledgePlatform(
         documents: STUB_KNOWLEDGE_DOCUMENTS.map((d) => ({
           externalId: d.id,
           title: d.title,
-          body: d.body,
+          body: [
+            d.summary,
+            d.body,
+            (d.faqs ?? []).length ? `Common questions:\n${(d.faqs ?? []).map((q) => `- ${q}`).join('\n')}` : '',
+            d.topics.join(', '),
+          ]
+            .filter(Boolean)
+            .join('\n\n'),
           ...(d.url ? { sourceUri: d.url } : {}),
           lastModified: d.lastUpdated ?? new Date().toISOString(),
           contentType: 'text/markdown',

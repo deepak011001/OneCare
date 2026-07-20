@@ -66,7 +66,7 @@ export function createEmployeeEnterpriseAgent(): EnterpriseAgent {
       'workingHours',
       'searchKnowledge',
     ],
-    systemPromptRef: 'agent.placeholder',
+    systemPromptRef: 'agent.employee.system',
     enabled: true,
     lifecycle: mergeLifecycleHooks({
       beforePlanning: (ctx, message) => {

@@ -48,6 +48,15 @@ describe('ess-knowledge', () => {
     assert.ok(requests.every((r) => r.intent === 'employee.knowledge.ask'));
   });
 
+  it('classifies WFH and travel reimbursement prompts', () => {
+    const wfh = classifyKnowledgeText('Explain the work from home policy.');
+    assert.equal(wfh.domain, 'hr');
+    const travel = classifyKnowledgeText('Who approves travel reimbursement?');
+    assert.ok(
+      travel.domain === 'finance' || travel.category === 'reimbursement' || travel.domain === 'hr',
+    );
+  });
+
   it('extracts entities without failing on unknowns', () => {
     const slots = extractKnowledgeEntities(
       'What is the India maternity leave policy for remote employees?',
@@ -68,7 +77,7 @@ describe('ess-knowledge', () => {
     assert.ok(outcome.answer.sources.length > 0);
     assert.ok(outcome.answer.sources[0]?.title);
     assert.ok(outcome.answer.confidence > 0);
-    assert.match(formatKnowledgeAssistantMessage(outcome), /Source:/);
+    assert.match(formatKnowledgeAssistantMessage(outcome), /Sources:/);
   });
 
   it('does not hallucinate sources when nothing matches', async () => {
@@ -150,5 +159,19 @@ describe('ess-knowledge', () => {
     });
     assert.ok(answer.parts[0]?.found);
     assert.ok(answer.sources[0]?.documentId);
+  });
+
+  it('includes Sources section when answering with attribution', async () => {
+    const capability = createKnowledgeCapability({ retrieval: createStubKnowledgeStore() });
+    const outcome = await capability.process({
+      message: 'What is the leave policy?',
+      permissions: ['knowledge.search'],
+    });
+    assert.equal(outcome.kind, 'answered');
+    if (outcome.kind === 'answered') {
+      const text = formatKnowledgeAssistantMessage(outcome);
+      assert.match(text, /Sources:/);
+      assert.ok(outcome.answer.sources.length > 0);
+    }
   });
 });
