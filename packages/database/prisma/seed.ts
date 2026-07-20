@@ -124,10 +124,25 @@ const ROLE_PERMISSION_MAP: Record<string, readonly string[]> = {
 };
 
 const DEV_USERS = [
-  { email: 'employee@demo.onecare.local', displayName: 'Demo Employee', role: 'Employee', employeeCode: 'E001' },
-  { email: 'manager@demo.onecare.local', displayName: 'Demo Manager', role: 'Manager', employeeCode: 'E002' },
+  {
+    email: 'employee@demo.onecare.local',
+    displayName: 'Demo Employee',
+    role: 'Employee',
+    employeeCode: 'E001',
+  },
+  {
+    email: 'manager@demo.onecare.local',
+    displayName: 'Demo Manager',
+    role: 'Manager',
+    employeeCode: 'E002',
+  },
   { email: 'hr@demo.onecare.local', displayName: 'Demo HR', role: 'HR', employeeCode: 'E003' },
-  { email: 'admin@demo.onecare.local', displayName: 'Demo System Admin', role: 'SystemAdmin', employeeCode: 'E004' },
+  {
+    email: 'admin@demo.onecare.local',
+    displayName: 'Demo System Admin',
+    role: 'SystemAdmin',
+    employeeCode: 'E004',
+  },
 ] as const;
 
 async function upsertPermission(code: string, module: string, description: string) {

@@ -29,7 +29,10 @@ describe('RbacPermissionChecker', () => {
 
   it('grants SuperAdmin all permissions', () => {
     assert.equal(
-      checker.hasPermission(principal({ roles: ['SuperAdmin'], permissions: [] }), PERMISSIONS.ADMIN_AUDIT_READ),
+      checker.hasPermission(
+        principal({ roles: ['SuperAdmin'], permissions: [] }),
+        PERMISSIONS.ADMIN_AUDIT_READ,
+      ),
       true,
     );
   });

@@ -104,7 +104,9 @@ export class IdentityService {
         OR: [{ entraOid: profile.subject }, { email: profile.email.toLowerCase() }],
       },
       include: {
-        userRoles: { include: { role: { include: { rolePermissions: { include: { permission: true } } } } } },
+        userRoles: {
+          include: { role: { include: { rolePermissions: { include: { permission: true } } } } },
+        },
         attributes: true,
       },
     });
@@ -135,7 +137,13 @@ export class IdentityService {
       });
     }
 
-    return this.issueSessionForUser(user.id, input.device, input.correlationId, input.requestId, input.rememberMe ?? false);
+    return this.issueSessionForUser(
+      user.id,
+      input.device,
+      input.correlationId,
+      input.requestId,
+      input.rememberMe ?? false,
+    );
   }
 
   async developmentLogin(input: {

@@ -1,57 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  color-scheme: light dark;
-  --oc-bg: #0f1419;
-  --oc-fg: #f4f7fa;
-  --oc-muted: #9aa7b5;
-  --oc-accent: #3d9b8f;
-  --oc-font: "Segoe UI", "Helvetica Neue", sans-serif;
+  --background: 210 20% 98%;
+  --foreground: 215 25% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 215 25% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 25% 12%;
+  --primary: 172 43% 36%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 16% 93%;
+  --secondary-foreground: 215 25% 16%;
+  --muted: 210 16% 94%;
+  --muted-foreground: 215 10% 42%;
+  --accent: 172 25% 92%;
+  --accent-foreground: 172 40% 22%;
+  --destructive: 0 72% 48%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 16% 86%;
+  --input: 214 16% 86%;
+  --ring: 172 43% 36%;
+  --radius: 0.5rem;
 }
 
-* {
-  box-sizing: border-box;
+.dark {
+  --background: 210 24% 8%;
+  --foreground: 210 20% 96%;
+  --card: 210 22% 11%;
+  --card-foreground: 210 20% 96%;
+  --popover: 210 22% 11%;
+  --popover-foreground: 210 20% 96%;
+  --primary: 172 45% 42%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 16% 18%;
+  --secondary-foreground: 210 20% 94%;
+  --muted: 210 16% 16%;
+  --muted-foreground: 210 10% 65%;
+  --accent: 172 20% 18%;
+  --accent-foreground: 172 35% 80%;
+  --destructive: 0 62% 45%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 210 14% 20%;
+  --input: 210 14% 20%;
+  --ring: 172 45% 42%;
 }
 
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-  background:
-    radial-gradient(circle at top left, rgba(61, 155, 143, 0.22), transparent 40%),
-    linear-gradient(160deg, #0f1419 0%, #172029 55%, #101820 100%);
-  color: var(--oc-fg);
-  font-family: var(--oc-font);
-}
+@layer base {
+  * {
+    @apply border-border;
+  }
 
-.shell {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2.5rem;
-  max-width: 48rem;
-}
-
-.eyebrow {
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  color: var(--oc-accent);
-  margin: 0 0 1rem;
-}
-
-h1 {
-  font-size: clamp(2.75rem, 6vw, 4.5rem);
-  line-height: 1.05;
-  margin: 0;
-  font-weight: 650;
-}
-
-.tagline {
-  font-size: 1.35rem;
-  margin: 1rem 0 0;
-}
-
-.muted {
-  color: var(--oc-muted);
-  margin-top: 2rem;
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
 }

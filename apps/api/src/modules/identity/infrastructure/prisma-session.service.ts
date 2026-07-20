@@ -1,10 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
-import type {
-  CreateSessionInput,
-  SessionPort,
-  SessionRecord,
-} from '@onecare/auth';
+import type { CreateSessionInput, SessionPort, SessionRecord } from '@onecare/auth';
 import type { CachePort } from '@onecare/cache';
 import type { OneCareEnv } from '@onecare/config';
 import type { PrismaClient } from '@onecare/database';
@@ -20,7 +16,9 @@ export class PrismaSessionService implements SessionPort {
     @Inject(APP_TOKENS.CACHE) private readonly cache: CachePort,
   ) {}
 
-  async createSession(input: CreateSessionInput): Promise<{ session: SessionRecord; refreshToken: string }> {
+  async createSession(
+    input: CreateSessionInput,
+  ): Promise<{ session: SessionRecord; refreshToken: string }> {
     const now = Date.now();
     const absoluteTtl = input.rememberMe
       ? this.env.SESSION_REMEMBER_ME_TTL_SECONDS
@@ -62,14 +60,18 @@ export class PrismaSessionService implements SessionPort {
       },
     });
 
-    await this.cacheSession(session.id, {
-      sessionId: session.id,
-      tenantId: session.tenantId,
-      userId: session.userId,
-      revoked: false,
-      absoluteExpiresAt: absoluteExpiresAt.toISOString(),
-      idleExpiresAt: idleExpiresAt.toISOString(),
-    }, absoluteTtl);
+    await this.cacheSession(
+      session.id,
+      {
+        sessionId: session.id,
+        tenantId: session.tenantId,
+        userId: session.userId,
+        revoked: false,
+        absoluteExpiresAt: absoluteExpiresAt.toISOString(),
+        idleExpiresAt: idleExpiresAt.toISOString(),
+      },
+      absoluteTtl,
+    );
 
     return { session: this.toRecord(session), refreshToken: rawRefresh };
   }
@@ -93,14 +95,18 @@ export class PrismaSessionService implements SessionPort {
       data: { lastActivityAt: now, idleExpiresAt },
     });
 
-    await this.cacheSession(sessionId, {
+    await this.cacheSession(
       sessionId,
-      tenantId: updated.tenantId,
-      userId: updated.userId,
-      revoked: false,
-      absoluteExpiresAt: updated.absoluteExpiresAt.toISOString(),
-      idleExpiresAt: idleExpiresAt.toISOString(),
-    }, this.env.SESSION_ABSOLUTE_TIMEOUT_SECONDS);
+      {
+        sessionId,
+        tenantId: updated.tenantId,
+        userId: updated.userId,
+        revoked: false,
+        absoluteExpiresAt: updated.absoluteExpiresAt.toISOString(),
+        idleExpiresAt: idleExpiresAt.toISOString(),
+      },
+      this.env.SESSION_ABSOLUTE_TIMEOUT_SECONDS,
+    );
 
     return this.toRecord(updated);
   }

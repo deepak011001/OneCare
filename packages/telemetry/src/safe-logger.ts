@@ -3,7 +3,11 @@ import { redactPii } from './pii';
 import type { LogFields, LogLevel, Logger } from './logger';
 
 /** Logger that redacts PII/secrets from field payloads. */
-export function createSafeLogger(name: string, level: LogLevel = 'info', baseFields: LogFields = {}): Logger {
+export function createSafeLogger(
+  name: string,
+  level: LogLevel = 'info',
+  baseFields: LogFields = {},
+): Logger {
   const inner = createLogger(name, level, baseFields);
   const wrap =
     (fn: (message: string, fields?: LogFields) => void) =>
@@ -12,7 +16,10 @@ export function createSafeLogger(name: string, level: LogLevel = 'info', baseFie
     };
   return {
     child(fields: LogFields) {
-      return createSafeLogger(name, level, { ...baseFields, ...redactPii(fields as Record<string, unknown>) });
+      return createSafeLogger(name, level, {
+        ...baseFields,
+        ...redactPii(fields as Record<string, unknown>),
+      });
     },
     fatal: wrap(inner.fatal.bind(inner)),
     error: wrap(inner.error.bind(inner)),

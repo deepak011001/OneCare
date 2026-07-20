@@ -22,23 +22,37 @@ async function bootstrap() {
   });
 
   // CSRF strategy for cookie auth: SameSite=Lax + double-submit token header check on mutating auth routes
-  app.use((req: { method: string; path: string; cookies?: Record<string, string>; header: (name: string) => string | undefined }, res: { status: (code: number) => { json: (body: unknown) => void } }, next: () => void) => {
-    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && req.path.startsWith('/v1/auth')) {
-      const cookieToken = req.cookies?.oc_csrf;
-      const headerToken = req.header('x-csrf-token');
-      if (cookieToken && headerToken !== cookieToken) {
-        res.status(403).json({
-          type: 'https://onecare.local/errors/csrf',
-          title: 'CSRF validation failed',
-          status: 403,
-          detail: 'Missing or invalid CSRF token',
-          code: 'CSRF_FAILED',
-        });
-        return;
+  app.use(
+    (
+      req: {
+        method: string;
+        path: string;
+        cookies?: Record<string, string>;
+        header: (name: string) => string | undefined;
+      },
+      res: { status: (code: number) => { json: (body: unknown) => void } },
+      next: () => void,
+    ) => {
+      if (
+        ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) &&
+        req.path.startsWith('/v1/auth')
+      ) {
+        const cookieToken = req.cookies?.oc_csrf;
+        const headerToken = req.header('x-csrf-token');
+        if (cookieToken && headerToken !== cookieToken) {
+          res.status(403).json({
+            type: 'https://onecare.local/errors/csrf',
+            title: 'CSRF validation failed',
+            status: 403,
+            detail: 'Missing or invalid CSRF token',
+            code: 'CSRF_FAILED',
+          });
+          return;
+        }
       }
-    }
-    next();
-  });
+      next();
+    },
+  );
 
   void isCookieSecure;
 

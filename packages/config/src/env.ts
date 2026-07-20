@@ -18,16 +18,35 @@ export const envSchema = z
     JWT_ISSUER: z.string().default('onecare'),
     JWT_AUDIENCE: z.string().default('onecare-api'),
     ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().positive().default(900),
-    REFRESH_TOKEN_TTL_SECONDS: z.coerce.number().int().positive().default(60 * 60 * 24 * 14),
-    SESSION_IDLE_TIMEOUT_SECONDS: z.coerce.number().int().positive().default(60 * 30),
-    SESSION_ABSOLUTE_TIMEOUT_SECONDS: z.coerce.number().int().positive().default(60 * 60 * 12),
-    SESSION_REMEMBER_ME_TTL_SECONDS: z.coerce.number().int().positive().default(60 * 60 * 24 * 30),
+    REFRESH_TOKEN_TTL_SECONDS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(60 * 60 * 24 * 14),
+    SESSION_IDLE_TIMEOUT_SECONDS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(60 * 30),
+    SESSION_ABSOLUTE_TIMEOUT_SECONDS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(60 * 60 * 12),
+    SESSION_REMEMBER_ME_TTL_SECONDS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(60 * 60 * 24 * 30),
     AUTH_MODE: z.enum(['development', 'entra']).default('development'),
     AUTH_COOKIE_NAME: z.string().default('oc_access'),
     REFRESH_COOKIE_NAME: z.string().default('oc_refresh'),
     CSRF_COOKIE_NAME: z.string().default('oc_csrf'),
     COOKIE_SECURE: z
-      .preprocess((v) => (v === undefined || v === '' ? undefined : v === 'true' || v === true), z.boolean())
+      .preprocess(
+        (v) => (v === undefined || v === '' ? undefined : v === 'true' || v === true),
+        z.boolean(),
+      )
       .optional(),
     RATE_LIMIT_TTL_SECONDS: z.coerce.number().int().positive().default(60),
     RATE_LIMIT_LIMIT: z.coerce.number().int().positive().default(120),
@@ -49,7 +68,12 @@ export const envSchema = z
       });
     }
     if (env.AUTH_MODE === 'entra') {
-      for (const key of ['ENTRA_TENANT_ID', 'ENTRA_CLIENT_ID', 'ENTRA_CLIENT_SECRET', 'ENTRA_REDIRECT_URI'] as const) {
+      for (const key of [
+        'ENTRA_TENANT_ID',
+        'ENTRA_CLIENT_ID',
+        'ENTRA_CLIENT_SECRET',
+        'ENTRA_REDIRECT_URI',
+      ] as const) {
         if (!env[key]) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
