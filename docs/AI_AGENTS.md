@@ -20,7 +20,7 @@
 | Agent | Responsibility | Typical Tools (MCP) |
 |-------|----------------|---------------------|
 | Master Orchestrator | Intent classification, planning, routing, synthesis | (meta) agent invocation, memory read |
-| ESS Agent (`employee`) | Employee self-service | leave, knowledge (retrieval abstraction), profile, attendance (read) — **contract:** [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md) · **framework:** [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) · **knowledge:** [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md) · **cross-capability:** [`CROSS_CAPABILITY_ORCHESTRATION.md`](./CROSS_CAPABILITY_ORCHESTRATION.md) |
+| ESS Agent (`employee`) | Employee self-service | leave, knowledge, attendance — **contract:** [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md) · **framework:** [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) · **agent framework:** [`AGENT_FRAMEWORK.md`](./AGENT_FRAMEWORK.md) · **knowledge:** [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md) · **cross-capability:** [`CROSS_CAPABILITY_ORCHESTRATION.md`](./CROSS_CAPABILITY_ORCHESTRATION.md) |
 | MSS Agent | Manager actions | approvals, team leave/attendance |
 | HR Agent | HR cases & policies | HRIS tools, knowledge handoff |
 | Payroll Agent | Payslips, salary history | payroll MCP |
@@ -106,7 +106,7 @@ interface AgentResult {
 }
 ```
 
-Agents are registered:
+Agents are registered via `@onecare/agent-framework` (`EnterpriseAgent`) and projected to the runtime `RegisteredAgent` catalog. See [`AGENT_FRAMEWORK.md`](./AGENT_FRAMEWORK.md).
 
 ```typescript
 interface AgentDefinition {

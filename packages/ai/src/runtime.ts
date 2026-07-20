@@ -18,7 +18,8 @@ import type { OrchestrationDiagnostics } from '@onecare/ess-orchestration';
 import { createEmployeeCapabilityRegistry, createLeaveCapability } from '@onecare/ess-leave';
 import { createAttendanceCapability } from '@onecare/ess-attendance';
 import { createKnowledgeCapability, type KnowledgeRetrievalPort } from '@onecare/ess-knowledge';
-import { createDefaultAgentRegistry } from './agents/registry';
+import type { EnterpriseAgentPlatform } from '@onecare/agent-framework';
+import { createDefaultAgentPlatform, createDefaultAgentRegistry } from './agents/registry';
 import { createDefaultAiHardening, type AiHardeningPorts } from './hardening';
 import { InMemoryAiObservability } from './observability';
 import {
@@ -31,6 +32,7 @@ import type { LlmProviderId } from './providers/types';
 export interface AiRuntime {
   readonly orchestrator: MasterOrchestrator;
   readonly agents: ReturnType<typeof createDefaultAgentRegistry>;
+  readonly agentPlatform: EnterpriseAgentPlatform;
   readonly tools: ReturnType<typeof createDefaultToolRegistry>;
   readonly prompts: ReturnType<typeof createDefaultPromptRegistry>;
   readonly providers: ReturnType<typeof createDefaultLlmProviderRegistry>;
@@ -55,6 +57,8 @@ export interface CreateAiRuntimeOptions {
   readonly hardening?: AiHardeningPorts;
   /** Swap knowledge retrieval (M6 Enterprise Knowledge Platform) without redesigning agents. */
   readonly knowledgeRetrieval?: KnowledgeRetrievalPort;
+  /** Optional pre-built agent platform (tests / custom catalogs). */
+  readonly agentPlatform?: EnterpriseAgentPlatform;
 }
 
 function buildToolRegistry(integration?: AiRuntimeIntegrationOptions) {
@@ -74,7 +78,8 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
   const providers = createDefaultLlmProviderRegistry();
   const providerId = options?.providerId ?? 'mock';
   const llm = providers.get(providerId);
-  const agents = createDefaultAgentRegistry();
+  const agentPlatform = options?.agentPlatform ?? createDefaultAgentPlatform();
+  const agents = createDefaultAgentRegistry(agentPlatform);
   const tools = buildToolRegistry(options?.integration);
   const prompts = createDefaultPromptRegistry();
   const conversations = options?.conversations ?? new InMemoryConversationStore();
@@ -154,6 +159,7 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
   return {
     orchestrator,
     agents,
+    agentPlatform,
     tools,
     prompts,
     providers,

@@ -1,3 +1,8 @@
+import {
+  createEnterpriseAgentPlatform,
+  toRuntimeRegisteredAgent,
+  type EnterpriseAgentPlatform,
+} from '@onecare/agent-framework';
 import { PLACEHOLDER_AGENTS, type DomainAgentId, type RegisteredAgent } from './catalog';
 
 export interface AgentRegistryPort {
@@ -27,10 +32,26 @@ export class InMemoryAgentRegistry implements AgentRegistryPort {
   }
 }
 
-export function createDefaultAgentRegistry(): InMemoryAgentRegistry {
+/**
+ * Builds the runtime agent catalog from the Enterprise Agent Framework.
+ * Employee Agent is migrated onto the framework; orchestrator shape is unchanged.
+ */
+export function createDefaultAgentRegistry(
+  platform: EnterpriseAgentPlatform = createEnterpriseAgentPlatform(),
+): InMemoryAgentRegistry {
   const registry = new InMemoryAgentRegistry();
-  for (const agent of PLACEHOLDER_AGENTS) {
-    registry.register(agent);
+  for (const agent of platform.registry.list()) {
+    registry.register(toRuntimeRegisteredAgent(agent) as RegisteredAgent);
+  }
+  // Safety: if framework catalog is empty, fall back to legacy placeholders.
+  if (registry.list().length === 0) {
+    for (const agent of PLACEHOLDER_AGENTS) {
+      registry.register(agent);
+    }
   }
   return registry;
+}
+
+export function createDefaultAgentPlatform(): EnterpriseAgentPlatform {
+  return createEnterpriseAgentPlatform();
 }

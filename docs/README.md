@@ -12,6 +12,11 @@ Living **source of truth** for product, architecture, and engineering. Cursor ru
 | [EMPLOYEE_CAPABILITY_FRAMEWORK.md](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) | Reusable ESS capability interface, registry, pipelines |
 | [KNOWLEDGE_CAPABILITY.md](./KNOWLEDGE_CAPABILITY.md) | Employee knowledge capability — retrieval abstraction, intents, APIs |
 | [ENTERPRISE_KNOWLEDGE_PLATFORM.md](./ENTERPRISE_KNOWLEDGE_PLATFORM.md) | M6 Enterprise Knowledge Platform overview |
+| [AGENT_FRAMEWORK.md](./AGENT_FRAMEWORK.md) | M6.5 Enterprise Agent Framework |
+| [AGENT_REGISTRY.md](./AGENT_REGISTRY.md) | Agent registry operations |
+| [AGENT_LIFECYCLE.md](./AGENT_LIFECYCLE.md) | Agent lifecycle hooks |
+| [AGENT_CONTEXT.md](./AGENT_CONTEXT.md) | Request-scoped agent context |
+| [AGENT_HANDOFFS.md](./AGENT_HANDOFFS.md) | Handoff & collaboration contracts |
 | [RAG_ARCHITECTURE.md](./RAG_ARCHITECTURE.md) | RAG pipeline layers |
 | [DOCUMENT_CONNECTORS.md](./DOCUMENT_CONNECTORS.md) | Knowledge source connectors |
 | [ACL_MODEL.md](./ACL_MODEL.md) | Document/chunk ACL |

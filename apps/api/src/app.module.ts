@@ -9,6 +9,7 @@ import { KnowledgeModule } from './modules/knowledge/knowledge.module';
 import { KnowledgePlatformModule } from './modules/knowledge-platform/knowledge-platform.module';
 import { EmployeeCapabilitiesModule } from './modules/employee-capabilities/employee-capabilities.module';
 import { AiModule } from './modules/ai/ai.module';
+import { AgentsModule } from './modules/agents/agents.module';
 import { HealthController } from './health.controller';
 import { GlobalExceptionFilter } from './shared/presentation/global-exception.filter';
 import { AuthGuard } from './modules/identity/presentation/auth.guard';
@@ -26,6 +27,7 @@ import { RateLimitMiddleware } from './shared/presentation/rate-limit.middleware
     AttendanceModule,
     KnowledgeModule,
     EmployeeCapabilitiesModule,
+    AgentsModule,
   ],
   controllers: [HealthController],
   providers: [

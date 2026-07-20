@@ -203,6 +203,21 @@ M0 Foundations
 **Exit criteria:** “What is our travel/leave policy?” returns grounded answers from permitted docs; typecheck/lint/tests green; Employee Agent / AI Runtime / MCP unchanged in design.
 
 **Follow-ups:** Live SharePoint connector, pgvector/Azure AI Search adapters, BullMQ sync workers, citation chips in chat UI.
+
+### M6.5 — Enterprise Agent Framework
+
+**Outcome:** Reusable agent foundation; Employee Agent migrated; future agents onboard with minimal code.
+
+**Status:** Implemented (`@onecare/agent-framework`).
+
+- Agent model, registry, lifecycle, context, memory, handoff, collaboration, approval abstractions
+- Employee Agent registered via framework; AI Runtime catalog projected from framework
+- Admin APIs `/v1/agents*` + admin shell pages
+- Docs: AGENT_FRAMEWORK, AGENT_LIFECYCLE, AGENT_REGISTRY, AGENT_CONTEXT, AGENT_HANDOFFS
+- Contract: [`AGENT_FRAMEWORK.md`](./AGENT_FRAMEWORK.md)
+
+**Exit criteria:** Employee behavior unchanged; lint/typecheck/tests green; AI Runtime / MCP / Knowledge / Capability Framework / Orchestration not redesigned.
+
 ---
 
 ### M7 — Workflows & Manager Approvals
