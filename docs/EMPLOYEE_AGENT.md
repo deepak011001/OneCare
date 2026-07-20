@@ -19,6 +19,7 @@ User → Master Orchestrator → Employee Agent → Tool Registry → MCP Gatewa
 **Non-goals (do not put here):**
 
 - Knowledge / policy answers for employees → **Employee Knowledge Capability** (`ess.knowledge`, [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md)) backed by **Enterprise Knowledge Platform** ([`ENTERPRISE_KNOWLEDGE_PLATFORM.md`](./ENTERPRISE_KNOWLEDGE_PLATFORM.md))
+- Agent registration → **Enterprise Agent Framework** ([`AGENT_FRAMEWORK.md`](./AGENT_FRAMEWORK.md)); Employee Agent is a first-class `EnterpriseAgent`
 - Manager approvals (→ Manager / MSS Agent)
 - HR case ownership (→ HR Agent)
 - Admin / tenant configuration

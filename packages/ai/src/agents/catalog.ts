@@ -115,13 +115,13 @@ export const PLACEHOLDER_AGENTS: readonly RegisteredAgent[] = [
     name: 'KnowledgeAgent',
     version: '0.1.0',
     description:
-      'Enterprise knowledge routing. ESS knowledge Q&A is handled by @onecare/ess-knowledge (Employee Capability); production RAG remains M6.',
+      'Enterprise knowledge routing. ESS knowledge Q&A is handled by Employee Agent + Knowledge Platform.',
     supportedIntents: ['knowledge.search', 'general.assist'],
     capabilities: [
       { id: 'knowledge.route', description: 'Route knowledge questions' },
       {
         id: 'ess.knowledge',
-        description: 'Employee knowledge capability (retrieval abstraction; not production RAG)',
+        description: 'Employee knowledge capability bridge',
       },
     ],
     allowedTools: ['searchKnowledge'],

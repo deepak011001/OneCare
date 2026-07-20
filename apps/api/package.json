@@ -28,6 +28,7 @@
     "@onecare/mcp": "workspace:*",
     "@onecare/policies": "workspace:*",
     "@onecare/ai": "workspace:*",
+    "@onecare/agent-framework": "workspace:*",
     "@onecare/conversations": "workspace:*",
     "@onecare/memory": "workspace:*",
     "@onecare/planner": "workspace:*",

@@ -19,6 +19,7 @@
     { "path": "../ess-leave" },
     { "path": "../ess-attendance" },
     { "path": "../ess-knowledge" },
-    { "path": "../ess-orchestration" }
+    { "path": "../ess-orchestration" },
+    { "path": "../agent-framework" }
   ]
 }
