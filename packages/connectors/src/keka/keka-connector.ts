@@ -7,6 +7,8 @@ export interface KekaHttpClient {
   applyLeave(context: ConnectorToolCallRequest): Promise<unknown>;
   cancelLeave(context: ConnectorToolCallRequest): Promise<unknown>;
   leaveHistory(context: ConnectorToolCallRequest): Promise<unknown>;
+  leaveTypes(context: ConnectorToolCallRequest): Promise<unknown>;
+  holidayCalendar(context: ConnectorToolCallRequest): Promise<unknown>;
   ping(): Promise<void>;
 }
 
@@ -21,7 +23,7 @@ const LEAVE_TOOLS: readonly ConnectorToolDefinition[] = [
     description: 'Read employee leave balance from HRIS',
     category: 'leave',
     version: '1.0.0',
-    permissions: ['leave.apply'],
+    permissions: ['leave.read'],
     confirmationRequired: false,
     inputSchema: { type: 'object', additionalProperties: false, properties: {} },
     outputSchema: {
@@ -52,6 +54,7 @@ const LEAVE_TOOLS: readonly ConnectorToolDefinition[] = [
         endDate: { type: 'string', format: 'date' },
         leaveType: { type: 'string' },
         reason: { type: 'string', maxLength: 1000 },
+        halfDay: { type: 'boolean' },
         idempotencyKey: { type: 'string' },
       },
     },
@@ -96,7 +99,7 @@ const LEAVE_TOOLS: readonly ConnectorToolDefinition[] = [
     description: 'List leave requests for the authenticated employee',
     category: 'leave',
     version: '1.0.0',
-    permissions: ['leave.apply'],
+    permissions: ['leave.read'],
     confirmationRequired: false,
     inputSchema: {
       type: 'object',
@@ -114,6 +117,46 @@ const LEAVE_TOOLS: readonly ConnectorToolDefinition[] = [
     sideEffect: 'read',
     risk: 'low',
     timeoutMs: 12_000,
+  },
+  {
+    name: 'leaveTypes',
+    description: 'List available leave types for the employee',
+    category: 'leave',
+    version: '1.0.0',
+    permissions: ['leave.read'],
+    confirmationRequired: false,
+    inputSchema: { type: 'object', additionalProperties: false, properties: {} },
+    outputSchema: {
+      type: 'object',
+      properties: { types: { type: 'array' } },
+    },
+    sideEffect: 'read',
+    risk: 'low',
+    timeoutMs: 8_000,
+  },
+  {
+    name: 'holidayCalendar',
+    description: 'List holidays for a month or date range',
+    category: 'leave',
+    version: '1.0.0',
+    permissions: ['holiday.read'],
+    confirmationRequired: false,
+    inputSchema: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        month: { type: 'string', description: 'YYYY-MM' },
+        fromDate: { type: 'string', format: 'date' },
+        toDate: { type: 'string', format: 'date' },
+      },
+    },
+    outputSchema: {
+      type: 'object',
+      properties: { holidays: { type: 'array' } },
+    },
+    sideEffect: 'read',
+    risk: 'low',
+    timeoutMs: 8_000,
   },
 ];
 
@@ -176,6 +219,19 @@ export class KekaRestClient implements KekaHttpClient {
     const qs = params.toString();
     return this.request(`/api/v1/hr/leave/requests${qs ? `?${qs}` : ''}`, { method: 'GET' });
   }
+
+  async leaveTypes(): Promise<unknown> {
+    return this.request(`/api/v1/hr/leave/types`, { method: 'GET' });
+  }
+
+  async holidayCalendar(context: ConnectorToolCallRequest): Promise<unknown> {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(context.arguments)) {
+      if (value !== undefined) params.set(key, String(value));
+    }
+    const qs = params.toString();
+    return this.request(`/api/v1/hr/holidays${qs ? `?${qs}` : ''}`, { method: 'GET' });
+  }
 }
 
 export class KekaStubClient implements KekaHttpClient {
@@ -185,6 +241,7 @@ export class KekaStubClient implements KekaHttpClient {
     return {
       balances: [
         { leaveType: 'Annual', available: 12, used: 3 },
+        { leaveType: 'Casual', available: 5, used: 1 },
         { leaveType: 'Sick', available: 6, used: 1 },
       ],
       asOf: new Date().toISOString(),
@@ -216,6 +273,34 @@ export class KekaStubClient implements KekaHttpClient {
           endDate: '2026-07-02',
           status: 'approved',
         },
+        {
+          requestId: 'leave-demo-2',
+          leaveType: 'Casual',
+          startDate: '2026-08-15',
+          endDate: '2026-08-15',
+          status: 'pending_approval',
+        },
+      ],
+    };
+  }
+
+  async leaveTypes(): Promise<unknown> {
+    return {
+      types: [
+        { name: 'Annual', unit: 'day' },
+        { name: 'Casual', unit: 'day' },
+        { name: 'Sick', unit: 'day' },
+      ],
+    };
+  }
+
+  async holidayCalendar(context: ConnectorToolCallRequest): Promise<unknown> {
+    const month = String(context.arguments.month ?? '2026-07');
+    return {
+      month,
+      holidays: [
+        { date: `${month}-04`, name: 'Independence Observance' },
+        { date: `${month}-15`, name: 'Company Foundation Day' },
       ],
     };
   }
@@ -293,6 +378,10 @@ export class KekaConnector extends BaseEnterpriseConnector {
         return this.client.cancelLeave(request);
       case 'leaveHistory':
         return this.client.leaveHistory(request);
+      case 'leaveTypes':
+        return this.client.leaveTypes(request);
+      case 'holidayCalendar':
+        return this.client.holidayCalendar(request);
       default:
         throw new ConnectorInvocationError('TOOL_NOT_SUPPORTED', tool.name, false);
     }

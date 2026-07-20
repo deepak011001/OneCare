@@ -1,5 +1,5 @@
 {
-  "name": "@onecare/ai",
+  "name": "@onecare/ess-leave",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -18,20 +18,11 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings=0",
-    "test": "node --import tsx --test src/**/*.test.ts src/**/**/*.test.ts",
+    "test": "node --import tsx --test src/**/*.test.ts",
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@onecare/confirmations": "workspace:*",
-    "@onecare/conversations": "workspace:*",
-    "@onecare/ess-leave": "workspace:*",
-    "@onecare/mcp": "workspace:*",
-    "@onecare/memory": "workspace:*",
-    "@onecare/planner": "workspace:*",
-    "@onecare/policies": "workspace:*",
-    "@onecare/prompts": "workspace:*",
-    "@onecare/shared": "workspace:*",
-    "@onecare/tools": "workspace:*"
+    "@onecare/shared": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.2"

@@ -174,6 +174,18 @@ export const api = {
         body: JSON.stringify(body),
       },
     ),
+  getLeaveDashboard: () => request<ApiEnvelope<unknown>>('/v1/leave/dashboard'),
+  getLeaveHistory: (status?: string) =>
+    request<ApiEnvelope<unknown>>(
+      `/v1/leave/history${status ? `?status=${encodeURIComponent(status)}` : ''}`,
+    ),
+  getLeaveRequest: (id: string) => request<ApiEnvelope<unknown>>(`/v1/leave/requests/${id}`),
+  getLeaveHolidays: (month?: string) =>
+    request<ApiEnvelope<unknown>>(
+      `/v1/leave/holidays${month ? `?month=${encodeURIComponent(month)}` : ''}`,
+    ),
+  getLeaveTypes: () => request<ApiEnvelope<unknown>>('/v1/leave/types'),
+  getLeaveBalance: () => request<ApiEnvelope<unknown>>('/v1/leave/balance'),
 };
 
 export function getApiBaseUrl(): string {

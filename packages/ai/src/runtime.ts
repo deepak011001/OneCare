@@ -12,6 +12,7 @@ import {
 import type { McpGatewayService } from '@onecare/mcp';
 import type { InMemoryConfirmationStore } from '@onecare/confirmations';
 import type { PolicyEngine } from '@onecare/policies';
+import { createLeaveCapability } from '@onecare/ess-leave';
 import { createDefaultAgentRegistry } from './agents/registry';
 import { InMemoryAiObservability } from './observability';
 import {
@@ -100,6 +101,7 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
       observability,
       toolExecutor,
       resolveConfirmationApproved,
+      leaveCapability: createLeaveCapability(),
     });
   } else if (toolExecutor) {
     orchestrator = createMasterOrchestrator({
@@ -112,6 +114,7 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
       llm,
       observability,
       toolExecutor,
+      leaveCapability: createLeaveCapability(),
     });
   } else {
     orchestrator = createMasterOrchestrator({
@@ -123,6 +126,7 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
       prompts,
       llm,
       observability,
+      leaveCapability: createLeaveCapability(),
     });
   }
 
