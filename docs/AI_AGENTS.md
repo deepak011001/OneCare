@@ -20,14 +20,14 @@
 | Agent | Responsibility | Typical Tools (MCP) |
 |-------|----------------|---------------------|
 | Master Orchestrator | Intent classification, planning, routing, synthesis | (meta) agent invocation, memory read |
-| ESS Agent (`employee`) | Employee self-service | leave, profile, attendance (read) — **contract:** [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md) · **framework:** [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) |
+| ESS Agent (`employee`) | Employee self-service | leave, knowledge (retrieval abstraction), profile, attendance (read) — **contract:** [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md) · **framework:** [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) · **knowledge:** [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md) |
 | MSS Agent | Manager actions | approvals, team leave/attendance |
 | HR Agent | HR cases & policies | HRIS tools, knowledge handoff |
 | Payroll Agent | Payslips, salary history | payroll MCP |
 | Attendance Agent | Clock in/out, history | attendance MCP |
 | IT Agent | Tickets, resets, access | ServiceNow/Jira/Graph |
 | Finance Agent | Expenses, invoices (phased) | finance MCP |
-| Knowledge Agent | RAG Q&A with citations | vector search, doc fetch |
+| Knowledge Agent | Enterprise RAG Q&A with citations (M6); ESS Q&A via `@onecare/ess-knowledge` until then | vector search, doc fetch |
 | Recruitment Agent | Hiring-scoped intents | ATS MCP |
 | Learning Agent | LMS intents | learning MCP |
 | Analytics Agent | Metrics narratives (read-only) | analytics APIs |

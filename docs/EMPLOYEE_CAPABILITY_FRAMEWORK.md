@@ -10,7 +10,7 @@
 
 Standardize how every **Employee Agent** capability is built.
 
-Leave (`@onecare/ess-leave`) is the reference implementation. Future capabilities (Attendance, Payroll, Profile, IT, …) implement the same contract and register themselves — they do **not** fork orchestrator or MCP logic.
+Leave (`@onecare/ess-leave`) is the reference implementation. Knowledge (`@onecare/ess-knowledge`) is the knowledge intelligence capability. Future capabilities (Attendance, Payroll, Profile, IT, …) implement the same contract and register themselves — they do **not** fork orchestrator or MCP logic.
 
 ```
 User → Master Orchestrator → Employee Agent
@@ -28,6 +28,7 @@ User → Master Orchestrator → Employee Agent
 |---------|------|
 | `@onecare/ess-capability` | Interface, registry, entities, validation, clarification, confirmation draft, response helpers, telemetry, runner |
 | `@onecare/ess-leave` | Leave capability implementing the interface |
+| `@onecare/ess-knowledge` | Knowledge capability — retrieval abstraction, hierarchical classification, source attribution |
 
 ---
 
@@ -66,7 +67,7 @@ Every capability exposes:
 - `findByIntent` / `resolveForMessage`
 - Aggregate `allDashboardWidgets`, `allSuggestedPrompts`, `allHelp`
 
-Composition root: `createEmployeeCapabilityRegistry()` in `@onecare/ess-leave` (registers Leave today).
+Composition root: `createEmployeeCapabilityRegistry(options?, extras?)` in `@onecare/ess-leave` (registers Leave; pass Knowledge / Attendance / … as `extras`).
 
 API surface:
 

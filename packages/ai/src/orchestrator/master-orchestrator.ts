@@ -14,6 +14,12 @@ import {
   formatLeaveAssistantMessage,
   isLeaveRelatedMessage,
 } from '@onecare/ess-leave';
+import type { KnowledgeCapability, KnowledgeSlots } from '@onecare/ess-knowledge';
+import {
+  createKnowledgeCapability,
+  formatKnowledgeAssistantMessage,
+  isKnowledgeRelatedMessage,
+} from '@onecare/ess-knowledge';
 import type { AgentRegistryPort } from '../agents/registry';
 import { estimateCostUsd, type AiObservabilityPort, type AiObservation } from '../observability';
 import type { LlmProviderPort } from '../providers/types';
@@ -21,6 +27,7 @@ import type { StreamEvent } from '../streaming/types';
 import type { ChatRequest, ChatResult, OrchestratorPort, PlanRequest } from './types';
 
 const LEAVE_SLOTS_MEMORY_KEY = 'leave.slots';
+const KNOWLEDGE_SLOTS_MEMORY_KEY = 'knowledge.slots';
 
 export interface MasterOrchestratorDeps {
   readonly conversations: ConversationStorePort;
@@ -33,6 +40,7 @@ export interface MasterOrchestratorDeps {
   readonly observability: AiObservabilityPort;
   readonly toolExecutor?: ToolExecutorPort;
   readonly leaveCapability?: LeaveCapability;
+  readonly knowledgeCapability?: KnowledgeCapability;
   readonly resolveConfirmationApproved?: (
     tenantId: string,
     userId: string,
@@ -189,15 +197,31 @@ export class MasterOrchestrator implements OrchestratorPort {
 
     const toolResultSummaries: string[] = [];
     let leaveAssistantOverride: string | null = null;
+    let knowledgeAssistantOverride: string | null = null;
     let skipLlm = false;
 
     const leaveCapability = this.deps.leaveCapability ?? createLeaveCapability();
+    const knowledgeCapability = this.deps.knowledgeCapability ?? createKnowledgeCapability();
+    const planHasLeave = plan.steps.some((s) => s.intent.startsWith('employee.leave'));
+    const planHasKnowledge = plan.steps.some(
+      (s) =>
+        s.intent.startsWith('employee.knowledge') ||
+        s.intent === 'knowledge.search' ||
+        s.agentId === 'knowledge',
+    );
     const useLeaveCapability =
       Boolean(this.deps.toolExecutor) &&
       (primary?.agentId === 'employee' || isLeaveRelatedMessage(input.message)) &&
       (primary?.intent?.startsWith('employee.leave') ||
+        planHasLeave ||
         isLeaveRelatedMessage(input.message) ||
         Boolean(input.approvedToolConfirmations));
+    const useKnowledgeCapability =
+      planHasKnowledge ||
+      primary?.intent?.startsWith('employee.knowledge') ||
+      primary?.agentId === 'knowledge' ||
+      (!useLeaveCapability && isKnowledgeRelatedMessage(input.message)) ||
+      (planHasLeave && isKnowledgeRelatedMessage(input.message));
 
     if (useLeaveCapability && this.deps.toolExecutor) {
       const priorRecord = await this.deps.memory.conversation.load(
@@ -423,7 +447,83 @@ export class MasterOrchestrator implements OrchestratorPort {
           }
         }
       }
-    } else {
+    }
+
+    if (useKnowledgeCapability) {
+      const priorRecord = await this.deps.memory.conversation.load(
+        {
+          tenantId: String(input.context.tenantId),
+          conversationId: String(conversation.id),
+        },
+        KNOWLEDGE_SLOTS_MEMORY_KEY,
+      );
+      const priorSlots = (priorRecord?.value as KnowledgeSlots | null) ?? {};
+
+      onEvent({
+        type: 'tool',
+        sequence: 0,
+        data: {
+          name: 'knowledge.search',
+          status: 'completed',
+          result: { engine: knowledgeCapability.getRetrieval().engineId },
+        },
+      });
+
+      const outcome = await knowledgeCapability.process({
+        message: input.message,
+        priorSlots,
+        permissions: input.context.permissions,
+      });
+
+      if (outcome.kind === 'clarify') {
+        await this.deps.memory.conversation.save(
+          {
+            tenantId: String(input.context.tenantId),
+            conversationId: String(conversation.id),
+          },
+          KNOWLEDGE_SLOTS_MEMORY_KEY,
+          outcome.slots,
+        );
+        onEvent({
+          type: 'clarification',
+          sequence: 0,
+          data: {
+            question: outcome.question,
+            missing: outcome.missing,
+            intent: outcome.intent,
+          },
+        });
+        if (outcome.suggestedReplies?.length) {
+          onEvent({
+            type: 'suggested_replies',
+            sequence: 0,
+            data: { replies: outcome.suggestedReplies },
+          });
+        }
+      } else if (outcome.kind === 'answered') {
+        await this.deps.memory.conversation.save(
+          {
+            tenantId: String(input.context.tenantId),
+            conversationId: String(conversation.id),
+          },
+          KNOWLEDGE_SLOTS_MEMORY_KEY,
+          outcome.slots,
+        );
+        if (outcome.answer.suggestedFollowUps?.length) {
+          onEvent({
+            type: 'suggested_replies',
+            sequence: 0,
+            data: { replies: outcome.answer.suggestedFollowUps },
+          });
+        }
+        toolResultSummaries.push(
+          `knowledge.search: sources=${outcome.answer.sources.map((s) => s.documentId).join(',')}`,
+        );
+      }
+
+      knowledgeAssistantOverride = formatKnowledgeAssistantMessage(outcome);
+      skipLlm = true;
+    } else if (!useLeaveCapability) {
       for (const toolName of primary?.toolNames ?? []) {
         const tool = this.deps.tools.get(toolName);
         if (!tool || !tool.implemented || !this.deps.toolExecutor) {
@@ -527,9 +627,11 @@ export class MasterOrchestrator implements OrchestratorPort {
     });
 
     try {
-      if (skipLlm && leaveAssistantOverride) {
-        assistantText = leaveAssistantOverride;
-        for (const word of leaveAssistantOverride.split(/(\s+)/)) {
+      if (skipLlm && (leaveAssistantOverride || knowledgeAssistantOverride)) {
+        assistantText = [leaveAssistantOverride, knowledgeAssistantOverride]
+          .filter((part): part is string => Boolean(part))
+          .join('\n\n');
+        for (const word of assistantText.split(/(\s+)/)) {
           if (!word) continue;
           onEvent({ type: 'delta', sequence: 0, data: { text: word } });
         }

@@ -35,7 +35,7 @@ export const PLACEHOLDER_AGENTS: readonly RegisteredAgent[] = [
     id: 'employee',
     name: 'EmployeeAgent',
     version: '1.0.0',
-    description: 'Employee self-service — leave capability (ESS).',
+    description: 'Employee self-service — leave and knowledge capabilities (ESS).',
     supportedIntents: [
       'employee.self_service',
       'employee.leave.balance',
@@ -44,11 +44,21 @@ export const PLACEHOLDER_AGENTS: readonly RegisteredAgent[] = [
       'employee.leave.cancel',
       'employee.leave.types',
       'employee.leave.holidays',
+      'employee.knowledge.ask',
+      'employee.knowledge.search',
+      'employee.knowledge.related',
+      'employee.knowledge.popular',
+      'employee.knowledge.help',
+      'employee.knowledge.categories',
     ],
     capabilities: [
       { id: 'ess.leave.read', description: 'Read leave balance, history, types, holidays' },
       { id: 'ess.leave.write', description: 'Apply and cancel leave via MCP with confirmation' },
       { id: 'ess.clarify', description: 'Multi-turn clarification for leave slots' },
+      {
+        id: 'ess.knowledge',
+        description: 'Enterprise knowledge Q&A with retrieval abstraction and source attribution',
+      },
     ],
     allowedTools: [
       'leaveBalance',
@@ -57,6 +67,7 @@ export const PLACEHOLDER_AGENTS: readonly RegisteredAgent[] = [
       'cancelLeave',
       'leaveTypes',
       'holidayCalendar',
+      'searchKnowledge',
     ],
     systemPromptRef: 'agent.placeholder',
     enabled: true,
@@ -87,9 +98,16 @@ export const PLACEHOLDER_AGENTS: readonly RegisteredAgent[] = [
     id: 'knowledge',
     name: 'KnowledgeAgent',
     version: '0.1.0',
-    description: 'Knowledge routing placeholder (no RAG in M3).',
+    description:
+      'Enterprise knowledge routing. ESS knowledge Q&A is handled by @onecare/ess-knowledge (Employee Capability); production RAG remains M6.',
     supportedIntents: ['knowledge.search', 'general.assist'],
-    capabilities: [{ id: 'knowledge.route', description: 'Route knowledge questions' }],
+    capabilities: [
+      { id: 'knowledge.route', description: 'Route knowledge questions' },
+      {
+        id: 'ess.knowledge',
+        description: 'Employee knowledge capability (retrieval abstraction; not production RAG)',
+      },
+    ],
     allowedTools: ['searchKnowledge'],
     systemPromptRef: 'agent.placeholder',
     enabled: true,

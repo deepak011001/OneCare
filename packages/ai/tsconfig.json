@@ -16,6 +16,7 @@
     { "path": "../confirmations" },
     { "path": "../policies" },
     { "path": "../ess-capability" },
-    { "path": "../ess-leave" }
+    { "path": "../ess-leave" },
+    { "path": "../ess-knowledge" }
   ]
 }

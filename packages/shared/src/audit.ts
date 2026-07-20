@@ -20,6 +20,9 @@ export const AUDIT_ACTIONS = {
   LEAVE_APPLY: 'leave.apply',
   LEAVE_CANCEL: 'leave.cancel',
   LEAVE_CONFIRMATION_REJECTED: 'leave.confirmation.rejected',
+  KNOWLEDGE_SEARCH: 'knowledge.search',
+  KNOWLEDGE_VIEW: 'knowledge.view',
+  KNOWLEDGE_VIEW_DENIED: 'knowledge.view.denied',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];

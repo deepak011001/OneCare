@@ -64,6 +64,7 @@ pnpm lint
 | `@onecare/mcp` | MCP gateway, registry, resilience |
 | `@onecare/ess-capability` | Employee capability framework (registry, entities, validate/clarify) |
 | `@onecare/ess-leave` | Employee leave capability (intents, dates, validation, clarify/confirm) |
+| `@onecare/ess-knowledge` | Employee knowledge capability (retrieval abstraction, classification, attribution) |
 | `@onecare/workflows` | Workflow engine contracts |
 | `@onecare/integrations` | Integration adapter ports |
 | `@onecare/telemetry` | Logging, AI metrics hooks & OpenTelemetry |
@@ -75,7 +76,7 @@ Start at [`docs/README.md`](./docs/README.md). Cursor agents: see [`AGENTS.md`](
 
 ## Milestone
 
-Current: **M4 Enterprise MCP Platform** — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+Current: **M5 Employee Agent** (Leave + Knowledge capability) — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ### API + database (M1)
 

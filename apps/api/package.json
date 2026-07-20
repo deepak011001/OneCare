@@ -20,6 +20,7 @@
     "@onecare/config": "workspace:*",
     "@onecare/database": "workspace:*",
     "@onecare/ess-leave": "workspace:*",
+    "@onecare/ess-knowledge": "workspace:*",
     "@onecare/events": "workspace:*",
     "@onecare/mcp": "workspace:*",
     "@onecare/policies": "workspace:*",

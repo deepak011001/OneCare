@@ -18,9 +18,9 @@ User → Master Orchestrator → Employee Agent → Tool Registry → MCP Gatewa
 
 **Non-goals (do not put here):**
 
+- Knowledge / policy answers for employees → **Employee Knowledge Capability** (`ess.knowledge`, [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md)); production RAG remains M6 Knowledge Platform
 - Manager approvals (→ Manager / MSS Agent)
 - HR case ownership (→ HR Agent)
-- Knowledge / policy RAG answers (→ Knowledge Agent; Employee may *handoff*)
 - Admin / tenant configuration
 - Direct vendor SDK usage inside the agent
 
@@ -59,7 +59,18 @@ Intents are stable strings. Add new intents in this table before shipping tools/
 | `employee.leave.enough` | “Do I have enough sick leave?” | `leaveBalance` | No |
 | `employee.leave.status` | “When is my leave approved?” | `leaveHistory` | No |
 
-### 3.2 Planned (post-M5, same agent)
+### 3.2 Knowledge (M5 Slice 3)
+
+| Intent | User meaning | Default tools | Confirmation |
+|--------|--------------|---------------|--------------|
+| `employee.knowledge.ask` | Policy / how-to / vague / multi questions | retrieval port (`knowledge.search`) | No |
+| `employee.knowledge.popular` | Trending / FAQs | — | No |
+| `employee.knowledge.help` | Topics, tips, limitations | — | No |
+| `employee.knowledge.categories` | Browse taxonomy | — | No |
+
+See [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md).
+
+### 3.3 Planned (post-M5, same agent)
 
 | Intent | Notes |
 |--------|--------|
@@ -69,10 +80,9 @@ Intents are stable strings. Add new intents in this table before shipping tools/
 | `employee.profile.read` | Own profile fields only |
 | `employee.payroll.payslip` | PII; confirm / mask in logs |
 | `employee.payroll.salary_history` | High risk PII; confirm + policy |
-| `employee.handoff.knowledge` | Delegate policy questions to Knowledge Agent |
 | `employee.handoff.manager` | “Who can approve?” → explain + optional MSS handoff |
 
-### 3.3 Explicitly out of scope
+### 3.4 Explicitly out of scope
 
 | Intent pattern | Owner |
 |----------------|--------|
@@ -93,6 +103,7 @@ Capabilities are coarse product claims implemented via the **Employee Capability
 | `ess.leave` | Leave read/write via `@onecare/ess-leave` (framework reference) | ✓ |
 | `ess.leave.read` | Read balance and history for self | ✓ |
 | `ess.leave.write` | Apply / cancel own leave | ✓ |
+| `ess.knowledge` | Enterprise knowledge Q&A via `@onecare/ess-knowledge` (retrieval abstraction; not production RAG) | ✓ |
 | `ess.attendance.read` | Read own attendance | Later |
 | `ess.attendance.write` | Clock in/out / regularize (if allowed) | Later |
 | `ess.profile.read` | Read own profile | Later |
@@ -120,6 +131,7 @@ Authorization is Application-layer RBAC (+ future ABAC). Tool metadata `permissi
 | `applyLeave` | `leave.apply`, `mcp.execute` |
 | `cancelLeave` | `leave.cancel`, `mcp.execute` |
 | Chat / stream | `ai.chat` |
+| Knowledge ask / search / dashboard | `knowledge.search` |
 | List MCP tools (debug/admin surfaces) | `mcp.tools.read` |
 
 **Deny behavior:**
@@ -200,9 +212,10 @@ If the user asks balance **and** apply in one message:
 
 | Signal | Action |
 |--------|--------|
-| Policy / handbook question | Delegate / route to Knowledge Agent |
+| Policy / handbook / benefits / how-to | Employee Knowledge Capability (`ess.knowledge`) |
 | “Approve my team’s leave” | Explain ESS cannot approve others → Manager Agent |
 | System outage / connector down | Graceful error; no fake success |
+| Production RAG corpus / embeddings | M6 Knowledge Platform (retrieval port swap) |
 
 ---
 

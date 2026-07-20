@@ -149,7 +149,18 @@ M0 Foundations
 
 **Exit criteria:** Employee can check balance, clarify apply/cancel, confirm writes, and see leave widgets; lint/typecheck/tests green.
 
-**Status:** Slice 1 (Leave) implemented on `feature/m5-leave-capability`.
+**Status:** Slice 1 (Leave) + Framework + Slice 3 (Knowledge) on M5 release line. Attendance may land via separate PR.
+
+### M5 Slice 3 — Employee Knowledge Capability
+
+**Outcome:** Enterprise knowledge intelligence on the Employee Capability Framework — **not** production RAG.
+
+- `@onecare/ess-knowledge`: hierarchical classification, multi-intent, entities, clarification, structured answers + attribution
+- `KnowledgeRetrievalPort` + stub store (markdown/JSON/memory); swappable for M6 engines
+- APIs `/v1/knowledge/*`, dashboard widgets, help system
+- Contract: [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md)
+
+**Exit criteria:** Natural-language policy/how-to questions answer with sources (or explicit no-source); follow-ups and multi-question prompts work; lint/typecheck/tests green.
 
 ---
 

@@ -93,6 +93,9 @@ importers:
       '@onecare/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@onecare/ess-knowledge':
+        specifier: workspace:*
+        version: link:../../packages/ess-knowledge
       '@onecare/ess-leave':
         specifier: workspace:*
         version: link:../../packages/ess-leave
@@ -322,6 +325,9 @@ importers:
       '@onecare/ess-capability':
         specifier: workspace:*
         version: link:../ess-capability
+      '@onecare/ess-knowledge':
+        specifier: workspace:*
+        version: link:../ess-knowledge
       '@onecare/ess-leave':
         specifier: workspace:*
         version: link:../ess-leave
@@ -430,6 +436,19 @@ importers:
 
   packages/ess-capability:
     dependencies:
+      '@onecare/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.1
+
+  packages/ess-knowledge:
+    dependencies:
+      '@onecare/ess-capability':
+        specifier: workspace:*
+        version: link:../ess-capability
       '@onecare/shared':
         specifier: workspace:*
         version: link:../shared
