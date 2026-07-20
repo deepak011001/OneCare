@@ -28,6 +28,7 @@ Lookup keys match DB helper `featureFlagLookupKey(scope, key, id?)`.
 | `capability.ess.leave.enabled` | on | Leave capability |
 | `capability.ess.attendance.enabled` | on | Attendance capability |
 | `capability.ess.knowledge.enabled` | on | Knowledge capability |
+| `knowledge.platform.enabled` | on | Enterprise Knowledge Platform engine |
 | `ai.cross_orchestration.enabled` | on | Cross-capability orchestrator |
 | `mcp.execute.enabled` | on | MCP execute path |
 | `preview.streaming.v2` | on | Preview gate (no behavior change yet) |

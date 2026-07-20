@@ -3,7 +3,7 @@
 **Status:** Living Document — Source of Truth for Employee Knowledge (M5 Slice 3)  
 **Package:** `@onecare/ess-knowledge`  
 **Capability ID:** `ess.knowledge`  
-**Related:** [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) · [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md) · [`AI_AGENTS.md`](./AI_AGENTS.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`ROADMAP.md`](./ROADMAP.md)
+**Related:** [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) · [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md) · [`AI_AGENTS.md`](./AI_AGENTS.md) · [`ARCHITECTURE.md`](./ARCHITECTURE.md) · [`ROADMAP.md`](./ROADMAP.md) · [`ENTERPRISE_KNOWLEDGE_PLATFORM.md`](./ENTERPRISE_KNOWLEDGE_PLATFORM.md)
 
 ---
 
@@ -11,7 +11,7 @@
 
 The **Knowledge Capability** is the intelligent knowledge layer of OneCare for employees.
 
-It is **not** a simple FAQ chatbot and **not** production RAG.
+It is **not** a simple FAQ chatbot. Production retrieval is provided by the **Enterprise Knowledge Platform** (M6) behind `KnowledgeRetrievalPort`.
 
 Employees ask naturally. The capability:
 
@@ -20,27 +20,23 @@ Employees ask naturally. The capability:
 - Retrieves via a **replaceable retrieval abstraction**
 - Returns structured answers with **source attribution**
 - Supports follow-ups and selective clarification
-- Prepares the path to Enterprise RAG (M6) without coupling to any vector database
+- Consumes `@onecare/knowledge-platform` without coupling to any vector vendor SDK
 
 ```
 User → Master Orchestrator → Employee Agent
          → Capability Registry → ess.knowledge
-              → KnowledgeRetrievalPort (stub today)
-                   → future: Azure AI Search / pgvector / SharePoint / …
+              → KnowledgeRetrievalPort
+                   → Enterprise Knowledge Platform (default)
+                   → StubKnowledgeStore (KNOWLEDGE_ENGINE=stub)
 ```
 
 ---
 
-## 2. Non-goals (this slice)
+## 2. Non-goals (capability package)
 
-Do **not** build:
+Do **not** put vendor SDKs or ingestion workers inside `@onecare/ess-knowledge`.
 
-- Production RAG, embeddings, or ingestion workers
-- Azure AI Search / pgvector / Elasticsearch / Pinecone
-- LlamaIndex / LangChain retrieval stacks
-- OCR or search indexing pipelines
-
-Build **abstractions + stub store** only.
+Platform concerns (connectors, embeddings, vector DBs) live in `@onecare/knowledge-platform` — see [`ENTERPRISE_KNOWLEDGE_PLATFORM.md`](./ENTERPRISE_KNOWLEDGE_PLATFORM.md).
 
 ---
 
@@ -91,10 +87,9 @@ interface KnowledgeRetrievalPort {
 }
 ```
 
-**Current:** `StubKnowledgeStore` (in-memory markdown/JSON-shaped corpus).  
-**Future:** adapters for Azure AI Search, vector DB, Elastic, SharePoint, Confluence, Drive, Notion.
-
-The capability **must not** import a concrete vector engine.
+**Current default:** Enterprise Knowledge Platform via API composition.  
+**Fallback:** `StubKnowledgeStore` when `KNOWLEDGE_ENGINE=stub`.  
+**Adapters:** Azure AI Search, pgvector, Elastic, SharePoint, etc. implement platform ports — capability stays unchanged.
 
 ---
 
@@ -146,12 +141,11 @@ Planner routes `employee.knowledge.*`. Orchestrator runs `KnowledgeCapability.pr
 
 ---
 
-## 10. Path to M6 RAG
+## 10. Enterprise Knowledge Platform (M6)
 
-1. Keep `KnowledgeRetrievalPort` stable.
-2. Add ACL-aware vector/search adapter implementing the port.
-3. Wire Knowledge Agent / ingestion workers without changing ESS capability business flow.
-4. Promote citation UI richness; faithfulness evals.
+Production retrieval is `@onecare/knowledge-platform` implementing `KnowledgeRetrievalPort`. See [`ENTERPRISE_KNOWLEDGE_PLATFORM.md`](./ENTERPRISE_KNOWLEDGE_PLATFORM.md).
+
+Follow-ups: live SharePoint connector, pgvector/Azure AI Search adapters, BullMQ workers, richer citation UI.
 
 ---
 

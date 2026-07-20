@@ -27,7 +27,7 @@
 | Attendance Agent | Clock in/out, history | attendance MCP |
 | IT Agent | Tickets, resets, access | ServiceNow/Jira/Graph |
 | Finance Agent | Expenses, invoices (phased) | finance MCP |
-| Knowledge Agent | Enterprise RAG Q&A with citations (M6); ESS Q&A via `@onecare/ess-knowledge` until then | vector search, doc fetch |
+| Knowledge Agent | Enterprise RAG Q&A with citations via `@onecare/knowledge-platform` + ESS capability | vector + hybrid search, doc fetch |
 | Recruitment Agent | Hiring-scoped intents | ATS MCP |
 | Learning Agent | LMS intents | learning MCP |
 | Analytics Agent | Metrics narratives (read-only) | analytics APIs |

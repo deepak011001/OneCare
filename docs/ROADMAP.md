@@ -189,17 +189,20 @@ M0 Foundations
 
 ### M6 — Knowledge Platform (Enterprise RAG)
 
-**Outcome:** Permission-aware answers with citations.
+**Outcome:** Permission-aware answers with citations via production `KnowledgeRetrievalPort`.
 
-- Ingestion pipeline (PDF/Word first; SharePoint next)
-- Embeddings + pgvector
-- ACL metadata on chunks
-- Knowledge Agent
-- Admin: register source + sync job (BullMQ)
-- Citation UI in chat
+**Status:** Implemented on main line (`@onecare/knowledge-platform`).
 
-**Exit criteria:** “What is our travel policy?” returns grounded answer only from permitted docs.
+- Connector abstraction (SharePoint/Confluence/Drive/Notion stubs + local file types)
+- Ingestion (full/incremental/manual, fingerprint, soft-delete, checkpoints)
+- Normalize · metadata · ACL · chunk · embed · vector · hybrid · rerank
+- Admin APIs `/v1/knowledge-platform/*` + admin shell pages
+- Docs: ENTERPRISE_KNOWLEDGE_PLATFORM + RAG/ACL/ingestion/search/citation/ops
+- Contract: [`ENTERPRISE_KNOWLEDGE_PLATFORM.md`](./ENTERPRISE_KNOWLEDGE_PLATFORM.md)
 
+**Exit criteria:** “What is our travel/leave policy?” returns grounded answers from permitted docs; typecheck/lint/tests green; Employee Agent / AI Runtime / MCP unchanged in design.
+
+**Follow-ups:** Live SharePoint connector, pgvector/Azure AI Search adapters, BullMQ sync workers, citation chips in chat UI.
 ---
 
 ### M7 — Workflows & Manager Approvals

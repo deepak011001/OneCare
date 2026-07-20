@@ -65,6 +65,22 @@ export const envSchema = z
     AI_STREAM_CHUNK_DELAY_MS: z.coerce.number().int().nonnegative().default(8),
     CONVERSATION_STORE: z.enum(['memory', 'prisma']).default('memory'),
     CONVERSATION_RETENTION_DAYS: z.coerce.number().int().positive().default(365),
+    KNOWLEDGE_ENGINE: z.enum(['platform', 'stub']).default('platform'),
+    KNOWLEDGE_EMBEDDING_PROVIDER: z
+      .enum(['local-hash', 'azure-openai', 'openai', 'vertex', 'bedrock', 'huggingface'])
+      .default('local-hash'),
+    KNOWLEDGE_VECTOR_STORE: z
+      .enum([
+        'memory',
+        'pgvector',
+        'azure-ai-search',
+        'qdrant',
+        'pinecone',
+        'elastic',
+        'weaviate',
+        'milvus',
+      ])
+      .default('memory'),
     FEATURE_FLAGS_BOOTSTRAP: z.string().default(''),
     CONNECTOR_DEFAULT_TIMEOUT_MS: z.coerce.number().int().positive().default(15_000),
     CONNECTOR_MAX_RETRIES: z.coerce.number().int().nonnegative().default(2),

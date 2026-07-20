@@ -11,6 +11,15 @@ Living **source of truth** for product, architecture, and engineering. Cursor ru
 | [EMPLOYEE_AGENT.md](./EMPLOYEE_AGENT.md) | Employee (ESS) agent contract — intents, tools, confirmations |
 | [EMPLOYEE_CAPABILITY_FRAMEWORK.md](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) | Reusable ESS capability interface, registry, pipelines |
 | [KNOWLEDGE_CAPABILITY.md](./KNOWLEDGE_CAPABILITY.md) | Employee knowledge capability — retrieval abstraction, intents, APIs |
+| [ENTERPRISE_KNOWLEDGE_PLATFORM.md](./ENTERPRISE_KNOWLEDGE_PLATFORM.md) | M6 Enterprise Knowledge Platform overview |
+| [RAG_ARCHITECTURE.md](./RAG_ARCHITECTURE.md) | RAG pipeline layers |
+| [DOCUMENT_CONNECTORS.md](./DOCUMENT_CONNECTORS.md) | Knowledge source connectors |
+| [ACL_MODEL.md](./ACL_MODEL.md) | Document/chunk ACL |
+| [INGESTION_PIPELINE.md](./INGESTION_PIPELINE.md) | Sync, fingerprint, checkpoints |
+| [EMBEDDING_STRATEGY.md](./EMBEDDING_STRATEGY.md) | Embedding provider port |
+| [SEARCH_ARCHITECTURE.md](./SEARCH_ARCHITECTURE.md) | Hybrid search + rerank |
+| [CITATION_MODEL.md](./CITATION_MODEL.md) | Citation rules |
+| [KNOWLEDGE_OPERATIONS.md](./KNOWLEDGE_OPERATIONS.md) | Knowledge ops & admin APIs |
 | [CROSS_CAPABILITY_ORCHESTRATION.md](./CROSS_CAPABILITY_ORCHESTRATION.md) | Multi-intent Employee Agent orchestration — graph, merge, partial failure |
 | [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md) | M5.5 production hardening overview |
 | [OPERATIONS.md](./OPERATIONS.md) | Runtime ops, probes, playbooks |

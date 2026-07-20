@@ -29,6 +29,8 @@
     { "path": "../../packages/memory" },
     { "path": "../../packages/planner" },
     { "path": "../../packages/tools" },
-    { "path": "../../packages/workflows" }
+    { "path": "../../packages/workflows" },
+    { "path": "../../packages/ess-knowledge" },
+    { "path": "../../packages/knowledge-platform" }
   ]
 }

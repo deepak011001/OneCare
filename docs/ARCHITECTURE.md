@@ -196,29 +196,27 @@ ESS domain logic lives in `@onecare/ess-capability` + capability packages (e.g. 
 
 ### 6.2 Knowledge Query
 
-**Near-term (M5 Knowledge Capability — not production RAG):**
+**Employee path (capability unchanged):**
 
 ```
 User question
   → Orchestrator → Employee Agent → ess.knowledge
-  → KnowledgeRetrievalPort (stub store today; swappable)
+  → KnowledgeRetrievalPort
+       → @onecare/knowledge-platform (M6; default)
+       → stub store when KNOWLEDGE_ENGINE=stub
   → Structured answer + source attribution (+ related / follow-ups)
   → Audit query metadata (no invented sources)
 ```
 
-**Target (M6 Enterprise RAG):**
+**Platform pipeline (M6):**
 
 ```
-User question
-  → Knowledge Agent
-  → Embed query
-  → Vector search WITH ACL filters
-  → Rerank / ground
-  → Answer + citations
-  → Audit retrieval set (doc IDs only; no raw PII leakage)
+Connectors → Ingestion → Normalize → Metadata → ACL → Chunk → Embed
+  → Vector search WITH ACL → Rerank / ground → Citations
+  → Audit retrieval set (doc IDs only; no raw PII / embeddings)
 ```
 
-M6 adapters implement the same `KnowledgeRetrievalPort` so ESS capability stays engine-agnostic.
+See [`ENTERPRISE_KNOWLEDGE_PLATFORM.md`](./ENTERPRISE_KNOWLEDGE_PLATFORM.md). M6 adapters implement the same `KnowledgeRetrievalPort` so ESS capability stays engine-agnostic.
 
 ---
 
