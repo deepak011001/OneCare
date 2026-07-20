@@ -22,6 +22,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@onecare/database": "workspace:*",
     "@onecare/shared": "workspace:*"
   },
   "devDependencies": {

@@ -24,7 +24,10 @@ Consistency, security, evolvability, and clear contracts for web, agents, and fu
 
 ```
 GET    /v1/health
+GET    /v1/health/live
 GET    /v1/ready
+GET    /v1/health/ready
+GET    /v1/health/dependencies
 GET    /v1/auth/login
 POST   /v1/auth/login
 GET    /v1/auth/callback

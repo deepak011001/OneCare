@@ -63,6 +63,13 @@ export const envSchema = z
     AI_MAX_TOKENS: z.coerce.number().int().positive().default(1024),
     AI_TEMPERATURE: z.coerce.number().min(0).max(2).default(0.2),
     AI_STREAM_CHUNK_DELAY_MS: z.coerce.number().int().nonnegative().default(8),
+    CONVERSATION_STORE: z.enum(['memory', 'prisma']).default('memory'),
+    CONVERSATION_RETENTION_DAYS: z.coerce.number().int().positive().default(365),
+    FEATURE_FLAGS_BOOTSTRAP: z.string().default(''),
+    CONNECTOR_DEFAULT_TIMEOUT_MS: z.coerce.number().int().positive().default(15_000),
+    CONNECTOR_MAX_RETRIES: z.coerce.number().int().nonnegative().default(2),
+    AI_CONTEXT_MAX_CHARS: z.coerce.number().int().positive().default(32_000),
+    AI_TOKEN_BUDGET: z.coerce.number().int().positive().default(8_192),
   })
   .superRefine((env, ctx) => {
     if (env.NODE_ENV === 'production' && env.AUTH_MODE === 'development') {
@@ -70,6 +77,20 @@ export const envSchema = z
         code: z.ZodIssueCode.custom,
         path: ['AUTH_MODE'],
         message: 'AUTH_MODE=development is forbidden when NODE_ENV=production',
+      });
+    }
+    if (env.NODE_ENV === 'production' && env.SESSION_SECRET.length < 32) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['SESSION_SECRET'],
+        message: 'SESSION_SECRET must be at least 32 characters in production',
+      });
+    }
+    if (env.NODE_ENV === 'production' && env.MCP_GATEWAY_AUTH_TOKEN === 'change-me-local-only') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['MCP_GATEWAY_AUTH_TOKEN'],
+        message: 'MCP_GATEWAY_AUTH_TOKEN must be changed for production',
       });
     }
     if (env.AUTH_MODE === 'entra') {

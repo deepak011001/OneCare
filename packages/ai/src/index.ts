@@ -10,6 +10,7 @@ export * from './observability';
 export * from './orchestrator/types';
 export * from './orchestrator/master-orchestrator';
 export * from './runtime';
+export * from './hardening';
 
 /** @deprecated Prefer DOMAIN_AGENT_IDS / RegisteredAgent from catalog */
 export {
