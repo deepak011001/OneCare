@@ -19,6 +19,7 @@
     "@onecare/cache": "workspace:*",
     "@onecare/config": "workspace:*",
     "@onecare/database": "workspace:*",
+    "@onecare/ess-attendance": "workspace:*",
     "@onecare/ess-leave": "workspace:*",
     "@onecare/events": "workspace:*",
     "@onecare/mcp": "workspace:*",

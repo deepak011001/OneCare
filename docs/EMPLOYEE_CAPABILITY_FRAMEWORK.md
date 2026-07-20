@@ -66,7 +66,7 @@ Every capability exposes:
 - `findByIntent` / `resolveForMessage`
 - Aggregate `allDashboardWidgets`, `allSuggestedPrompts`, `allHelp`
 
-Composition root: `createEmployeeCapabilityRegistry()` in `@onecare/ess-leave` (registers Leave today).
+Composition root: `createEmployeeCapabilityRegistry(options, extras)` in `@onecare/ess-leave` (registers Leave; pass Attendance and future capabilities as `extras`).
 
 API surface:
 

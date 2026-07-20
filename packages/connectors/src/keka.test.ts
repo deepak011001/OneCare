@@ -46,4 +46,21 @@ describe('KekaConnector', () => {
     const data = holidays.data as { holidays?: unknown[] };
     assert.ok(Array.isArray(data.holidays));
   });
+
+  it('supports attendance today and clock in', async () => {
+    const connector = createKekaConnector();
+    await connector.initialize({ resolveSecret: async () => null });
+    const today = await connector.executeTool({
+      toolName: 'attendanceToday',
+      arguments: {},
+      context: { ...baseContext, permissions: ['attendance.read'] },
+    });
+    assert.equal(today.ok, true);
+    const clockIn = await connector.executeTool({
+      toolName: 'clockIn',
+      arguments: { location: 'Office' },
+      context: { ...baseContext, permissions: ['attendance.clockin', 'mcp.execute'] },
+    });
+    assert.equal(clockIn.ok, true);
+  });
 });
