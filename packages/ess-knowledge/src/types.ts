@@ -1,13 +1,7 @@
 /** Knowledge domain types — retrieval-engine agnostic. */
 
 export type KnowledgeDomain =
-  | 'hr'
-  | 'it'
-  | 'finance'
-  | 'company'
-  | 'learning'
-  | 'recruitment'
-  | 'general';
+  'hr' | 'it' | 'finance' | 'company' | 'learning' | 'recruitment' | 'general';
 
 export type KnowledgeCategory =
   | 'leave'
@@ -49,13 +43,7 @@ export type KnowledgeIntent =
   | 'employee.knowledge.categories';
 
 export type AnswerFormat =
-  | 'answer'
-  | 'summary'
-  | 'bullets'
-  | 'table'
-  | 'timeline'
-  | 'comparison'
-  | 'steps';
+  'answer' | 'summary' | 'bullets' | 'table' | 'timeline' | 'comparison' | 'steps';
 
 export interface KnowledgeClassification {
   readonly domain: KnowledgeDomain;

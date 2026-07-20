@@ -91,18 +91,10 @@ export function extractKnowledgeEntities(
   prior: KnowledgeSlots = {},
   now: Date = new Date(),
 ): KnowledgeSlots {
-  const extracted = extractDeclaredEntities(
-    KNOWLEDGE_ENTITIES,
-    message,
-    toSlotBag(prior),
-    now,
-  );
+  const extracted = extractDeclaredEntities(KNOWLEDGE_ENTITIES, message, toSlotBag(prior), now);
   return asKnowledgeSlots(mergeSlotBags(toSlotBag(prior), extracted));
 }
 
-export function mergeKnowledgeSlots(
-  prior: KnowledgeSlots,
-  next: KnowledgeSlots,
-): KnowledgeSlots {
+export function mergeKnowledgeSlots(prior: KnowledgeSlots, next: KnowledgeSlots): KnowledgeSlots {
   return { ...prior, ...next };
 }

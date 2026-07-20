@@ -18,7 +18,10 @@ export const PRIORITY = {
   unknown: 100,
 } as const;
 
-export function classifyNodeKind(plan: ExecutionPlan | null | undefined, capabilityId: string): GraphNodeKind {
+export function classifyNodeKind(
+  plan: ExecutionPlan | null | undefined,
+  capabilityId: string,
+): GraphNodeKind {
   if (!plan) return capabilityId === 'unknown' ? 'unknown' : 'read';
   if (plan.requiresConfirmation) return 'write';
   // Knowledge-style tools use dotted names (capability-agnostic convention)
@@ -105,8 +108,8 @@ export function buildExecutionGraph(input: {
     }
   >;
 }): ExecutionGraph {
-  const baseNodes: Omit<ExecutionGraphNode, 'status' | 'dependsOn' | 'mode'>[] = input.selections.map(
-    (selection, index) => {
+  const baseNodes: Omit<ExecutionGraphNode, 'status' | 'dependsOn' | 'mode'>[] =
+    input.selections.map((selection, index) => {
       const planned = input.plans.get(selection.segmentId);
       const kind = planned?.kind ?? classifyNodeKind(undefined, selection.capabilityId);
       return {
@@ -121,8 +124,7 @@ export function buildExecutionGraph(input: {
         requiresConfirmation: planned?.requiresConfirmation ?? false,
         ...(planned?.plan ? { plan: planned.plan } : {}),
       };
-    },
-  );
+    });
 
   const deps = detectDependencies(
     baseNodes.map((n) => ({

@@ -7,7 +7,11 @@ export interface FlagEvaluationContext {
 }
 
 export interface FeatureFlagPort {
-  isEnabled(key: string, context?: FlagEvaluationContext, defaultEnabled?: boolean): Promise<boolean>;
+  isEnabled(
+    key: string,
+    context?: FlagEvaluationContext,
+    defaultEnabled?: boolean,
+  ): Promise<boolean>;
   getValue<T = unknown>(
     key: string,
     context?: FlagEvaluationContext,

@@ -106,9 +106,7 @@ export function buildKnowledgeAnswer(input: {
   readonly hitsByRequest: ReadonlyMap<string, readonly KnowledgeSearchHit[]>;
   readonly relatedDocs?: readonly KnowledgeDocument[];
 }): KnowledgeAnswer {
-  const parts = input.requests.map((req) =>
-    buildPart(req, input.hitsByRequest.get(req.id) ?? []),
-  );
+  const parts = input.requests.map((req) => buildPart(req, input.hitsByRequest.get(req.id) ?? []));
 
   const sourcesMap = new Map<string, KnowledgeSourceAttribution>();
   for (const part of parts) {
@@ -124,9 +122,7 @@ export function buildKnowledgeAnswer(input: {
       .filter((id, i, arr) => arr.indexOf(id) === i)
       .slice(0, 5)
       .map((id) => {
-        const hit = [...input.hitsByRequest.values()]
-          .flat()
-          .find((h) => h.document.id === id);
+        const hit = [...input.hitsByRequest.values()].flat().find((h) => h.document.id === id);
         return hit ? { id, title: hit.document.title } : { id, title: id };
       });
 
@@ -142,9 +138,7 @@ export function buildKnowledgeAnswer(input: {
 
   const suggestedFollowUps = faqs.slice(0, 4);
   const confidence =
-    parts.length === 0
-      ? 0
-      : parts.reduce((sum, p) => sum + p.confidence, 0) / parts.length;
+    parts.length === 0 ? 0 : parts.reduce((sum, p) => sum + p.confidence, 0) / parts.length;
 
   const multiIntent = parts.length > 1;
   const text = parts

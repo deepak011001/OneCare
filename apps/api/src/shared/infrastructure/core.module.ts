@@ -4,12 +4,7 @@ import { createPrismaClient } from '@onecare/database';
 import { InProcessEventBus } from '@onecare/events';
 import { InMemoryFeatureFlagService } from '@onecare/feature-flags';
 import { NoOpMfaChallengePort } from '@onecare/security';
-import {
-  createSafeLogger,
-  InMemoryMetrics,
-  NoOpTracer,
-  PlatformMetrics,
-} from '@onecare/telemetry';
+import { createSafeLogger, InMemoryMetrics, NoOpTracer, PlatformMetrics } from '@onecare/telemetry';
 import { InMemoryCachePort } from '@onecare/cache';
 import { RbacPermissionChecker } from '@onecare/auth';
 import { APP_TOKENS } from '../tokens';

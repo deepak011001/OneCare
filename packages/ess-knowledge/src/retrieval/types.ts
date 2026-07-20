@@ -4,13 +4,7 @@
  */
 
 export type KnowledgeDocumentType =
-  | 'policy'
-  | 'handbook'
-  | 'sop'
-  | 'faq'
-  | 'announcement'
-  | 'guide'
-  | 'other';
+  'policy' | 'handbook' | 'sop' | 'faq' | 'announcement' | 'guide' | 'other';
 
 export interface KnowledgeDocument {
   readonly id: string;

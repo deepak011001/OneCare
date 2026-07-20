@@ -209,8 +209,7 @@ export class MasterOrchestrator implements OrchestratorPort {
         },
         ESS_SLOTS_MEMORY_KEY,
       );
-      const priorSlotsByCapability =
-        (priorRecord?.value as Record<string, SlotBag> | null) ?? {};
+      const priorSlotsByCapability = (priorRecord?.value as Record<string, SlotBag> | null) ?? {};
 
       const useCross = shouldUseCrossCapability({
         registry,

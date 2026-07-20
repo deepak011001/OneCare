@@ -23,10 +23,7 @@ import { selectCapabilities } from './capability-selector';
 import { buildExecutionGraph, detectDependencies } from './graph-builder';
 import { splitIntentSegments } from './intent-splitter';
 import { mergeClarifications, mergeConfirmations } from './mergers';
-import {
-  createCapabilityToolPort,
-  createCrossCapabilityOrchestrator,
-} from './orchestrator';
+import { createCapabilityToolPort, createCrossCapabilityOrchestrator } from './orchestrator';
 import { detectConflicts, mergeResponses } from './response';
 import type { ExecutionGraphNode } from './types';
 
@@ -105,7 +102,9 @@ function stubCapability(input: {
       return [];
     },
     suggestedPrompts(): SuggestedPromptDef[] {
-      return [{ id: `${input.id}.fu`, label: 'Follow up', prompt: 'Tell me more', kind: 'follow_up' }];
+      return [
+        { id: `${input.id}.fu`, label: 'Follow up', prompt: 'Tell me more', kind: 'follow_up' },
+      ];
     },
     helpExamples(): CapabilityHelp {
       return {
@@ -155,17 +154,13 @@ describe('ess-orchestration', () => {
   });
 
   it('splits multi-intent messages', () => {
-    const segments = splitIntentSegments(
-      'How many leaves do I have and show today attendance',
-    );
+    const segments = splitIntentSegments('How many leaves do I have and show today attendance');
     assert.ok(segments.length >= 2);
   });
 
   it('selects multiple capabilities from the registry', () => {
     const registry = createCapabilityRegistry([leave, attendance, knowledge]);
-    const segments = splitIntentSegments(
-      'How many leaves do I have? What is the leave policy?',
-    );
+    const segments = splitIntentSegments('How many leaves do I have? What is the leave policy?');
     const selections = selectCapabilities({ registry, segments });
     const ids = new Set(selections.map((s) => s.capabilityId));
     assert.ok(ids.has('ess.leave') || ids.has('ess.knowledge'));
@@ -407,7 +402,11 @@ describe('ess-orchestration', () => {
     const orchestrator = createCrossCapabilityOrchestrator({ registry });
     const tools = createCapabilityToolPort({
       getTool: () => ({ implemented: true }),
-      execute: async () => ({ ok: false, decision: 'confirmation_required', confirmationId: 'conf-1' }),
+      execute: async () => ({
+        ok: false,
+        decision: 'confirmation_required',
+        confirmationId: 'conf-1',
+      }),
     });
     const result = await orchestrator.run({
       message: 'Clock out',
@@ -560,7 +559,7 @@ describe('ess-orchestration', () => {
     writer.missingSlots = (_intent, slots) => (slots['startDate'] ? [] : ['startDate']);
     writer.extractEntities = (turn) => ({
       ...(turn.priorSlots ?? {}),
-      ...( /tomorrow/i.test(turn.message) ? { startDate: 'tomorrow' } : {}),
+      ...(/tomorrow/i.test(turn.message) ? { startDate: 'tomorrow' } : {}),
     });
 
     const registry = createCapabilityRegistry([writer]);

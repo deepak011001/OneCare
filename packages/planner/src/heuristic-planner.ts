@@ -12,7 +12,7 @@ interface RouteRule {
 }
 
 /**
- * Routing table only ?Çö domain validation/clarification lives in capabilities (e.g. ess-leave).
+ * Routing table only ?ï¿½ï¿½ domain validation/clarification lives in capabilities (e.g. ess-leave).
  * More specific leave rules are listed first (higher priority wins when multiple match).
  */
 const ROUTES: readonly RouteRule[] = [
@@ -262,9 +262,7 @@ export class HeuristicPlanner implements PlannerPort {
     ).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
     const leavePrimary = matched.find((r) => r.intent.startsWith('employee.leave.'));
-    const attendancePrimary = matched.find((r) =>
-      r.intent.startsWith('employee.attendance.'),
-    );
+    const attendancePrimary = matched.find((r) => r.intent.startsWith('employee.attendance.'));
     const knowledgePrimary = matched.find((r) => r.intent.startsWith('employee.knowledge.'));
 
     let stepsSource: RouteRule[] | null = null;

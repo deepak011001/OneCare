@@ -131,8 +131,14 @@ describe('ess-knowledge', () => {
 
   it('detects knowledge-related messages and intents', () => {
     assert.equal(isKnowledgeRelatedMessage('Where can I find the code of conduct?'), true);
-    assert.equal(detectKnowledgeIntent('Show popular knowledge questions'), 'employee.knowledge.popular');
-    assert.equal(detectKnowledgeIntent('What knowledge topics can you help with?'), 'employee.knowledge.help');
+    assert.equal(
+      detectKnowledgeIntent('Show popular knowledge questions'),
+      'employee.knowledge.popular',
+    );
+    assert.equal(
+      detectKnowledgeIntent('What knowledge topics can you help with?'),
+      'employee.knowledge.help',
+    );
   });
 
   it('builds answer structure from retrieval hits', async () => {

@@ -77,7 +77,11 @@ export class KnowledgeService {
       ],
       quickLinks: [
         { id: 'handbook', label: 'Employee Handbook', href: '/app/employee/knowledge' },
-        { id: 'leave-policy', label: 'Leave Policy', href: '/app/ai?prompt=What%20is%20our%20leave%20policy%3F' },
+        {
+          id: 'leave-policy',
+          label: 'Leave Policy',
+          href: '/app/ai?prompt=What%20is%20our%20leave%20policy%3F',
+        },
         { id: 'faqs', label: 'FAQs', href: '/app/employee/knowledge' },
       ],
       categories: categories.map((c) => ({

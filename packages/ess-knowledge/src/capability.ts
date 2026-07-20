@@ -390,8 +390,7 @@ export class KnowledgeCapability implements EmployeeCapability {
   async answerMessage(input: KnowledgeCapabilityInput): Promise<KnowledgeCapabilityOutcome> {
     const prior = input.priorSlots ?? {};
     const intent =
-      detectKnowledgeIntent(input.message, prior) ??
-      ('employee.knowledge.ask' as KnowledgeIntent);
+      detectKnowledgeIntent(input.message, prior) ?? ('employee.knowledge.ask' as KnowledgeIntent);
 
     if (
       !detectKnowledgeIntent(input.message, prior) &&
@@ -487,15 +486,9 @@ export class KnowledgeCapability implements EmployeeCapability {
     for (const request of requests) {
       const result = await this.retrieval.search({
         text: request.text,
-        ...(request.classification.domain
-          ? { domain: request.classification.domain }
-          : {}),
-        ...(request.classification.category
-          ? { category: request.classification.category }
-          : {}),
-        ...(request.classification.topic
-          ? { topics: [request.classification.topic] }
-          : {}),
+        ...(request.classification.domain ? { domain: request.classification.domain } : {}),
+        ...(request.classification.category ? { category: request.classification.category } : {}),
+        ...(request.classification.topic ? { topics: [request.classification.topic] } : {}),
         ...(slots.country ? { country: slots.country } : {}),
         limit: 5,
       });
@@ -521,9 +514,7 @@ export class KnowledgeCapability implements EmployeeCapability {
 
     const primaryHits = hitsByRequest.get(requests[0]?.id ?? '') ?? [];
     const primaryDoc = primaryHits[0]?.document;
-    const relatedDocs = primaryDoc
-      ? await this.retrieval.listRelated(primaryDoc.id, 5)
-      : [];
+    const relatedDocs = primaryDoc ? await this.retrieval.listRelated(primaryDoc.id, 5) : [];
 
     const answer = buildKnowledgeAnswer({
       requests,
@@ -540,8 +531,7 @@ export class KnowledgeCapability implements EmployeeCapability {
         primaryDoc.id,
         ...(primaryDoc.relatedIds ?? []),
       ].slice(0, 5);
-      (nextSlots as { lastTopic: string }).lastTopic =
-        primaryDoc.topics[0] ?? primaryDoc.title;
+      (nextSlots as { lastTopic: string }).lastTopic = primaryDoc.topics[0] ?? primaryDoc.title;
       (nextSlots as { lastDomain: KnowledgeSlots['lastDomain'] }).lastDomain =
         primaryDoc.domain as KnowledgeSlots['lastDomain'];
       (nextSlots as { lastCategory: KnowledgeSlots['lastCategory'] }).lastCategory =
@@ -676,9 +666,7 @@ export function createKnowledgeCapability(
   return new KnowledgeCapability(options);
 }
 
-export function formatKnowledgeAssistantMessage(
-  outcome: KnowledgeCapabilityOutcome,
-): string {
+export function formatKnowledgeAssistantMessage(outcome: KnowledgeCapabilityOutcome): string {
   if (outcome.kind === 'clarify') return outcome.question;
   if (outcome.kind === 'invalid') return outcome.message;
   if (outcome.kind === 'unsupported') return outcome.message;

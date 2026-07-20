@@ -8,17 +8,14 @@ import type {
   KnowledgeSlots,
 } from './types';
 
-const FOLLOW_UP_HINT =
-  /\b(what about|and for|how about|same for|also|similar(?:ly)?|instead)\b/i;
+const FOLLOW_UP_HINT = /\b(what about|and for|how about|same for|also|similar(?:ly)?|instead)\b/i;
 
 const HELP_HINT =
   /\b(what can you (help|answer)|knowledge (help|topics)|supported topics|search tips|what topics)\b/i;
 
-const POPULAR_HINT =
-  /\b(popular|trending|most viewed|frequently asked|common questions)\b/i;
+const POPULAR_HINT = /\b(popular|trending|most viewed|frequently asked|common questions)\b/i;
 
-const CATEGORIES_HINT =
-  /\b(knowledge categories|what topics|list categories|browse policies)\b/i;
+const CATEGORIES_HINT = /\b(knowledge categories|what topics|list categories|browse policies)\b/i;
 
 const RELATED_HINT = /\b(related (policies|documents|topics)|similar questions)\b/i;
 
@@ -152,7 +149,8 @@ export function buildKnowledgeRequests(
   prior?: KnowledgeSlots,
   intentOverride?: KnowledgeIntent,
 ): KnowledgeRequest[] {
-  const intent = intentOverride ?? detectKnowledgeIntent(message, prior) ?? 'employee.knowledge.ask';
+  const intent =
+    intentOverride ?? detectKnowledgeIntent(message, prior) ?? 'employee.knowledge.ask';
 
   if (
     intent === 'employee.knowledge.help' ||

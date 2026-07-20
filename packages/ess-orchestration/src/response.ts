@@ -13,11 +13,14 @@ export function detectConflicts(nodes: readonly ExecutionGraphNode[]): Orchestra
   const holidayMention = completed.find((n) =>
     /holiday/i.test(`${n.resultText ?? ''} ${n.segmentText}`),
   );
-  if (write && holidayMention && /leave|time\s*off|pto/i.test(write.segmentText + (write.intent ?? ''))) {
+  if (
+    write &&
+    holidayMention &&
+    /leave|time\s*off|pto/i.test(write.segmentText + (write.intent ?? ''))
+  ) {
     conflicts.push({
       code: 'WRITE_HOLIDAY_OVERLAP',
-      message:
-        'Your request may overlap a holiday. Please review dates before confirming.',
+      message: 'Your request may overlap a holiday. Please review dates before confirming.',
       capabilityIds: [write.capabilityId, holidayMention.capabilityId],
     });
   }

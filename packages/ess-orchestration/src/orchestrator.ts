@@ -10,11 +10,7 @@ import {
   type SlotBag,
 } from '@onecare/ess-capability';
 import { selectCapabilities } from './capability-selector';
-import {
-  buildExecutionGraph,
-  classifyNodeKind,
-  priorityForKind,
-} from './graph-builder';
+import { buildExecutionGraph, classifyNodeKind, priorityForKind } from './graph-builder';
 import { splitIntentSegments } from './intent-splitter';
 import { mergeClarifications, mergeConfirmations } from './mergers';
 import { detectConflicts, mergeResponses } from './response';
@@ -124,9 +120,7 @@ export class CrossCapabilityOrchestrator {
           question: lifecycle.question,
           missing: lifecycle.missing,
           slots: lifecycle.slots,
-          ...(lifecycle.suggestedReplies
-            ? { suggestedReplies: lifecycle.suggestedReplies }
-            : {}),
+          ...(lifecycle.suggestedReplies ? { suggestedReplies: lifecycle.suggestedReplies } : {}),
         };
         slotsByCapability[capability.id] = lifecycle.slots;
         planMeta.set(selection.segmentId, {
@@ -248,9 +242,16 @@ export class CrossCapabilityOrchestrator {
       const drafts: ConfirmationDraft[] = [];
       const confirmationIds: Record<string, string> = {};
       for (const node of writeNodes) {
-        await this.executeNode(node, input, new Map(), input.timeoutMs ?? this.defaultTimeoutMs, 0, () => {
-          retries += 1;
-        });
+        await this.executeNode(
+          node,
+          input,
+          new Map(),
+          input.timeoutMs ?? this.defaultTimeoutMs,
+          0,
+          () => {
+            retries += 1;
+          },
+        );
         if (node.status === 'waiting_confirmation') {
           const capability = this.options.registry.get(node.capabilityId);
           const confirmation =
@@ -561,9 +562,7 @@ export function createCrossCapabilityOrchestrator(
 
 /** Adapter from Tool Registry / MCP executor into CapabilityToolPort. */
 export function createCapabilityToolPort(input: {
-  readonly getTool: (
-    name: string,
-  ) => { implemented: boolean; connectorId?: string } | undefined;
+  readonly getTool: (name: string) => { implemented: boolean; connectorId?: string } | undefined;
   readonly execute: (req: {
     toolName: string;
     connectorId?: string;
@@ -630,11 +629,7 @@ function countParallelGroups(graph: ExecutionGraph): number {
   return graph.nodes.filter((n) => n.mode === 'parallel').length > 1 ? 1 : 0;
 }
 
-function withTimeout<T>(
-  promise: Promise<T>,
-  timeoutMs: number,
-  signal?: AbortSignal,
-): Promise<T> {
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, signal?: AbortSignal): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('TIMEOUT')), timeoutMs);
     const onAbort = () => {

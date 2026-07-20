@@ -1,4 +1,10 @@
-import { DomainError, ForbiddenError, NotFoundError, OneCareError, UnauthorizedError } from './errors';
+import {
+  DomainError,
+  ForbiddenError,
+  NotFoundError,
+  OneCareError,
+  UnauthorizedError,
+} from './errors';
 
 /** Canonical error categories for enterprise APIs — stable codes, not HTTP status. */
 export const ERROR_CATEGORIES = {

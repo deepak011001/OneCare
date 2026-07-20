@@ -35,7 +35,6 @@ export interface ConversationStorePort {
   ): Promise<Conversation>;
 }
 
-
 const idleStreaming = (): StreamingState => ({ status: 'idle', buffer: '' });
 
 export class InMemoryConversationStore implements ConversationStorePort {

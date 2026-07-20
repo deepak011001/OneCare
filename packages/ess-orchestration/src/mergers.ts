@@ -18,9 +18,7 @@ export function mergeClarifications(
   }
 
   const missing = [...new Set(entries.flatMap(([, c]) => c.missing))];
-  const replies = [
-    ...new Set(entries.flatMap(([, c]) => c.suggestedReplies ?? [])),
-  ].slice(0, 6);
+  const replies = [...new Set(entries.flatMap(([, c]) => c.suggestedReplies ?? []))].slice(0, 6);
 
   const lines = entries.map(([, c], i) => `${i + 1}. ${c.question}`);
   return {

@@ -36,9 +36,9 @@ export function shouldUseCrossCapability(input: {
   if (input.agentId === 'employee' || input.agentId === 'knowledge') return true;
   if (input.intent?.startsWith('employee.')) return true;
   if (input.planIntents.some((i) => i.startsWith('employee.'))) return true;
-  return input.registry.list().some((capability) =>
-    capability.canHandle({ message: input.message }),
-  );
+  return input.registry
+    .list()
+    .some((capability) => capability.canHandle({ message: input.message }));
 }
 
 export async function runCrossCapabilityTurn(input: {
@@ -217,9 +217,7 @@ function emitResultEvents(
 
   if (result.kind === 'confirmation_required') {
     const first = result.confirmation.items[0];
-    const firstId = first
-      ? result.confirmation.confirmationIds[first.toolName]
-      : undefined;
+    const firstId = first ? result.confirmation.confirmationIds[first.toolName] : undefined;
     onEvent({
       type: 'confirmation_required',
       sequence: 0,

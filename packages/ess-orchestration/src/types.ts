@@ -7,13 +7,7 @@ import type {
   SlotBag,
 } from '@onecare/ess-capability';
 
-export type GraphNodeKind =
-  | 'read'
-  | 'write'
-  | 'knowledge'
-  | 'clarify'
-  | 'confirm'
-  | 'unknown';
+export type GraphNodeKind = 'read' | 'write' | 'knowledge' | 'clarify' | 'confirm' | 'unknown';
 
 export type GraphNodeStatus =
   | 'pending'

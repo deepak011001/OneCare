@@ -19,14 +19,8 @@ describe('ai hardening hooks', () => {
 
   it('enforces token budget', () => {
     const budget = new DefaultTokenBudget();
-    assert.equal(
-      budget.allow({ estimatedPromptTokens: 100, maxTokens: 50, budget: 200 }),
-      true,
-    );
-    assert.equal(
-      budget.allow({ estimatedPromptTokens: 180, maxTokens: 50, budget: 200 }),
-      false,
-    );
+    assert.equal(budget.allow({ estimatedPromptTokens: 100, maxTokens: 50, budget: 200 }), true);
+    assert.equal(budget.allow({ estimatedPromptTokens: 180, maxTokens: 50, budget: 200 }), false);
   });
 
   it('allow-all safety hook permits traffic', async () => {

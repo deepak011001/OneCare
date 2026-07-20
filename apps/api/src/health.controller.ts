@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  Optional,
-  ServiceUnavailableException,
-} from '@nestjs/common';
+import { Controller, Get, Inject, Optional, ServiceUnavailableException } from '@nestjs/common';
 import { AGENT_IDS, type AiRuntime } from '@onecare/ai';
 import type { CachePort } from '@onecare/cache';
 import type { OneCareEnv } from '@onecare/config';

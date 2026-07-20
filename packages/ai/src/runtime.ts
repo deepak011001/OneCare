@@ -86,12 +86,10 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
   ]);
   const leaveCapability =
     (employeeCapabilities.get('ess.leave') as
-      | ReturnType<typeof createLeaveCapability>
-      | undefined) ?? createLeaveCapability();
+      ReturnType<typeof createLeaveCapability> | undefined) ?? createLeaveCapability();
   const attendanceCapability =
     (employeeCapabilities.get('ess.attendance') as
-      | ReturnType<typeof createAttendanceCapability>
-      | undefined) ?? createAttendanceCapability();
+      ReturnType<typeof createAttendanceCapability> | undefined) ?? createAttendanceCapability();
 
   let lastOrchestrationDiagnostics: OrchestrationDiagnostics | null = null;
 

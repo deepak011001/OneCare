@@ -52,7 +52,9 @@ function scoreDocument(doc: KnowledgeDocument, query: KnowledgeSearchQuery): num
 export class StubKnowledgeStore implements KnowledgeRetrievalPort {
   readonly engineId = 'stub-memory';
 
-  constructor(private readonly documents: readonly KnowledgeDocument[] = STUB_KNOWLEDGE_DOCUMENTS) {}
+  constructor(
+    private readonly documents: readonly KnowledgeDocument[] = STUB_KNOWLEDGE_DOCUMENTS,
+  ) {}
 
   async search(query: KnowledgeSearchQuery): Promise<KnowledgeSearchResult> {
     const started = Date.now();

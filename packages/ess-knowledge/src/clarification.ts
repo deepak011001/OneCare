@@ -43,7 +43,8 @@ export function needsKnowledgeClarification(input: {
   ) {
     return {
       missing: ['query'],
-      question: 'What would you like to know? You can ask about policies, benefits, IT, or finance.',
+      question:
+        'What would you like to know? You can ask about policies, benefits, IT, or finance.',
       suggestedReplies: [
         'What is our leave policy?',
         'Can I work from home?',

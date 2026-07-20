@@ -179,8 +179,7 @@ export class PrismaConversationStore implements ConversationStorePort {
   }
 
   private map(row: PrismaConversationRow): Conversation {
-    const streaming =
-      this.streaming.get(this.key(row.tenantId, row.id)) ?? idleStreaming();
+    const streaming = this.streaming.get(this.key(row.tenantId, row.id)) ?? idleStreaming();
     const messages: ConversationMessage[] = (row.messages ?? []).map((m) => {
       const meta =
         m.metadataJson && typeof m.metadataJson === 'object'
