@@ -1,5 +1,5 @@
 {
-  "name": "@onecare/ess-leave",
+  "name": "@onecare/ess-capability",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -22,7 +22,6 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@onecare/ess-capability": "workspace:*",
     "@onecare/shared": "workspace:*"
   },
   "devDependencies": {

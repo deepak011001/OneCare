@@ -15,6 +15,7 @@
     { "path": "../tools" },
     { "path": "../confirmations" },
     { "path": "../policies" },
+    { "path": "../ess-capability" },
     { "path": "../ess-leave" }
   ]
 }

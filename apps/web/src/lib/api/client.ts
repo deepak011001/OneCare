@@ -186,6 +186,12 @@ export const api = {
     ),
   getLeaveTypes: () => request<ApiEnvelope<unknown>>('/v1/leave/types'),
   getLeaveBalance: () => request<ApiEnvelope<unknown>>('/v1/leave/balance'),
+  getEmployeeCapabilities: () => request<ApiEnvelope<unknown>>('/v1/employee/capabilities'),
+  getEmployeeCapabilityWidgets: () =>
+    request<ApiEnvelope<unknown>>('/v1/employee/capabilities/widgets'),
+  getEmployeeCapabilityPrompts: () =>
+    request<ApiEnvelope<unknown>>('/v1/employee/capabilities/prompts'),
+  getEmployeeCapabilityHelp: () => request<ApiEnvelope<unknown>>('/v1/employee/capabilities/help'),
 };
 
 export function getApiBaseUrl(): string {

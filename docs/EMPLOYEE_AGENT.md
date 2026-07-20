@@ -86,10 +86,11 @@ Intents are stable strings. Add new intents in this table before shipping tools/
 
 ## 4. Capabilities
 
-Capabilities are coarse product claims; intents map to them for Admin / feature flags.
+Capabilities are coarse product claims implemented via the **Employee Capability Framework** ([`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md)). Intents map to registered capabilities for Admin / feature flags.
 
 | Capability ID | Description | M5 |
 |---------------|-------------|-----|
+| `ess.leave` | Leave read/write via `@onecare/ess-leave` (framework reference) | ✓ |
 | `ess.leave.read` | Read balance and history for self | ✓ |
 | `ess.leave.write` | Apply / cancel own leave | ✓ |
 | `ess.attendance.read` | Read own attendance | Later |
@@ -104,6 +105,7 @@ Capabilities are coarse product claims; intents map to them for Admin / feature 
 1. Capabilities operate **only on the authenticated principal** unless a future ABAC policy explicitly allows otherwise.
 2. The agent never “acts as” another employee via LLM-supplied IDs.
 3. Vendor mapping (email → HRIS employee id) happens in MCP / connector identity propagation — not in prompts.
+4. New ESS domains **implement `EmployeeCapability` and register** — do not duplicate leave’s clarify/validate/confirm logic.
 
 ---
 

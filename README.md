@@ -62,6 +62,7 @@ pnpm lint
 | `@onecare/policies` | Tool execution policy engine |
 | `@onecare/confirmations` | Human-in-the-loop confirmation store |
 | `@onecare/mcp` | MCP gateway, registry, resilience |
+| `@onecare/ess-capability` | Employee capability framework (registry, entities, validate/clarify) |
 | `@onecare/ess-leave` | Employee leave capability (intents, dates, validation, clarify/confirm) |
 | `@onecare/workflows` | Workflow engine contracts |
 | `@onecare/integrations` | Integration adapter ports |
