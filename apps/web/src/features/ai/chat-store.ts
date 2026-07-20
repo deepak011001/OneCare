@@ -1,11 +1,14 @@
 import { create } from 'zustand';
 import type { ChatMessageView, ConversationSummary, ExecutionPlanView } from './types';
+import type { PendingConfirmation } from './components/tool-confirmation-card';
 
 type ChatState = {
   conversations: ConversationSummary[];
   activeConversationId: string | null;
   messages: ChatMessageView[];
   plan: ExecutionPlanView | null;
+  pendingConfirmation: PendingConfirmation | null;
+  toolStatus: string | null;
   streaming: boolean;
   error: string | null;
   setConversations: (items: ConversationSummary[]) => void;
@@ -14,6 +17,8 @@ type ChatState = {
   appendMessage: (message: ChatMessageView) => void;
   updateStreamingAssistant: (content: string) => void;
   setPlan: (plan: ExecutionPlanView | null) => void;
+  setPendingConfirmation: (pending: PendingConfirmation | null) => void;
+  setToolStatus: (status: string | null) => void;
   setStreaming: (value: boolean) => void;
   setError: (error: string | null) => void;
   resetActive: () => void;
@@ -24,6 +29,8 @@ export const useChatStore = create<ChatState>((set) => ({
   activeConversationId: null,
   messages: [],
   plan: null,
+  pendingConfirmation: null,
+  toolStatus: null,
   streaming: false,
   error: null,
   setConversations: (conversations) => set({ conversations }),
@@ -46,6 +53,8 @@ export const useChatStore = create<ChatState>((set) => ({
       };
     }),
   setPlan: (plan) => set({ plan }),
+  setPendingConfirmation: (pendingConfirmation) => set({ pendingConfirmation }),
+  setToolStatus: (toolStatus) => set({ toolStatus }),
   setStreaming: (streaming) => set({ streaming }),
   setError: (error) => set({ error }),
   resetActive: () =>
@@ -53,6 +62,8 @@ export const useChatStore = create<ChatState>((set) => ({
       activeConversationId: null,
       messages: [],
       plan: null,
+      pendingConfirmation: null,
+      toolStatus: null,
       error: null,
       streaming: false,
     }),

@@ -82,7 +82,13 @@ export class AiController {
   async chat(
     @Req() req: AuthenticatedRequest & Request,
     @Res() res: Response,
-    @Body() body: { message?: string; conversationId?: string; stream?: boolean },
+    @Body()
+    body: {
+      message?: string;
+      conversationId?: string;
+      stream?: boolean;
+      approvedToolConfirmations?: Record<string, string>;
+    },
   ) {
     const message = body.message?.trim();
     if (!message) {
@@ -98,6 +104,9 @@ export class AiController {
         message,
         context: req.requestContext!,
         ...(body.conversationId ? { conversationId: body.conversationId } : {}),
+        ...(body.approvedToolConfirmations
+          ? { approvedToolConfirmations: body.approvedToolConfirmations }
+          : {}),
       });
       res.status(200).json({
         data: {
@@ -132,6 +141,9 @@ export class AiController {
           message,
           context: req.requestContext!,
           ...(body.conversationId ? { conversationId: body.conversationId } : {}),
+          ...(body.approvedToolConfirmations
+            ? { approvedToolConfirmations: body.approvedToolConfirmations }
+            : {}),
         },
         (event) => sse.emit({ type: event.type, data: event.data }),
         abort.signal,

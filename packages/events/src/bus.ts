@@ -41,4 +41,5 @@ export const DOMAIN_EVENTS = {
   AI_PLAN_CREATED: 'AiPlanCreated',
   AI_AGENT_INVOKED: 'AiAgentInvoked',
   AI_STREAM_COMPLETED: 'AiStreamCompleted',
+  MCP_TOOL_EXECUTED: 'McpToolExecuted',
 } as const;

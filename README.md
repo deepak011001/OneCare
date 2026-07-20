@@ -56,8 +56,12 @@ pnpm lint
 | `@onecare/prompts` | Versioned prompt templates & rendering |
 | `@onecare/memory` | Conversation / user / session / agent memory ports |
 | `@onecare/planner` | Execution planning (single / multi-agent) |
-| `@onecare/tools` | Tool registry interfaces (placeholders in M3) |
-| `@onecare/mcp` | MCP protocol types & gateway client |
+| `@onecare/tools` | Tool metadata registry + MCP executor |
+| `@onecare/connector-sdk` | Enterprise connector contract |
+| `@onecare/connectors` | Vendor connectors (Keka leave tools) |
+| `@onecare/policies` | Tool execution policy engine |
+| `@onecare/confirmations` | Human-in-the-loop confirmation store |
+| `@onecare/mcp` | MCP gateway, registry, resilience |
 | `@onecare/workflows` | Workflow engine contracts |
 | `@onecare/integrations` | Integration adapter ports |
 | `@onecare/telemetry` | Logging, AI metrics hooks & OpenTelemetry |
@@ -69,7 +73,7 @@ Start at [`docs/README.md`](./docs/README.md). Cursor agents: see [`AGENTS.md`](
 
 ## Milestone
 
-Current: **M3 AI Platform Core** — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+Current: **M4 Enterprise MCP Platform** — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ### API + database (M1)
 

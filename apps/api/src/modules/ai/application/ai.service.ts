@@ -81,6 +81,7 @@ export class AiService {
     message: string;
     context: RequestContext;
     conversationId?: string;
+    approvedToolConfirmations?: Readonly<Record<string, string>>;
   }): Promise<ChatResult> {
     await this.events.publish({
       name: DOMAIN_EVENTS.AI_CHAT_STARTED,
@@ -94,6 +95,9 @@ export class AiService {
       message: input.message,
       context: input.context,
       ...(input.conversationId ? { conversationId: input.conversationId } : {}),
+      ...(input.approvedToolConfirmations
+        ? { approvedToolConfirmations: input.approvedToolConfirmations }
+        : {}),
     });
 
     await this.events.publish({
@@ -133,6 +137,7 @@ export class AiService {
       message: string;
       context: RequestContext;
       conversationId?: string;
+      approvedToolConfirmations?: Readonly<Record<string, string>>;
     },
     onEvent: (event: StreamEvent) => void,
     signal?: AbortSignal,
@@ -151,6 +156,9 @@ export class AiService {
         context: input.context,
         stream: true,
         ...(input.conversationId ? { conversationId: input.conversationId } : {}),
+        ...(input.approvedToolConfirmations
+          ? { approvedToolConfirmations: input.approvedToolConfirmations }
+          : {}),
       },
       onEvent,
       signal,

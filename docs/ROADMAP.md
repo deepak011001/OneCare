@@ -107,7 +107,22 @@ M0 Foundations
 
 ---
 
-### M4 — First Domain Slice: Leave via MCP
+### M4 — Enterprise MCP Platform & Connector Framework
+
+**Outcome:** Production MCP gateway, connector SDK, Keka leave tools, confirmation + policy engine.
+
+- `@onecare/connector-sdk`, `@onecare/connectors`, `@onecare/policies`, `@onecare/confirmations`
+- MCP gateway: registry, discovery, execute, retry, circuit breaker, telemetry
+- Keka connector (stub + optional REST): `leaveBalance`, `applyLeave`, `cancelLeave`, `leaveHistory`
+- API: `/v1/mcp/*`; AI tool registry wired to gateway; confirmation UX in `/app/ai`
+
+**Exit criteria:** Tool execution E2E for leave reads; write tools gated by confirmation; lint/typecheck/tests green.
+
+**Status:** Implemented in codebase (M4 integration platform slice).
+
+---
+
+### M4 (legacy doc) — First Domain Slice: Leave via MCP
 
 **Outcome:** Real business value — apply/balance leave.
 
@@ -120,7 +135,7 @@ M0 Foundations
 
 **Exit criteria:** Employee can check balance and apply leave end-to-end in a tenant.
 
----
+**Note:** ESS leave UI and notifications deferred — see M5+ in product backlog.
 
 ### M5 — Knowledge Platform (Enterprise RAG)
 

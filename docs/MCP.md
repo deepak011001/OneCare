@@ -29,13 +29,16 @@
                                               External System API
 ```
 
-OneCare hosts an **MCP Client Gateway** that:
+OneCare hosts an **MCP Client Gateway** (`apps/mcp-gateway`, `@onecare/mcp`) that:
 
-- Resolves tenant → MCP server endpoints  
-- Injects auth material from secret store (never from LLM)  
-- Enforces tool allowlists per agent  
-- Logs tool calls (name, latency, status, redacted args)  
-- Applies circuit breakers and timeouts  
+- Resolves tenant → connector registrations  
+- Injects auth material from secret store (`secret_ref` / env — never from LLM)  
+- Enforces tool allowlists + `@onecare/policies` execution policies  
+- Supports confirmation gates via `@onecare/confirmations`  
+- Logs tool calls (name, latency, status, redacted args) + audit events  
+- Applies circuit breakers, timeouts, and retries  
+
+Connectors implement `@onecare/connector-sdk` (`packages/connectors/*`). The API exposes `/v1/mcp/*` for discovery and execution; the AI runtime invokes tools through the same gateway (planner unchanged).
 
 ---
 
@@ -107,7 +110,7 @@ MCP server maps this to vendor identity (SCIM ID, email, employee number) via te
 | `leaveBalance` | read | low |
 | `applyLeave` | write | medium |
 | `cancelLeave` | write | medium |
-| `listLeaveRequests` | read | low |
+| `leaveHistory` | read | low |
 
 ### Attendance
 

@@ -9,6 +9,8 @@ export interface ChatRequest {
   readonly conversationId?: string;
   readonly context: RequestContext;
   readonly stream?: boolean;
+  /** Approved confirmation IDs keyed by tool name (after user confirms in UI). */
+  readonly approvedToolConfirmations?: Readonly<Record<string, string>>;
 }
 
 export interface PlanRequest {

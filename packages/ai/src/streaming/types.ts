@@ -1,7 +1,15 @@
 export type StreamTransport = 'sse' | 'websocket' | 'chunked';
 
 export type StreamEventType =
-  'conversation' | 'plan' | 'agent' | 'delta' | 'tool' | 'done' | 'error' | 'cancelled';
+  | 'conversation'
+  | 'plan'
+  | 'agent'
+  | 'delta'
+  | 'tool'
+  | 'confirmation_required'
+  | 'done'
+  | 'error'
+  | 'cancelled';
 
 export interface StreamEvent<T = unknown> {
   readonly type: StreamEventType;

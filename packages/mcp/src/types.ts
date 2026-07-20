@@ -18,6 +18,7 @@ export interface McpExecutionContext {
   readonly correlationId: CorrelationId;
   readonly roles: readonly string[];
   readonly attributes: Readonly<Record<string, unknown>>;
+  readonly permissions?: readonly string[];
 }
 
 export interface McpToolCallRequest {

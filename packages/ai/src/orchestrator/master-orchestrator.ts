@@ -7,7 +7,7 @@ import {
 import type { MemoryFacade } from '@onecare/memory';
 import type { ExecutionPlan, PlannerPort } from '@onecare/planner';
 import type { PromptRegistryPort } from '@onecare/prompts';
-import type { ToolRegistryPort } from '@onecare/tools';
+import type { ToolRegistryPort, ToolExecutorPort } from '@onecare/tools';
 import type { AgentRegistryPort } from '../agents/registry';
 import { estimateCostUsd, type AiObservabilityPort, type AiObservation } from '../observability';
 import type { LlmProviderPort } from '../providers/types';
@@ -23,6 +23,12 @@ export interface MasterOrchestratorDeps {
   readonly prompts: PromptRegistryPort;
   readonly llm: LlmProviderPort;
   readonly observability: AiObservabilityPort;
+  readonly toolExecutor?: ToolExecutorPort;
+  readonly resolveConfirmationApproved?: (
+    tenantId: string,
+    userId: string,
+    confirmationId: string,
+  ) => Promise<boolean>;
 }
 
 /**
@@ -172,17 +178,86 @@ export class MasterOrchestrator implements OrchestratorPort {
         .map((t) => `${t.name} (implemented=${t.implemented})`)
         .join(', ') ?? 'none';
 
+    const toolResultSummaries: string[] = [];
+
     for (const toolName of primary?.toolNames ?? []) {
       const tool = this.deps.tools.get(toolName);
+      if (!tool || !tool.implemented || !this.deps.toolExecutor) {
+        onEvent({
+          type: 'tool',
+          sequence: 0,
+          data: {
+            name: toolName,
+            status: 'skipped',
+            reason: tool?.implemented === false ? 'placeholder_only' : 'unavailable',
+          },
+        });
+        continue;
+      }
+
+      const confirmationId = input.approvedToolConfirmations?.[toolName];
+      let confirmationApproved = false;
+      if (confirmationId && this.deps.resolveConfirmationApproved) {
+        confirmationApproved = await this.deps.resolveConfirmationApproved(
+          String(input.context.tenantId),
+          String(input.context.userId),
+          confirmationId,
+        );
+      }
+
+      const execution = await this.deps.toolExecutor.execute({
+        toolName,
+        connectorId: tool.connectorId,
+        arguments: {},
+        context: {
+          tenantId: input.context.tenantId,
+          userId: input.context.userId,
+          correlationId: input.context.correlationId,
+          roles: input.context.roles,
+          permissions: input.context.permissions,
+          attributes: input.context.attributes,
+        },
+        confirmationApproved,
+      });
+
+      if (execution.decision === 'confirmation_required') {
+        onEvent({
+          type: 'confirmation_required',
+          sequence: 0,
+          data: {
+            toolName,
+            connectorId: tool.connectorId,
+            confirmationId: execution.confirmationId,
+            summary: execution.errorMessage,
+          },
+        });
+        onEvent({
+          type: 'tool',
+          sequence: 0,
+          data: {
+            name: toolName,
+            status: 'pending_confirmation',
+            confirmationId: execution.confirmationId,
+          },
+        });
+        continue;
+      }
+
       onEvent({
         type: 'tool',
         sequence: 0,
         data: {
           name: toolName,
-          status: 'skipped',
-          reason: tool?.implemented === false ? 'placeholder_only' : 'unavailable',
+          status: execution.ok ? 'completed' : 'failed',
+          ...(execution.data !== undefined ? { result: execution.data } : {}),
+          ...(execution.errorMessage ? { errorMessage: execution.errorMessage } : {}),
+          latencyMs: execution.latencyMs,
         },
       });
+
+      if (execution.ok && execution.data !== undefined) {
+        toolResultSummaries.push(`${toolName}: ${JSON.stringify(execution.data)}`);
+      }
     }
 
     const completionMessages = [
@@ -190,7 +265,7 @@ export class MasterOrchestrator implements OrchestratorPort {
       ...(agentPrompt ? [{ role: 'system' as const, content: agentPrompt.content }] : []),
       {
         role: 'system' as const,
-        content: `Active plan: ${plan.summary}. Placeholder tools: ${toolHints}.`,
+        content: `Active plan: ${plan.summary}. Tools: ${toolHints}.${toolResultSummaries.length ? ` Tool results: ${toolResultSummaries.join(' | ')}.` : ''}`,
       },
       { role: 'user' as const, content: input.message },
     ];

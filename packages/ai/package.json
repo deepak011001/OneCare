@@ -22,10 +22,12 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@onecare/confirmations": "workspace:*",
     "@onecare/conversations": "workspace:*",
     "@onecare/mcp": "workspace:*",
     "@onecare/memory": "workspace:*",
     "@onecare/planner": "workspace:*",
+    "@onecare/policies": "workspace:*",
     "@onecare/prompts": "workspace:*",
     "@onecare/shared": "workspace:*",
     "@onecare/tools": "workspace:*"

@@ -12,6 +12,7 @@ export const AUDIT_ACTIONS = {
   AI_CHAT: 'ai.chat',
   AI_PLAN: 'ai.plan',
   AI_STREAM: 'ai.stream',
+  MCP_TOOL_EXECUTE: 'mcp.tool.execute',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];

@@ -2,6 +2,7 @@ import { Module, type NestModule, type MiddlewareConsumer } from '@nestjs/common
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { CoreModule } from './shared/infrastructure/core.module';
 import { IdentityModule } from './modules/identity/identity.module';
+import { McpModule } from './modules/mcp/mcp.module';
 import { AiModule } from './modules/ai/ai.module';
 import { HealthController } from './health.controller';
 import { GlobalExceptionFilter } from './shared/presentation/global-exception.filter';
@@ -10,7 +11,7 @@ import { correlationMiddleware } from './shared/presentation/correlation.middlew
 import { RateLimitMiddleware } from './shared/presentation/rate-limit.middleware';
 
 @Module({
-  imports: [CoreModule, IdentityModule, AiModule],
+  imports: [CoreModule, IdentityModule, McpModule, AiModule],
   controllers: [HealthController],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },

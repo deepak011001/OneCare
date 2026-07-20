@@ -14,6 +14,8 @@ export const PERMISSIONS = {
   ADMIN_ROLE_MANAGE: 'admin.role.manage',
   ADMIN_AUDIT_READ: 'admin.audit.read',
   MCP_EXECUTE: 'mcp.execute',
+  MCP_CONNECTORS_READ: 'mcp.connectors.read',
+  MCP_TOOLS_READ: 'mcp.tools.read',
   WORKFLOW_EXECUTE: 'workflow.execute',
   RBAC_ROLE_READ: 'rbac.role.read',
   RBAC_PERMISSION_READ: 'rbac.permission.read',
