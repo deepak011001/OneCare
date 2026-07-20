@@ -20,6 +20,12 @@ export const AUDIT_ACTIONS = {
   LEAVE_APPLY: 'leave.apply',
   LEAVE_CANCEL: 'leave.cancel',
   LEAVE_CONFIRMATION_REJECTED: 'leave.confirmation.rejected',
+  ATTENDANCE_VIEW: 'attendance.view',
+  ATTENDANCE_CLOCK_IN: 'attendance.clock_in',
+  ATTENDANCE_CLOCK_OUT: 'attendance.clock_out',
+  ATTENDANCE_REGULARIZE: 'attendance.regularize',
+  ATTENDANCE_VIEW_DENIED: 'attendance.view.denied',
+  ATTENDANCE_CONFIRMATION_REJECTED: 'attendance.confirmation.rejected',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];

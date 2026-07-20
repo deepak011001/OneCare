@@ -82,9 +82,55 @@ const ROUTES: readonly RouteRule[] = [
   },
   {
     agentId: 'employee',
+    intent: 'employee.attendance.clock_out',
+    patterns: [/\bclock\s*(me\s*)?out\b/i, /\bcheck\s*out\b/i],
+    toolNames: ['clockOut'],
+    risk: 'medium',
+    requiresConfirmation: true,
+    priority: 98,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.clock_in',
+    patterns: [/\bclock\s*(me\s*)?in\b/i, /\bcheck\s*in\b/i, /\bmark\s+(my\s+)?attendance\b/i],
+    toolNames: ['clockIn'],
+    priority: 97,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.regularize',
+    patterns: [/\bregularize\b/i, /\battendance\s+regularization\b/i],
+    toolNames: ['attendanceRegularization'],
+    risk: 'medium',
+    requiresConfirmation: true,
+    priority: 96,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.today',
+    patterns: [/\bam i checked in\b/i, /\btoday'?s attendance\b/i, /\battendance today\b/i],
+    toolNames: ['attendanceToday'],
+    priority: 88,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.summary',
+    patterns: [/\battendance summary\b/i, /\bwfh\b/i, /\bworking hours\b/i],
+    toolNames: ['attendanceSummary', 'workingHours'],
+    priority: 87,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.history',
+    patterns: [/\battendance history\b/i, /\bshow (this month'?s |my )?attendance\b/i],
+    toolNames: ['attendanceHistory'],
+    priority: 86,
+  },
+  {
+    agentId: 'employee',
     intent: 'employee.self_service',
     patterns: [/leave/i, /balance/i, /attendance/i, /payslip/i, /my profile/i],
-    toolNames: ['leaveBalance', 'attendance'],
+    toolNames: ['leaveBalance', 'attendanceToday'],
     priority: 40,
   },
   {
@@ -161,10 +207,13 @@ export class HeuristicPlanner implements PlannerPort {
       route.patterns.some((pattern) => pattern.test(input.message)),
     ).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
-    // Prefer single best leave/employee route when multiple employee leave signals fire
+    // Prefer single best employee domain route when multiple ESS signals fire
     const primary = matched[0];
     const stepsSource =
-      primary && primary.agentId === 'employee' && primary.intent.startsWith('employee.leave.')
+      primary &&
+      primary.agentId === 'employee' &&
+      (primary.intent.startsWith('employee.leave.') ||
+        primary.intent.startsWith('employee.attendance.'))
         ? [primary]
         : matched.length > 0
           ? matched

@@ -64,6 +64,7 @@ pnpm lint
 | `@onecare/mcp` | MCP gateway, registry, resilience |
 | `@onecare/ess-capability` | Employee capability framework (registry, entities, validate/clarify) |
 | `@onecare/ess-leave` | Employee leave capability (intents, dates, validation, clarify/confirm) |
+| `@onecare/ess-attendance` | Employee attendance capability (clock in/out, history, regularization) |
 | `@onecare/workflows` | Workflow engine contracts |
 | `@onecare/integrations` | Integration adapter ports |
 | `@onecare/telemetry` | Logging, AI metrics hooks & OpenTelemetry |

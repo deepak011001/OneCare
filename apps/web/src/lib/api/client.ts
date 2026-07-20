@@ -186,6 +186,16 @@ export const api = {
     ),
   getLeaveTypes: () => request<ApiEnvelope<unknown>>('/v1/leave/types'),
   getLeaveBalance: () => request<ApiEnvelope<unknown>>('/v1/leave/balance'),
+  getAttendanceDashboard: () => request<ApiEnvelope<unknown>>('/v1/attendance/dashboard'),
+  getAttendanceToday: () => request<ApiEnvelope<unknown>>('/v1/attendance/today'),
+  getAttendanceHistory: (status?: string) =>
+    request<ApiEnvelope<unknown>>(
+      `/v1/attendance/history${status ? `?status=${encodeURIComponent(status)}` : ''}`,
+    ),
+  getAttendanceSummary: (month?: string) =>
+    request<ApiEnvelope<unknown>>(
+      `/v1/attendance/summary${month ? `?month=${encodeURIComponent(month)}` : ''}`,
+    ),
   getEmployeeCapabilities: () => request<ApiEnvelope<unknown>>('/v1/employee/capabilities'),
   getEmployeeCapabilityWidgets: () =>
     request<ApiEnvelope<unknown>>('/v1/employee/capabilities/widgets'),
