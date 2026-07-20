@@ -220,9 +220,13 @@ export function ChatWorkspace() {
                   try {
                     await api.approveMcpConfirmation(pendingConfirmation.confirmationId);
                     setPendingConfirmation(null);
-                    await sendMessage(lastMessageRef.current, {
-                      [pendingConfirmation.toolName]: pendingConfirmation.confirmationId,
-                    }, { skipUserMessage: true });
+                    await sendMessage(
+                      lastMessageRef.current,
+                      {
+                        [pendingConfirmation.toolName]: pendingConfirmation.confirmationId,
+                      },
+                      { skipUserMessage: true },
+                    );
                   } catch (err) {
                     setError(err instanceof Error ? err.message : 'Confirmation failed');
                   } finally {

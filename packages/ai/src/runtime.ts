@@ -14,7 +14,10 @@ import type { InMemoryConfirmationStore } from '@onecare/confirmations';
 import type { PolicyEngine } from '@onecare/policies';
 import { createDefaultAgentRegistry } from './agents/registry';
 import { InMemoryAiObservability } from './observability';
-import { createMasterOrchestrator, type MasterOrchestrator } from './orchestrator/master-orchestrator';
+import {
+  createMasterOrchestrator,
+  type MasterOrchestrator,
+} from './orchestrator/master-orchestrator';
 import { createDefaultLlmProviderRegistry } from './providers/registry';
 import type { LlmProviderId } from './providers/types';
 

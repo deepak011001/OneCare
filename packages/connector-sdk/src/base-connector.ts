@@ -50,8 +50,7 @@ export abstract class BaseEnterpriseConnector implements EnterpriseConnector {
       const message = error instanceof Error ? error.message : 'connector_error';
       const code =
         error instanceof ConnectorInvocationError ? error.code : 'CONNECTOR_EXECUTION_FAILED';
-      const retryable =
-        error instanceof ConnectorInvocationError ? error.retryable : false;
+      const retryable = error instanceof ConnectorInvocationError ? error.retryable : false;
       return {
         ok: false,
         latencyMs: Date.now() - started,

@@ -34,3 +34,4 @@ packages/database/prisma/*.db-journal
 # Misc
 tmp
 .cache
+.tools

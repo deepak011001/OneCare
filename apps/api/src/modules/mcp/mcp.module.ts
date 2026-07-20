@@ -14,7 +14,8 @@ import { McpController } from './presentation/mcp.controller';
     },
     {
       provide: MCP_TOKENS.GATEWAY,
-      useFactory: async (platform: Awaited<ReturnType<typeof createMcpPlatform>>) => platform.gateway,
+      useFactory: async (platform: Awaited<ReturnType<typeof createMcpPlatform>>) =>
+        platform.gateway,
       inject: [MCP_TOKENS.PLATFORM],
     },
     McpService,

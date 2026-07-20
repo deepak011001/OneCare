@@ -98,6 +98,9 @@ export class InMemoryConfirmationStore implements ConfirmationStorePort {
   }
 }
 
-export function buildConfirmationSummary(toolName: string, args: Readonly<Record<string, unknown>>): string {
+export function buildConfirmationSummary(
+  toolName: string,
+  args: Readonly<Record<string, unknown>>,
+): string {
   return `Confirm execution of ${toolName} with ${JSON.stringify(args)}`;
 }

@@ -1,10 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import {
-  asCorrelationId,
-  asTenantId,
-  asUserId,
-} from '@onecare/shared';
+import { asCorrelationId, asTenantId, asUserId } from '@onecare/shared';
 import { BaseEnterpriseConnector } from './base-connector';
 import type { ConnectorHealthReport, ConnectorToolDefinition } from './types';
 

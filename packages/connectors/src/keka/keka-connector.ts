@@ -149,7 +149,7 @@ export class KekaRestClient implements KekaHttpClient {
     await this.request('/api/v1/health', { method: 'GET' });
   }
 
-  async getLeaveBalance(context: ConnectorToolCallRequest): Promise<unknown> {
+  async getLeaveBalance(_context: ConnectorToolCallRequest): Promise<unknown> {
     return this.request(`/api/v1/hr/employees/me/leave/balance`, { method: 'GET' });
   }
 
@@ -250,7 +250,9 @@ export class KekaConnector extends BaseEnterpriseConnector {
     }
   }
 
-  override async initialize(secrets: Parameters<BaseEnterpriseConnector['initialize']>[0]): Promise<void> {
+  override async initialize(
+    secrets: Parameters<BaseEnterpriseConnector['initialize']>[0],
+  ): Promise<void> {
     await super.initialize(secrets);
     if (this.options.httpClient) return;
     const baseUrl = this.options.apiBaseUrl ?? process.env.KEKA_API_BASE_URL;

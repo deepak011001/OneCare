@@ -1,11 +1,6 @@
 import type { CorrelationId, TenantId, UserId } from '@onecare/shared';
 
-export type ConnectorAuthType =
-  | 'oauth2'
-  | 'bearer'
-  | 'api_key'
-  | 'basic'
-  | 'custom';
+export type ConnectorAuthType = 'oauth2' | 'bearer' | 'api_key' | 'basic' | 'custom';
 
 export type ConnectorHealthStatus = 'healthy' | 'degraded' | 'down' | 'unknown';
 

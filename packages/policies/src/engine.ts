@@ -37,9 +37,7 @@ export class PermissionPolicy implements ExecutionPolicy {
   readonly id = 'permission';
 
   evaluate(context: PolicyEvaluationContext): PolicyEvaluationResult {
-    const missing = context.requiredPermissions.filter(
-      (p) => !context.permissions.includes(p),
-    );
+    const missing = context.requiredPermissions.filter((p) => !context.permissions.includes(p));
     if (missing.length > 0) {
       return {
         decision: 'deny',

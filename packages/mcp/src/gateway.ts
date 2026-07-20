@@ -54,9 +54,9 @@ export class McpGatewayService {
     return this.registry.list().find((c) => c.id === id) ?? null;
   }
 
-  listTools(connectorId?: string): Array<
-    ConnectorToolDefinition & { connectorId: string; connectorName: string }
-  > {
+  listTools(
+    connectorId?: string,
+  ): Array<ConnectorToolDefinition & { connectorId: string; connectorName: string }> {
     const items: Array<ConnectorToolDefinition & { connectorId: string; connectorName: string }> =
       [];
     for (const reg of this.registry.list()) {
@@ -91,7 +91,13 @@ export class McpGatewayService {
     const started = Date.now();
     const connector = this.registry.get(request.connectorId);
     if (!connector) {
-      return this.fail(started, request, 'CONNECTOR_NOT_FOUND', 'Connector is not registered', false);
+      return this.fail(
+        started,
+        request,
+        'CONNECTOR_NOT_FOUND',
+        'Connector is not registered',
+        false,
+      );
     }
     const registration = this.registry.list().find((c) => c.id === request.connectorId);
     if (registration?.healthStatus === 'down') {
@@ -260,7 +266,9 @@ export class EnvConnectorSecrets implements ConnectorSecrets {
   }
 }
 
-export function createDefaultMcpGateway(connectors: import('@onecare/connector-sdk').EnterpriseConnector[]): {
+export function createDefaultMcpGateway(
+  connectors: import('@onecare/connector-sdk').EnterpriseConnector[],
+): {
   registry: ConnectorRegistry;
   gateway: McpGatewayService;
 } {

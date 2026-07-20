@@ -1,11 +1,13 @@
 import type { McpGatewayService } from '@onecare/mcp';
 import type { PolicyEngine } from '@onecare/policies';
-import type {
-  ConfirmationStorePort,
-  CreateConfirmationInput,
-} from '@onecare/confirmations';
+import type { ConfirmationStorePort, CreateConfirmationInput } from '@onecare/confirmations';
 import { buildConfirmationSummary } from '@onecare/confirmations';
-import type { ToolExecutorPort, ToolExecutionInput, ToolExecutionResult, ToolRegistryPort } from './types';
+import type {
+  ToolExecutorPort,
+  ToolExecutionInput,
+  ToolExecutionResult,
+  ToolRegistryPort,
+} from './types';
 
 export interface McpToolExecutorDeps {
   readonly gateway: McpGatewayService;

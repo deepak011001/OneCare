@@ -167,10 +167,13 @@ export const api = {
     arguments?: Record<string, unknown>;
     confirmationId?: string;
   }) =>
-    request<ApiEnvelope<{ ok: boolean; data?: unknown; errorMessage?: string }>>('/v1/mcp/execute', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    }),
+    request<ApiEnvelope<{ ok: boolean; data?: unknown; errorMessage?: string }>>(
+      '/v1/mcp/execute',
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+    ),
 };
 
 export function getApiBaseUrl(): string {
