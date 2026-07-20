@@ -58,6 +58,12 @@ Intents are stable strings. Add new intents in this table before shipping tools/
 | `employee.leave.holidays` | “What holidays…?” | `holidayCalendar` | No |
 | `employee.leave.enough` | “Do I have enough sick leave?” | `leaveBalance` | No |
 | `employee.leave.status` | “When is my leave approved?” | `leaveHistory` | No |
+| `employee.attendance.today` | “Am I checked in today?” | `attendanceToday` | No |
+| `employee.attendance.history` | “Show this month’s attendance” | `attendanceHistory` | No |
+| `employee.attendance.summary` | “Attendance summary / WFH” | `attendanceSummary` | No |
+| `employee.attendance.clock_in` | “Clock me in” | `clockIn` | No |
+| `employee.attendance.clock_out` | “Clock me out” | `clockOut` | **Yes** |
+| `employee.attendance.regularize` | “Regularize attendance” | `attendanceRegularization` | **Yes** |
 
 ### 3.2 Knowledge (M5 Slice 3)
 
@@ -74,9 +80,6 @@ See [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md).
 
 | Intent | Notes |
 |--------|--------|
-| `employee.attendance.status` | Today’s punch / status |
-| `employee.attendance.history` | Recent attendance |
-| `employee.attendance.clock_in` / `clock_out` | Write; confirm |
 | `employee.profile.read` | Own profile fields only |
 | `employee.payroll.payslip` | PII; confirm / mask in logs |
 | `employee.payroll.salary_history` | High risk PII; confirm + policy |
@@ -101,11 +104,12 @@ Capabilities are coarse product claims implemented via the **Employee Capability
 | Capability ID | Description | M5 |
 |---------------|-------------|-----|
 | `ess.leave` | Leave read/write via `@onecare/ess-leave` (framework reference) | ✓ |
+| `ess.attendance` | Attendance via `@onecare/ess-attendance` | ✓ |
 | `ess.leave.read` | Read balance and history for self | ✓ |
 | `ess.leave.write` | Apply / cancel own leave | ✓ |
+| `ess.attendance.read` | Read own attendance | ✓ |
+| `ess.attendance.write` | Clock in/out / regularize (if allowed) | ✓ |
 | `ess.knowledge` | Enterprise knowledge Q&A via `@onecare/ess-knowledge` (retrieval abstraction; not production RAG) | ✓ |
-| `ess.attendance.read` | Read own attendance | Later |
-| `ess.attendance.write` | Clock in/out / regularize (if allowed) | Later |
 | `ess.profile.read` | Read own profile | Later |
 | `ess.payroll.read` | Payslip / salary history (self) | Later |
 | `ess.clarify` | Ask for missing slots before tools | ✓ |
@@ -130,6 +134,10 @@ Authorization is Application-layer RBAC (+ future ABAC). Tool metadata `permissi
 | `holidayCalendar` | `holiday.read` |
 | `applyLeave` | `leave.apply`, `mcp.execute` |
 | `cancelLeave` | `leave.cancel`, `mcp.execute` |
+| `attendanceToday`, `attendanceHistory`, `attendanceSummary`, `shiftSchedule`, `workingHours` | `attendance.read` |
+| `clockIn` | `attendance.clockin`, `mcp.execute` |
+| `clockOut` | `attendance.clockout`, `mcp.execute` |
+| `attendanceRegularization` | `attendance.regularize`, `mcp.execute` |
 | Chat / stream | `ai.chat` |
 | Knowledge ask / search / dashboard | `knowledge.search` |
 | List MCP tools (debug/admin surfaces) | `mcp.tools.read` |

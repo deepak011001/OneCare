@@ -14,6 +14,16 @@ import {
   formatLeaveAssistantMessage,
   isLeaveRelatedMessage,
 } from '@onecare/ess-leave';
+import type {
+  AttendanceCapability,
+  AttendanceSlots,
+  AttendanceTodaySnapshot,
+} from '@onecare/ess-attendance';
+import {
+  createAttendanceCapability,
+  formatAttendanceAssistantMessage,
+  isAttendanceRelatedMessage,
+} from '@onecare/ess-attendance';
 import type { KnowledgeCapability, KnowledgeSlots } from '@onecare/ess-knowledge';
 import {
   createKnowledgeCapability,
@@ -27,6 +37,7 @@ import type { StreamEvent } from '../streaming/types';
 import type { ChatRequest, ChatResult, OrchestratorPort, PlanRequest } from './types';
 
 const LEAVE_SLOTS_MEMORY_KEY = 'leave.slots';
+const ATTENDANCE_SLOTS_MEMORY_KEY = 'attendance.slots';
 const KNOWLEDGE_SLOTS_MEMORY_KEY = 'knowledge.slots';
 
 export interface MasterOrchestratorDeps {
@@ -40,6 +51,7 @@ export interface MasterOrchestratorDeps {
   readonly observability: AiObservabilityPort;
   readonly toolExecutor?: ToolExecutorPort;
   readonly leaveCapability?: LeaveCapability;
+  readonly attendanceCapability?: AttendanceCapability;
   readonly knowledgeCapability?: KnowledgeCapability;
   readonly resolveConfirmationApproved?: (
     tenantId: string,
@@ -49,7 +61,7 @@ export interface MasterOrchestratorDeps {
 }
 
 /**
- * Master Orchestrator — runtime only.
+ * Master Orchestrator ??? runtime only.
  * No domain business logic, no MCP calls, no vendor SDKs.
  */
 export class MasterOrchestrator implements OrchestratorPort {
@@ -197,12 +209,13 @@ export class MasterOrchestrator implements OrchestratorPort {
 
     const toolResultSummaries: string[] = [];
     let leaveAssistantOverride: string | null = null;
+    let attendanceAssistantOverride: string | null = null;
     let knowledgeAssistantOverride: string | null = null;
     let skipLlm = false;
 
     const leaveCapability = this.deps.leaveCapability ?? createLeaveCapability();
+    const attendanceCapability = this.deps.attendanceCapability ?? createAttendanceCapability();
     const knowledgeCapability = this.deps.knowledgeCapability ?? createKnowledgeCapability();
-    const planHasLeave = plan.steps.some((s) => s.intent.startsWith('employee.leave'));
     const planHasKnowledge = plan.steps.some(
       (s) =>
         s.intent.startsWith('employee.knowledge') ||
@@ -213,15 +226,27 @@ export class MasterOrchestrator implements OrchestratorPort {
       Boolean(this.deps.toolExecutor) &&
       (primary?.agentId === 'employee' || isLeaveRelatedMessage(input.message)) &&
       (primary?.intent?.startsWith('employee.leave') ||
-        planHasLeave ||
         isLeaveRelatedMessage(input.message) ||
-        Boolean(input.approvedToolConfirmations));
+        Boolean(input.approvedToolConfirmations)) &&
+      !isAttendanceRelatedMessage(input.message) &&
+      !primary?.intent?.startsWith('employee.knowledge');
+
+    const useAttendanceCapability =
+      Boolean(this.deps.toolExecutor) &&
+      !useLeaveCapability &&
+      (primary?.agentId === 'employee' || isAttendanceRelatedMessage(input.message)) &&
+      (primary?.intent?.startsWith('employee.attendance') ||
+        isAttendanceRelatedMessage(input.message) ||
+        Boolean(input.approvedToolConfirmations)) &&
+      !primary?.intent?.startsWith('employee.knowledge');
+
     const useKnowledgeCapability =
       planHasKnowledge ||
       primary?.intent?.startsWith('employee.knowledge') ||
       primary?.agentId === 'knowledge' ||
-      (!useLeaveCapability && isKnowledgeRelatedMessage(input.message)) ||
-      (planHasLeave && isKnowledgeRelatedMessage(input.message));
+      (!useLeaveCapability &&
+        !useAttendanceCapability &&
+        isKnowledgeRelatedMessage(input.message));
 
     if (useLeaveCapability && this.deps.toolExecutor) {
       const priorRecord = await this.deps.memory.conversation.load(
@@ -447,6 +472,184 @@ export class MasterOrchestrator implements OrchestratorPort {
           }
         }
       }
+    } else if (useAttendanceCapability && this.deps.toolExecutor) {
+      const priorRecord = await this.deps.memory.conversation.load(
+        {
+          tenantId: String(input.context.tenantId),
+          conversationId: String(conversation.id),
+        },
+        ATTENDANCE_SLOTS_MEMORY_KEY,
+      );
+      const priorSlots = (priorRecord?.value as AttendanceSlots | null) ?? {};
+
+      let today: AttendanceTodaySnapshot | undefined;
+      const todayTool = this.deps.tools.get('attendanceToday');
+      if (todayTool?.implemented) {
+        const todayResult = await this.deps.toolExecutor.execute({
+          toolName: 'attendanceToday',
+          connectorId: todayTool.connectorId,
+          arguments: {},
+          context: {
+            tenantId: input.context.tenantId,
+            userId: input.context.userId,
+            correlationId: input.context.correlationId,
+            roles: input.context.roles,
+            permissions: input.context.permissions,
+            attributes: input.context.attributes,
+          },
+          confirmationApproved: true,
+        });
+        if (todayResult.ok && todayResult.data && typeof todayResult.data === 'object') {
+          today = todayResult.data as AttendanceTodaySnapshot;
+        }
+      }
+
+      const outcome = attendanceCapability.process({
+        message: input.message,
+        priorSlots,
+        ...(today ? { today } : {}),
+      });
+
+      if (
+        outcome.kind === 'clarify' ||
+        outcome.kind === 'invalid' ||
+        outcome.kind === 'unsupported'
+      ) {
+        await this.deps.memory.conversation.save(
+          {
+            tenantId: String(input.context.tenantId),
+            conversationId: String(conversation.id),
+          },
+          ATTENDANCE_SLOTS_MEMORY_KEY,
+          outcome.kind === 'clarify' ? outcome.slots : priorSlots,
+        );
+        if (outcome.kind === 'clarify') {
+          onEvent({
+            type: 'clarification',
+            sequence: 0,
+            data: {
+              question: outcome.question,
+              missing: outcome.missing,
+              intent: outcome.intent,
+            },
+          });
+          if (outcome.suggestedReplies?.length) {
+            onEvent({
+              type: 'suggested_replies',
+              sequence: 0,
+              data: { replies: outcome.suggestedReplies },
+            });
+          }
+        }
+        attendanceAssistantOverride = formatAttendanceAssistantMessage(outcome);
+        skipLlm = true;
+      } else if (outcome.kind === 'ready') {
+        await this.deps.memory.conversation.save(
+          {
+            tenantId: String(input.context.tenantId),
+            conversationId: String(conversation.id),
+          },
+          ATTENDANCE_SLOTS_MEMORY_KEY,
+          outcome.slots,
+        );
+
+        const tool = this.deps.tools.get(outcome.toolName);
+        if (!tool?.implemented) {
+          attendanceAssistantOverride = 'That attendance action is not available yet.';
+          skipLlm = true;
+        } else {
+          const confirmationId = input.approvedToolConfirmations?.[outcome.toolName];
+          let confirmationApproved = false;
+          if (confirmationId && this.deps.resolveConfirmationApproved) {
+            confirmationApproved = await this.deps.resolveConfirmationApproved(
+              String(input.context.tenantId),
+              String(input.context.userId),
+              confirmationId,
+            );
+          }
+
+          const execution = await this.deps.toolExecutor.execute({
+            toolName: outcome.toolName,
+            connectorId: tool.connectorId,
+            arguments: outcome.arguments,
+            context: {
+              tenantId: input.context.tenantId,
+              userId: input.context.userId,
+              correlationId: input.context.correlationId,
+              roles: input.context.roles,
+              permissions: input.context.permissions,
+              attributes: {
+                ...input.context.attributes,
+                ...(outcome.confirmationSummary
+                  ? { confirmationSummary: outcome.confirmationSummary }
+                  : {}),
+              },
+            },
+            confirmationApproved,
+          });
+
+          if (execution.decision === 'confirmation_required') {
+            onEvent({
+              type: 'confirmation_required',
+              sequence: 0,
+              data: {
+                toolName: outcome.toolName,
+                connectorId: tool.connectorId,
+                confirmationId: execution.confirmationId,
+                summary: outcome.confirmationSummary ?? execution.errorMessage,
+                arguments: outcome.arguments,
+              },
+            });
+            onEvent({
+              type: 'tool',
+              sequence: 0,
+              data: {
+                name: outcome.toolName,
+                status: 'pending_confirmation',
+                confirmationId: execution.confirmationId,
+              },
+            });
+            attendanceAssistantOverride =
+              outcome.confirmationSummary ?? 'Please confirm this attendance action to continue.';
+            skipLlm = true;
+          } else {
+            onEvent({
+              type: 'tool',
+              sequence: 0,
+              data: {
+                name: outcome.toolName,
+                status: execution.ok ? 'completed' : 'failed',
+                ...(execution.data !== undefined ? { result: execution.data } : {}),
+                ...(execution.errorMessage ? { errorMessage: execution.errorMessage } : {}),
+                latencyMs: execution.latencyMs,
+              },
+            });
+            if (execution.ok) {
+              await this.deps.memory.conversation.save(
+                {
+                  tenantId: String(input.context.tenantId),
+                  conversationId: String(conversation.id),
+                },
+                ATTENDANCE_SLOTS_MEMORY_KEY,
+                {},
+              );
+              attendanceAssistantOverride = formatAttendanceAssistantMessage(
+                outcome,
+                execution.data,
+              );
+              toolResultSummaries.push(
+                `${outcome.toolName}: ${JSON.stringify(execution.data ?? {})}`,
+              );
+              skipLlm = true;
+            } else {
+              attendanceAssistantOverride =
+                execution.errorMessage ??
+                'I could not complete that attendance request. Please try again.';
+              skipLlm = true;
+            }
+          }
+        }
+      }
     }
 
     if (useKnowledgeCapability) {
@@ -523,7 +726,7 @@ export class MasterOrchestrator implements OrchestratorPort {
 
       knowledgeAssistantOverride = formatKnowledgeAssistantMessage(outcome);
       skipLlm = true;
-    } else if (!useLeaveCapability) {
+    } else if (!useLeaveCapability && !useAttendanceCapability) {
       for (const toolName of primary?.toolNames ?? []) {
         const tool = this.deps.tools.get(toolName);
         if (!tool || !tool.implemented || !this.deps.toolExecutor) {
@@ -627,8 +830,15 @@ export class MasterOrchestrator implements OrchestratorPort {
     });
 
     try {
-      if (skipLlm && (leaveAssistantOverride || knowledgeAssistantOverride)) {
-        assistantText = [leaveAssistantOverride, knowledgeAssistantOverride]
+      if (
+        skipLlm &&
+        (leaveAssistantOverride || attendanceAssistantOverride || knowledgeAssistantOverride)
+      ) {
+        assistantText = [
+          leaveAssistantOverride,
+          attendanceAssistantOverride,
+          knowledgeAssistantOverride,
+        ]
           .filter((part): part is string => Boolean(part))
           .join('\n\n');
         for (const word of assistantText.split(/(\s+)/)) {

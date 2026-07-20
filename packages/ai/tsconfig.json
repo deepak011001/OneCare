@@ -17,6 +17,7 @@
     { "path": "../policies" },
     { "path": "../ess-capability" },
     { "path": "../ess-leave" },
+    { "path": "../ess-attendance" },
     { "path": "../ess-knowledge" }
   ]
 }

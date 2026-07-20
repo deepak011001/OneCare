@@ -12,7 +12,7 @@ interface RouteRule {
 }
 
 /**
- * Routing table only â€” domain validation/clarification lives in capabilities (e.g. ess-leave).
+ * Routing table only ?Çö domain validation/clarification lives in capabilities (e.g. ess-leave).
  * More specific leave rules are listed first (higher priority wins when multiple match).
  */
 const ROUTES: readonly RouteRule[] = [
@@ -83,12 +83,55 @@ const ROUTES: readonly RouteRule[] = [
   {
     agentId: 'employee',
     intent: 'employee.knowledge.ask',
-    patterns: [
-      /\bmaternity\b/i,
-      /\bpaternity\b/i,
-    ],
+    patterns: [/\bmaternity\b/i, /\bpaternity\b/i],
     toolNames: ['knowledge.search'],
     priority: 82,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.clock_out',
+    patterns: [/\bclock\s*(me\s*)?out\b/i, /\bcheck\s*out\b/i],
+    toolNames: ['clockOut'],
+    risk: 'medium',
+    requiresConfirmation: true,
+    priority: 98,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.clock_in',
+    patterns: [/\bclock\s*(me\s*)?in\b/i, /\bcheck\s*in\b/i, /\bmark\s+(my\s+)?attendance\b/i],
+    toolNames: ['clockIn'],
+    priority: 97,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.regularize',
+    patterns: [/\bregularize\b/i, /\battendance\s+regularization\b/i],
+    toolNames: ['attendanceRegularization'],
+    risk: 'medium',
+    requiresConfirmation: true,
+    priority: 96,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.today',
+    patterns: [/\bam i checked in\b/i, /\btoday'?s attendance\b/i, /\battendance today\b/i],
+    toolNames: ['attendanceToday'],
+    priority: 88,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.summary',
+    patterns: [/\battendance summary\b/i, /\bwfh\b/i, /\bworking hours\b/i],
+    toolNames: ['attendanceSummary', 'workingHours'],
+    priority: 87,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.attendance.history',
+    patterns: [/\battendance history\b/i, /\bshow (this month'?s |my )?attendance\b/i],
+    toolNames: ['attendanceHistory'],
+    priority: 86,
   },
   {
     agentId: 'employee',
@@ -129,9 +172,6 @@ const ROUTES: readonly RouteRule[] = [
       /\bhandbook\b/i,
       /\bcode of conduct\b/i,
       /\bwork from home\b/i,
-      /\bwfh\b/i,
-      /\bmaternity\b/i,
-      /\bpaternity\b/i,
       /\breimburs/i,
       /\ballowance\b/i,
       /\bprobation\b/i,
@@ -151,7 +191,7 @@ const ROUTES: readonly RouteRule[] = [
     agentId: 'employee',
     intent: 'employee.self_service',
     patterns: [/leave/i, /balance/i, /attendance/i, /payslip/i, /my profile/i],
-    toolNames: ['leaveBalance', 'attendance'],
+    toolNames: ['leaveBalance', 'attendanceToday'],
     priority: 40,
   },
   {
@@ -214,7 +254,7 @@ const ROUTES: readonly RouteRule[] = [
   },
 ];
 
-/** Intent router only â€” no domain business rules. */
+/** Intent router only ? no domain business rules. */
 export class HeuristicPlanner implements PlannerPort {
   async plan(input: PlannerInput): Promise<ExecutionPlan> {
     const matched = ROUTES.filter((route) =>
@@ -222,17 +262,23 @@ export class HeuristicPlanner implements PlannerPort {
     ).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
     const leavePrimary = matched.find((r) => r.intent.startsWith('employee.leave.'));
+    const attendancePrimary = matched.find((r) =>
+      r.intent.startsWith('employee.attendance.'),
+    );
     const knowledgePrimary = matched.find((r) => r.intent.startsWith('employee.knowledge.'));
 
     let stepsSource: RouteRule[] | null = null;
     if (leavePrimary && knowledgePrimary) {
       stepsSource = [leavePrimary, knowledgePrimary];
+    } else if (attendancePrimary && knowledgePrimary) {
+      stepsSource = [attendancePrimary, knowledgePrimary];
     } else if (leavePrimary) {
       stepsSource = [leavePrimary];
+    } else if (attendancePrimary) {
+      stepsSource = [attendancePrimary];
     } else if (knowledgePrimary) {
       stepsSource = [knowledgePrimary];
     } else if (matched.length > 1) {
-      // Keep multi-agent coordination for non-ESS routes (e.g. manager + notification)
       const seen = new Set<string>();
       stepsSource = matched.filter((route) => {
         const key = `${route.agentId}:${route.intent}`;
@@ -262,7 +308,8 @@ export class HeuristicPlanner implements PlannerPort {
               id: 'step-1',
               agentId: 'employee',
               intent: 'employee.knowledge.ask',
-              rationale: 'Default employee knowledge-safe route when no strong domain signal is present',
+              rationale:
+                'Default employee knowledge-safe route when no strong domain signal is present',
               requiresConfirmation: false,
               risk: 'low' as const,
               status: 'pending' as const,

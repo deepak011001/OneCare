@@ -14,6 +14,7 @@ import type { InMemoryConfirmationStore } from '@onecare/confirmations';
 import type { PolicyEngine } from '@onecare/policies';
 import type { CapabilityRegistry } from '@onecare/ess-capability';
 import { createEmployeeCapabilityRegistry, createLeaveCapability } from '@onecare/ess-leave';
+import { createAttendanceCapability } from '@onecare/ess-attendance';
 import { createKnowledgeCapability } from '@onecare/ess-knowledge';
 import { createDefaultAgentRegistry } from './agents/registry';
 import { InMemoryAiObservability } from './observability';
@@ -72,12 +73,17 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
   const observability = new InMemoryAiObservability();
   const knowledgeCapability = createKnowledgeCapability();
   const employeeCapabilities = createEmployeeCapabilityRegistry(undefined, [
+    createAttendanceCapability(),
     knowledgeCapability,
   ]);
   const leaveCapability =
     (employeeCapabilities.get('ess.leave') as
       | ReturnType<typeof createLeaveCapability>
       | undefined) ?? createLeaveCapability();
+  const attendanceCapability =
+    (employeeCapabilities.get('ess.attendance') as
+      | ReturnType<typeof createAttendanceCapability>
+      | undefined) ?? createAttendanceCapability();
 
   const toolExecutor =
     options?.integration &&
@@ -109,6 +115,7 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
     llm,
     observability,
     leaveCapability,
+    attendanceCapability,
     knowledgeCapability,
   };
 

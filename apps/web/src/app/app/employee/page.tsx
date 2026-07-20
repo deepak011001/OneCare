@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { PageContainer, PageHeader } from '@/components/ui/page';
 import { LeaveDashboardWidgets } from '@/features/leave/leave-dashboard-widgets';
+import { AttendanceDashboardWidgets } from '@/features/attendance/attendance-dashboard-widgets';
 import { KnowledgeDashboardWidgets } from '@/features/knowledge/knowledge-dashboard-widgets';
 
 export default function EmployeePage() {
@@ -14,10 +15,10 @@ export default function EmployeePage() {
       <Breadcrumb items={[{ label: 'App', href: '/app/dashboard' }, { label: 'Employee' }]} />
       <PageHeader
         title="Employee Services"
-        description="Self-service leave and knowledge experiences powered by the Employee Agent."
+        description="Self-service leave, attendance, and knowledge powered by the Employee Agent."
         actions={
           <Button asChild size="sm">
-            <Link href="/app/ai?prompt=What%20is%20my%20leave%20balance%3F">Ask OneCare AI</Link>
+            <Link href="/app/ai?prompt=What%20is%20our%20leave%20policy%3F">Ask OneCare AI</Link>
           </Button>
         }
       />
@@ -35,12 +36,12 @@ export default function EmployeePage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Holidays</CardTitle>
-            <CardDescription>Upcoming company holidays</CardDescription>
+            <CardTitle>Attendance</CardTitle>
+            <CardDescription>Today status, history, and calendar</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" size="sm">
-              <Link href="/app/employee/leave/holidays">Open</Link>
+              <Link href="/app/employee/attendance">Open</Link>
             </Button>
           </CardContent>
         </Card>
@@ -57,20 +58,22 @@ export default function EmployeePage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Apply leave</CardTitle>
-            <CardDescription>Multi-turn leave apply via AI</CardDescription>
+            <CardTitle>Clock in</CardTitle>
+            <CardDescription>Mark attendance via AI</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" size="sm">
-              <Link href="/app/ai?prompt=Apply%20leave">Start</Link>
+              <Link href="/app/ai?prompt=Clock%20me%20in">Start</Link>
             </Button>
           </CardContent>
         </Card>
       </div>
       <div className="space-y-8">
         <LeaveDashboardWidgets />
+        <AttendanceDashboardWidgets />
         <KnowledgeDashboardWidgets />
       </div>
     </PageContainer>
   );
 }
+

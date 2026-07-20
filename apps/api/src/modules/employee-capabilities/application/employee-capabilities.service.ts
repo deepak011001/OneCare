@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { createEmployeeCapabilityRegistry } from '@onecare/ess-leave';
+import { createAttendanceCapability } from '@onecare/ess-attendance';
 import { createKnowledgeCapability } from '@onecare/ess-knowledge';
+import { createEmployeeCapabilityRegistry } from '@onecare/ess-leave';
 
 @Injectable()
 export class EmployeeCapabilitiesService {
   private readonly registry = createEmployeeCapabilityRegistry(undefined, [
+    createAttendanceCapability(),
     createKnowledgeCapability(),
   ]);
 
