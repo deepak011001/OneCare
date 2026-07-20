@@ -32,6 +32,7 @@ If a rule and a doc ever conflict, **update the doc first**, then tighten the ru
 | NestJS / APIs | `API_STANDARDS.md`, `ARCHITECTURE.md` |
 | Next.js / UI | `UI_GUIDELINES.md`, `CODING_GUIDELINES.md` |
 | Agents / LangGraph | `AI_AGENTS.md`, `MCP.md` |
+| Employee / ESS Agent | `EMPLOYEE_AGENT.md`, `MCP.md`, `AI_AGENTS.md` |
 | Prisma / schema | `DATABASE.md`, `SECURITY.md` |
 | Connectors | `MCP.md`, `INTEGRATIONS.md` |
 | Approvals / long-running | `WORKFLOWS.md` |

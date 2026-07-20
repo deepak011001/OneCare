@@ -9,6 +9,7 @@ type ChatState = {
   plan: ExecutionPlanView | null;
   pendingConfirmation: PendingConfirmation | null;
   toolStatus: string | null;
+  suggestedReplies: string[];
   streaming: boolean;
   error: string | null;
   setConversations: (items: ConversationSummary[]) => void;
@@ -19,6 +20,7 @@ type ChatState = {
   setPlan: (plan: ExecutionPlanView | null) => void;
   setPendingConfirmation: (pending: PendingConfirmation | null) => void;
   setToolStatus: (status: string | null) => void;
+  setSuggestedReplies: (replies: string[]) => void;
   setStreaming: (value: boolean) => void;
   setError: (error: string | null) => void;
   resetActive: () => void;
@@ -31,6 +33,7 @@ export const useChatStore = create<ChatState>((set) => ({
   plan: null,
   pendingConfirmation: null,
   toolStatus: null,
+  suggestedReplies: [],
   streaming: false,
   error: null,
   setConversations: (conversations) => set({ conversations }),
@@ -55,6 +58,7 @@ export const useChatStore = create<ChatState>((set) => ({
   setPlan: (plan) => set({ plan }),
   setPendingConfirmation: (pendingConfirmation) => set({ pendingConfirmation }),
   setToolStatus: (toolStatus) => set({ toolStatus }),
+  setSuggestedReplies: (suggestedReplies) => set({ suggestedReplies }),
   setStreaming: (streaming) => set({ streaming }),
   setError: (error) => set({ error }),
   resetActive: () =>
@@ -64,6 +68,7 @@ export const useChatStore = create<ChatState>((set) => ({
       plan: null,
       pendingConfirmation: null,
       toolStatus: null,
+      suggestedReplies: [],
       error: null,
       streaming: false,
     }),

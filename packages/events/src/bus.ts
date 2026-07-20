@@ -42,4 +42,7 @@ export const DOMAIN_EVENTS = {
   AI_AGENT_INVOKED: 'AiAgentInvoked',
   AI_STREAM_COMPLETED: 'AiStreamCompleted',
   MCP_TOOL_EXECUTED: 'McpToolExecuted',
+  LEAVE_TOOL_READ: 'LeaveToolRead',
+  LEAVE_APPLIED: 'LeaveApplied',
+  LEAVE_CANCELLED: 'LeaveCancelled',
 } as const;
