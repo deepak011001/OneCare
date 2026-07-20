@@ -39,7 +39,7 @@ function toBullets(body: string): string[] {
     .map((l) => l.trim())
     .filter(Boolean)
     .slice(0, 6)
-    .map((l) => l.replace(/^[•\-]\s*/, ''));
+    .map((l) => l.replace(/^[•-]\s*/, ''));
 }
 
 function toSteps(body: string): string[] {
