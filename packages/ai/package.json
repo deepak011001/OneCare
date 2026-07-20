@@ -18,11 +18,19 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings=0",
-    "test": "node -e \"process.exit(0)\"",
+    "test": "node --import tsx --test src/**/*.test.ts src/**/**/*.test.ts",
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@onecare/conversations": "workspace:*",
     "@onecare/mcp": "workspace:*",
-    "@onecare/shared": "workspace:*"
+    "@onecare/memory": "workspace:*",
+    "@onecare/planner": "workspace:*",
+    "@onecare/prompts": "workspace:*",
+    "@onecare/shared": "workspace:*",
+    "@onecare/tools": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
   }
 }

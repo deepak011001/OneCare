@@ -19,6 +19,11 @@ export const PERMISSIONS = {
   RBAC_PERMISSION_READ: 'rbac.permission.read',
   TENANT_READ: 'tenant.read',
   AUTH_SESSION_REVOKE: 'auth.session.revoke',
+  AI_CHAT: 'ai.chat',
+  AI_PLAN: 'ai.plan',
+  AI_AGENTS_READ: 'ai.agents.read',
+  AI_TOOLS_READ: 'ai.tools.read',
+  AI_MODELS_READ: 'ai.models.read',
 } as const;
 
 export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

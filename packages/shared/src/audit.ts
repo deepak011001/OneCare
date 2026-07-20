@@ -9,6 +9,9 @@ export const AUDIT_ACTIONS = {
   PERMISSION_CHANGED: 'rbac.permission.changed',
   PROFILE_UPDATED: 'user.profile.updated',
   TENANT_CREATED: 'tenant.created',
+  AI_CHAT: 'ai.chat',
+  AI_PLAN: 'ai.plan',
+  AI_STREAM: 'ai.stream',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];

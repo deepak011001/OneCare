@@ -94,7 +94,12 @@ onecare/
 │   ├── security/            # Crypto, CSRF helpers, MFA extension ports
 │   ├── cache/               # CachePort / Redis session cache contracts
 │   ├── events/              # Domain event bus (in-process; Kafka later)
-│   ├── ai/                  # Agent contracts & catalog
+│   ├── ai/                  # LLM providers, orchestrator, agent registry, streaming
+│   ├── conversations/       # Conversation / message entities & store ports
+│   ├── prompts/             # Versioned prompt templates & rendering
+│   ├── memory/              # Conversation / user / session / agent memory ports
+│   ├── planner/             # Execution plan abstraction (single/multi-agent)
+│   ├── tools/               # Tool registry (interfaces + placeholders)
 │   ├── mcp/                 # MCP tool types & gateway port
 │   ├── workflows/           # Workflow engine ports
 │   ├── integrations/        # Connector registry ports

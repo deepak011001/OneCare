@@ -81,6 +81,9 @@ importers:
       '@onecare/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@onecare/conversations':
+        specifier: workspace:*
+        version: link:../../packages/conversations
       '@onecare/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -90,6 +93,15 @@ importers:
       '@onecare/mcp':
         specifier: workspace:*
         version: link:../../packages/mcp
+      '@onecare/memory':
+        specifier: workspace:*
+        version: link:../../packages/memory
+      '@onecare/planner':
+        specifier: workspace:*
+        version: link:../../packages/planner
+      '@onecare/prompts':
+        specifier: workspace:*
+        version: link:../../packages/prompts
       '@onecare/security':
         specifier: workspace:*
         version: link:../../packages/security
@@ -99,6 +111,9 @@ importers:
       '@onecare/telemetry':
         specifier: workspace:*
         version: link:../../packages/telemetry
+      '@onecare/tools':
+        specifier: workspace:*
+        version: link:../../packages/tools
       '@onecare/workflows':
         specifier: workspace:*
         version: link:../../packages/workflows
@@ -286,12 +301,31 @@ importers:
 
   packages/ai:
     dependencies:
+      '@onecare/conversations':
+        specifier: workspace:*
+        version: link:../conversations
       '@onecare/mcp':
         specifier: workspace:*
         version: link:../mcp
+      '@onecare/memory':
+        specifier: workspace:*
+        version: link:../memory
+      '@onecare/planner':
+        specifier: workspace:*
+        version: link:../planner
+      '@onecare/prompts':
+        specifier: workspace:*
+        version: link:../prompts
       '@onecare/shared':
         specifier: workspace:*
         version: link:../shared
+      '@onecare/tools':
+        specifier: workspace:*
+        version: link:../tools
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.1
 
   packages/auth:
     dependencies:
@@ -310,6 +344,16 @@ importers:
       zod:
         specifier: ^3.24.1
         version: 3.25.76
+
+  packages/conversations:
+    dependencies:
+      '@onecare/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.1
 
   packages/database:
     dependencies:
@@ -349,6 +393,36 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
+  packages/memory:
+    dependencies:
+      '@onecare/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.1
+
+  packages/planner:
+    dependencies:
+      '@onecare/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.1
+
+  packages/prompts:
+    dependencies:
+      '@onecare/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.1
+
   packages/security:
     dependencies:
       '@onecare/shared':
@@ -370,6 +444,19 @@ importers:
       '@onecare/shared':
         specifier: workspace:*
         version: link:../shared
+
+  packages/tools:
+    dependencies:
+      '@onecare/mcp':
+        specifier: workspace:*
+        version: link:../mcp
+      '@onecare/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.1
 
   packages/ui: {}
 

@@ -51,11 +51,16 @@ pnpm lint
 | `@onecare/shared` | Shared types, errors, branded IDs |
 | `@onecare/auth` | AuthN/Z contracts & helpers |
 | `@onecare/database` | Prisma schema & client |
-| `@onecare/ai` | Agent contracts & orchestration ports |
+| `@onecare/ai` | LLM providers, Master Orchestrator, agent registry, streaming |
+| `@onecare/conversations` | Conversation / message model & store ports |
+| `@onecare/prompts` | Versioned prompt templates & rendering |
+| `@onecare/memory` | Conversation / user / session / agent memory ports |
+| `@onecare/planner` | Execution planning (single / multi-agent) |
+| `@onecare/tools` | Tool registry interfaces (placeholders in M3) |
 | `@onecare/mcp` | MCP protocol types & gateway client |
 | `@onecare/workflows` | Workflow engine contracts |
 | `@onecare/integrations` | Integration adapter ports |
-| `@onecare/telemetry` | Logging & OpenTelemetry |
+| `@onecare/telemetry` | Logging, AI metrics hooks & OpenTelemetry |
 | `@onecare/ui` | Shared UI primitives |
 
 ## Documentation
@@ -64,7 +69,7 @@ Start at [`docs/README.md`](./docs/README.md). Cursor agents: see [`AGENTS.md`](
 
 ## Milestone
 
-Current: **M2 Application Shell** — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+Current: **M3 AI Platform Core** — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ### API + database (M1)
 
@@ -75,16 +80,16 @@ pnpm db:deploy && pnpm db:seed
 pnpm --filter @onecare/api dev
 ```
 
-### Local web shell (M2)
+### Local web shell (M2+)
 
 ```bash
 pnpm --filter @onecare/web dev
 # open http://localhost:3000
 # sign in with a seeded development user (API must be running on :3001)
+# open /app/ai for mock-streamed chat
 ```
 
-Set `NEXT_PUBLIC_API_BASE_URL` and optionally `NEXT_PUBLIC_AUTH_MODE=entra` in `.env`.
-
+Set `NEXT_PUBLIC_API_BASE_URL` and optionally `NEXT_PUBLIC_AUTH_MODE=entra` in `.env`. Re-seed after pull to pick up `ai.*` permissions.
 ## License
 
 Proprietary — All rights reserved.

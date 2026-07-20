@@ -123,9 +123,13 @@ interface AgentDefinition {
 
 ---
 
-## 5. Runtime (LangGraph)
+## 5. Runtime (Orchestrator + Typed State)
 
-Preferred: **LangGraph** state machine per conversation turn or durable run.
+Preferred long-term: **LangGraph** (or equivalent) state machine per conversation turn.
+
+**M3 status:** A provider-independent **Master Orchestrator** implements the same node sequence without embedding LangGraph/OpenAI SDKs in Domain packages:
+
+`load conversation → plan → select agent → render prompts → stream LLM → update memory → observe`
 
 **State (minimum):**
 
@@ -139,7 +143,7 @@ Preferred: **LangGraph** state machine per conversation turn or durable run.
 
 **Nodes:** classify → plan → route → act → confirm → synthesize → persist  
 
-Use OpenAI Agents SDK only when it clearly simplifies a bounded agent; do not mix two runtimes inside one agent without an ADR.
+LangGraph may wrap this orchestrator later via an Infrastructure adapter (ADR). Do not mix two runtimes inside one agent without an ADR.
 
 ---
 

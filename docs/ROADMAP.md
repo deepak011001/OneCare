@@ -91,16 +91,19 @@ M0 Foundations
 
 **Outcome:** Multi-agent platform that plans and routes (tools mocked OK).
 
-- Agent registry (config-driven)
-- Master Orchestrator: intent → plan → domain agent
-- LangGraph (or chosen runtime) with typed state
-- Conversation + user memory stores
-- Prompt versioning table
-- Tool invocation interface (MCP client abstraction)
-- Confirmation policy engine (risk levels)
-- Cost/latency recording hooks
+- Agent registry (config-driven) with placeholder domain agents
+- Master Orchestrator: intent → plan → domain agent → mock LLM stream
+- Provider-independent LLM ports (Mock executes; OpenAI/Azure/Anthropic stubs)
+- Conversation + user/session/agent memory ports (in-memory adapters)
+- Prompt versioning framework (templates, variables, validation)
+- Tool registry interfaces (placeholders only — no MCP/business implementations)
+- Streaming abstractions (SSE now; WebSocket-shaped controller reserved)
+- Cost/latency/token observation hooks (in-memory)
+- Web `/app/ai` chat workspace with mock streaming
 
-**Exit criteria:** Chat returns a plan + mock tool result with full audit trail.
+**Exit criteria:** Chat returns a plan + mock streamed response with audit/events; typecheck/lint/tests green.
+
+**Status:** Implemented in codebase (M3). Postgres-backed conversation persistence and LangGraph wiring deferred to keep runtime provider-agnostic without vendor lock-in in Domain.
 
 ---
 

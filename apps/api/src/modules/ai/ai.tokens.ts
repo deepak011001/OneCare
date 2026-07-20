@@ -1,0 +1,4 @@
+export const AI_TOKENS = {
+  RUNTIME: 'AI_RUNTIME',
+  ORCHESTRATOR: 'AI_ORCHESTRATOR',
+} as const;

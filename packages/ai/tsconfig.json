@@ -5,5 +5,13 @@
     "rootDir": "src"
   },
   "include": ["src/**/*"],
-  "references": [{ "path": "../shared" }, { "path": "../mcp" }]
+  "references": [
+    { "path": "../shared" },
+    { "path": "../mcp" },
+    { "path": "../conversations" },
+    { "path": "../prompts" },
+    { "path": "../memory" },
+    { "path": "../planner" },
+    { "path": "../tools" }
+  ]
 }
