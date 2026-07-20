@@ -15,6 +15,7 @@ export const PERMISSIONS = {
   PAYROLL_VIEW: 'payroll.view',
   KNOWLEDGE_SEARCH: 'knowledge.search',
   KNOWLEDGE_UPLOAD: 'knowledge.upload',
+  KNOWLEDGE_ADMIN: 'knowledge.admin',
   ADMIN_USER_MANAGE: 'admin.user.manage',
   ADMIN_ROLE_MANAGE: 'admin.role.manage',
   ADMIN_AUDIT_READ: 'admin.audit.read',

@@ -27,6 +27,7 @@ export const PLATFORM_FLAGS = {
   CAPABILITY_LEAVE_ENABLED: 'capability.ess.leave.enabled',
   CAPABILITY_ATTENDANCE_ENABLED: 'capability.ess.attendance.enabled',
   CAPABILITY_KNOWLEDGE_ENABLED: 'capability.ess.knowledge.enabled',
+  KNOWLEDGE_PLATFORM_ENABLED: 'knowledge.platform.enabled',
   CROSS_ORCHESTRATION_ENABLED: 'ai.cross_orchestration.enabled',
   MCP_EXECUTE_ENABLED: 'mcp.execute.enabled',
   PREVIEW_STREAMING_V2: 'preview.streaming.v2',

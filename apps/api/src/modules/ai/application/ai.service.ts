@@ -8,6 +8,10 @@ import type { RequestContext } from '@onecare/shared';
 import { AUDIT_ACTIONS, NotFoundError } from '@onecare/shared';
 import { APP_TOKENS } from '../../../shared/tokens';
 import type { AuditPort } from '../../audit/infrastructure/prisma-audit.service';
+import {
+  KNOWLEDGE_TENANT_HOLDER,
+  type KnowledgeTenantHolder,
+} from '../../knowledge-platform/knowledge-platform.module';
 import { AI_TOKENS } from '../ai.tokens';
 
 @Injectable()
@@ -17,7 +21,12 @@ export class AiService {
     @Inject(AI_TOKENS.ORCHESTRATOR) private readonly orchestrator: OrchestratorPort,
     @Inject(APP_TOKENS.EVENT_BUS) private readonly events: EventBusPort,
     @Inject(APP_TOKENS.AUDIT_PORT) private readonly audit: AuditPort,
+    @Inject(KNOWLEDGE_TENANT_HOLDER) private readonly knowledgeTenant: KnowledgeTenantHolder,
   ) {}
+
+  private bindKnowledgeTenant(context: RequestContext) {
+    this.knowledgeTenant.current = String(context.tenantId);
+  }
 
   listAgents() {
     return this.runtime.agents.listEnabled();
@@ -100,6 +109,7 @@ export class AiService {
     conversationId?: string;
     approvedToolConfirmations?: Readonly<Record<string, string>>;
   }): Promise<ChatResult> {
+    this.bindKnowledgeTenant(input.context);
     await this.events.publish({
       name: DOMAIN_EVENTS.AI_CHAT_STARTED,
       occurredAt: new Date(),
@@ -159,6 +169,7 @@ export class AiService {
     onEvent: (event: StreamEvent) => void,
     signal?: AbortSignal,
   ): Promise<ChatResult> {
+    this.bindKnowledgeTenant(input.context);
     await this.events.publish({
       name: DOMAIN_EVENTS.AI_CHAT_STARTED,
       occurredAt: new Date(),

@@ -57,7 +57,7 @@ export interface KnowledgeCapabilityOptions {
 
 /**
  * Enterprise Knowledge Capability — Employee Capability Framework implementation.
- * Uses a replaceable {@link KnowledgeRetrievalPort} (stub store today; RAG engines later).
+ * Uses a replaceable {@link KnowledgeRetrievalPort} (Enterprise Knowledge Platform in M6+).
  */
 export class KnowledgeCapability implements EmployeeCapability {
   readonly id = 'ess.knowledge';
@@ -565,7 +565,7 @@ export class KnowledgeCapability implements EmployeeCapability {
       'You can ask multiple questions in one message.',
       'Follow-ups like “What about paternity?” keep prior context.',
       '',
-      'Limitations: answers come from the configured knowledge retrieval engine with source attribution. If no source exists, I will say so. This is not production RAG yet.',
+      'Limitations: answers come from the Enterprise Knowledge Platform (hybrid search + ACL) with source attribution. If no source exists, I will say so. Citations are never invented.',
     ].join('\n');
 
     return {

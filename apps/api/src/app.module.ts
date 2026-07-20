@@ -6,6 +6,7 @@ import { McpModule } from './modules/mcp/mcp.module';
 import { LeaveModule } from './modules/leave/leave.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { KnowledgeModule } from './modules/knowledge/knowledge.module';
+import { KnowledgePlatformModule } from './modules/knowledge-platform/knowledge-platform.module';
 import { EmployeeCapabilitiesModule } from './modules/employee-capabilities/employee-capabilities.module';
 import { AiModule } from './modules/ai/ai.module';
 import { HealthController } from './health.controller';
@@ -19,6 +20,7 @@ import { RateLimitMiddleware } from './shared/presentation/rate-limit.middleware
     CoreModule,
     IdentityModule,
     McpModule,
+    KnowledgePlatformModule,
     AiModule,
     LeaveModule,
     AttendanceModule,

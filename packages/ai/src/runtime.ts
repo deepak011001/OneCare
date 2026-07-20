@@ -53,6 +53,8 @@ export interface CreateAiRuntimeOptions {
   readonly integration?: AiRuntimeIntegrationOptions;
   readonly conversations?: ConversationStorePort;
   readonly hardening?: AiHardeningPorts;
+  /** Swap knowledge retrieval (M6 Enterprise Knowledge Platform) without redesigning agents. */
+  readonly knowledgeRetrieval?: import('@onecare/ess-knowledge').KnowledgeRetrievalPort;
 }
 
 function buildToolRegistry(integration?: AiRuntimeIntegrationOptions) {
@@ -79,7 +81,9 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
   const hardening = options?.hardening ?? createDefaultAiHardening();
   const memory = createInMemoryFacade();
   const observability = new InMemoryAiObservability();
-  const knowledgeCapability = createKnowledgeCapability();
+  const knowledgeCapability = createKnowledgeCapability({
+    ...(options?.knowledgeRetrieval ? { retrieval: options.knowledgeRetrieval } : {}),
+  });
   const employeeCapabilities = createEmployeeCapabilityRegistry(undefined, [
     createAttendanceCapability(),
     knowledgeCapability,

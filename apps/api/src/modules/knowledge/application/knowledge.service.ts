@@ -3,7 +3,6 @@ import type { EventBusPort } from '@onecare/events';
 import { DOMAIN_EVENTS } from '@onecare/events';
 import {
   createKnowledgeCapability,
-  createStubKnowledgeStore,
   listMostViewed,
   listRecentlyUpdatedQuestions,
   listTrendingQuestions,
@@ -15,18 +14,26 @@ import type { RequestContext } from '@onecare/shared';
 import { AUDIT_ACTIONS, DomainError } from '@onecare/shared';
 import { APP_TOKENS } from '../../../shared/tokens';
 import type { AuditPort } from '../../audit/infrastructure/prisma-audit.service';
+import {
+  KNOWLEDGE_TENANT_HOLDER,
+  type KnowledgeTenantHolder,
+} from '../../knowledge-platform/knowledge-platform.module';
 
 @Injectable()
 export class KnowledgeService {
-  private readonly retrieval: KnowledgeRetrievalPort;
   private readonly capability;
 
   constructor(
     @Inject(APP_TOKENS.EVENT_BUS) private readonly events: EventBusPort,
     @Inject(APP_TOKENS.AUDIT_PORT) private readonly audit: AuditPort,
+    @Inject(APP_TOKENS.KNOWLEDGE_RETRIEVAL) private readonly retrieval: KnowledgeRetrievalPort,
+    @Inject(KNOWLEDGE_TENANT_HOLDER) private readonly tenantHolder: KnowledgeTenantHolder,
   ) {
-    this.retrieval = createStubKnowledgeStore();
     this.capability = createKnowledgeCapability({ retrieval: this.retrieval });
+  }
+
+  private bindTenant(context: RequestContext) {
+    this.tenantHolder.current = String(context.tenantId);
   }
 
   private assertPermission(context: RequestContext) {
@@ -37,13 +44,14 @@ export class KnowledgeService {
 
   async getDashboard(context: RequestContext) {
     this.assertPermission(context);
+    this.bindTenant(context);
     await this.audit.write({
       tenantId: String(context.tenantId),
       userId: String(context.userId),
       sessionId: String(context.sessionId),
       action: AUDIT_ACTIONS.KNOWLEDGE_VIEW,
       resource: 'knowledge.dashboard',
-      resourceId: 'stub',
+      resourceId: this.retrieval.engineId,
       result: 'success',
       correlationId: String(context.correlationId),
       requestId: String(context.requestId),
@@ -70,7 +78,7 @@ export class KnowledgeService {
       announcements: [
         {
           id: 'ann-1',
-          title: 'Handbook refresh (stub)',
+          title: 'Handbook refresh',
           body: 'Employee handbook was updated this quarter.',
           publishedAt: '2026-03-10',
         },
@@ -96,6 +104,7 @@ export class KnowledgeService {
         label: n.label,
         example: n.examples[0],
       })),
+      engine: this.retrieval.engineId,
     };
   }
 
@@ -104,8 +113,10 @@ export class KnowledgeService {
     input: { readonly q: string; readonly domain?: string; readonly category?: string },
   ) {
     this.assertPermission(context);
+    this.bindTenant(context);
     const started = Date.now();
     const result = await this.retrieval.search({
+      tenantId: String(context.tenantId),
       text: input.q,
       ...(input.domain ? { domain: input.domain } : {}),
       ...(input.category ? { category: input.category } : {}),
@@ -158,6 +169,7 @@ export class KnowledgeService {
 
   async ask(context: RequestContext, message: string) {
     this.assertPermission(context);
+    this.bindTenant(context);
     const outcome = await this.capability.process({
       message,
       permissions: context.permissions,
@@ -184,6 +196,7 @@ export class KnowledgeService {
 
   async getDocument(context: RequestContext, id: string) {
     this.assertPermission(context);
+    this.bindTenant(context);
     const doc = await this.retrieval.getById(id);
     if (!doc) {
       throw new DomainError('NOT_FOUND', 'Knowledge document not found');
@@ -194,6 +207,7 @@ export class KnowledgeService {
 
   async getPopular(context: RequestContext) {
     this.assertPermission(context);
+    this.bindTenant(context);
     return {
       trending: listTrendingQuestions(),
       mostViewed: listMostViewed(),
@@ -204,6 +218,7 @@ export class KnowledgeService {
 
   async getCategories(context: RequestContext) {
     this.assertPermission(context);
+    this.bindTenant(context);
     return {
       taxonomy: KNOWLEDGE_TAXONOMY,
       counts: (await this.retrieval.listCategories?.()) ?? [],
@@ -212,6 +227,7 @@ export class KnowledgeService {
 
   async getHelp(context: RequestContext) {
     this.assertPermission(context);
+    this.bindTenant(context);
     return this.capability.helpExamples();
   }
 }

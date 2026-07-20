@@ -29,6 +29,8 @@ export const AUDIT_ACTIONS = {
   KNOWLEDGE_SEARCH: 'knowledge.search',
   KNOWLEDGE_VIEW: 'knowledge.view',
   KNOWLEDGE_VIEW_DENIED: 'knowledge.view.denied',
+  KNOWLEDGE_ADMIN: 'knowledge.admin',
+  KNOWLEDGE_SYNC: 'knowledge.sync',
   AI_ORCHESTRATION: 'ai.orchestration',
 } as const;
 

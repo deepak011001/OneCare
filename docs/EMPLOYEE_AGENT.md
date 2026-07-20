@@ -18,7 +18,7 @@ User → Master Orchestrator → Employee Agent → Tool Registry → MCP Gatewa
 
 **Non-goals (do not put here):**
 
-- Knowledge / policy answers for employees → **Employee Knowledge Capability** (`ess.knowledge`, [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md)); production RAG remains M6 Knowledge Platform
+- Knowledge / policy answers for employees → **Employee Knowledge Capability** (`ess.knowledge`, [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md)) backed by **Enterprise Knowledge Platform** ([`ENTERPRISE_KNOWLEDGE_PLATFORM.md`](./ENTERPRISE_KNOWLEDGE_PLATFORM.md))
 - Manager approvals (→ Manager / MSS Agent)
 - HR case ownership (→ HR Agent)
 - Admin / tenant configuration
@@ -109,7 +109,7 @@ Capabilities are coarse product claims implemented via the **Employee Capability
 | `ess.leave.write` | Apply / cancel own leave | ✓ |
 | `ess.attendance.read` | Read own attendance | ✓ |
 | `ess.attendance.write` | Clock in/out / regularize (if allowed) | ✓ |
-| `ess.knowledge` | Enterprise knowledge Q&A via `@onecare/ess-knowledge` (retrieval abstraction; not production RAG) | ✓ |
+| `ess.knowledge` | Enterprise knowledge Q&A via `@onecare/ess-knowledge` + `@onecare/knowledge-platform` | ✓ |
 | `ess.profile.read` | Read own profile | Later |
 | `ess.payroll.read` | Payslip / salary history (self) | Later |
 | `ess.clarify` | Ask for missing slots before tools | ✓ |
@@ -224,7 +224,7 @@ If the user asks balance **and** apply in one message:
 | Policy / handbook / benefits / how-to | Employee Knowledge Capability (`ess.knowledge`) |
 | “Approve my team’s leave” | Explain ESS cannot approve others → Manager Agent |
 | System outage / connector down | Graceful error; no fake success |
-| Production RAG corpus / embeddings | M6 Knowledge Platform (retrieval port swap) |
+| Production RAG corpus / embeddings | Enterprise Knowledge Platform (`@onecare/knowledge-platform`) |
 
 ---
 

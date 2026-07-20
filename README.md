@@ -79,7 +79,7 @@ Start at [`docs/README.md`](./docs/README.md). Cursor agents: see [`AGENTS.md`](
 
 ## Milestone
 
-Current: **M5.5 Production Readiness** (on M5 Employee Agent) — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+Current: **M6 Enterprise Knowledge Platform** (on M5 Employee Agent + M5.5 hardening) — see [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ### API + database (M1)
 

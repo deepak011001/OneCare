@@ -1,14 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { createAttendanceCapability } from '@onecare/ess-attendance';
-import { createKnowledgeCapability } from '@onecare/ess-knowledge';
+import { createKnowledgeCapability, type KnowledgeRetrievalPort } from '@onecare/ess-knowledge';
 import { createEmployeeCapabilityRegistry } from '@onecare/ess-leave';
+import { APP_TOKENS } from '../../../shared/tokens';
 
 @Injectable()
 export class EmployeeCapabilitiesService {
-  private readonly registry = createEmployeeCapabilityRegistry(undefined, [
-    createAttendanceCapability(),
-    createKnowledgeCapability(),
-  ]);
+  private readonly registry;
+
+  constructor(@Inject(APP_TOKENS.KNOWLEDGE_RETRIEVAL) retrieval: KnowledgeRetrievalPort) {
+    this.registry = createEmployeeCapabilityRegistry(undefined, [
+      createAttendanceCapability(),
+      createKnowledgeCapability({ retrieval }),
+    ]);
+  }
 
   list() {
     return this.registry.list().map((c) => ({
