@@ -1,4 +1,4 @@
-import type { ToolRisk, ToolSideEffect } from '@onecare/mcp';
+import type { McpExecutionContext, ToolRisk, ToolSideEffect } from '@onecare/mcp';
 
 export interface ToolRetryPolicy {
   readonly maxAttempts: number;
@@ -40,7 +40,7 @@ export interface ToolExecutionInput {
   readonly toolName: string;
   readonly connectorId: string;
   readonly arguments: Readonly<Record<string, unknown>>;
-  readonly context: import('@onecare/mcp').McpExecutionContext;
+  readonly context: McpExecutionContext;
   readonly confirmationApproved?: boolean;
 }
 

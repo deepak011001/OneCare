@@ -1,4 +1,4 @@
-import { createMcpPlatform } from '@onecare/mcp';
+import { createMcpPlatform, type McpExecutionContext } from '@onecare/mcp';
 import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 
 @Controller()
@@ -49,7 +49,7 @@ export class McpGatewayController {
       connectorId?: string;
       toolName?: string;
       arguments?: Record<string, unknown>;
-      context?: import('@onecare/mcp').McpExecutionContext;
+      context?: McpExecutionContext;
     },
   ) {
     const platform = await this.platformPromise;

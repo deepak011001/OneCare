@@ -1,10 +1,12 @@
+import type { ConnectorToolDefinition } from '@onecare/connector-sdk';
+import type { McpGatewayService } from '@onecare/mcp';
 import type { ToolDefinition, ToolRegistryPort } from './types';
 import { InMemoryToolRegistry } from './in-memory-registry';
 
 export { InMemoryToolRegistry } from './in-memory-registry';
 
 export function toolFromConnectorTool(
-  tool: import('@onecare/connector-sdk').ConnectorToolDefinition & {
+  tool: ConnectorToolDefinition & {
     connectorId: string;
   },
 ): ToolDefinition {
@@ -28,18 +30,13 @@ export function toolFromConnectorTool(
   };
 }
 
-export function syncToolsFromGateway(
-  registry: ToolRegistryPort,
-  gateway: import('@onecare/mcp').McpGatewayService,
-): void {
+export function syncToolsFromGateway(registry: ToolRegistryPort, gateway: McpGatewayService): void {
   for (const tool of gateway.listTools()) {
     registry.register(toolFromConnectorTool(tool));
   }
 }
 
-export function createMcpToolRegistry(
-  gateway: import('@onecare/mcp').McpGatewayService,
-): InMemoryToolRegistry {
+export function createMcpToolRegistry(gateway: McpGatewayService): InMemoryToolRegistry {
   const registry = new InMemoryToolRegistry();
   syncToolsFromGateway(registry, gateway);
   return registry;

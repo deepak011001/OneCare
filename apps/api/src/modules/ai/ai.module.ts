@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { createAiRuntime } from '@onecare/ai';
-import { createMcpPlatform, type McpPlatform } from '@onecare/mcp';
+import type { McpPlatform } from '@onecare/mcp';
 import { AI_TOKENS } from './ai.tokens';
 import { AiService } from './application/ai.service';
 import { AiController } from './presentation/ai.controller';

@@ -1,5 +1,8 @@
-import type { ConnectorToolDefinition } from '@onecare/connector-sdk';
-import type { ConnectorSecrets } from '@onecare/connector-sdk';
+import type {
+  ConnectorSecrets,
+  ConnectorToolDefinition,
+  EnterpriseConnector,
+} from '@onecare/connector-sdk';
 import type { CorrelationId, TenantId, UserId } from '@onecare/shared';
 import type { McpExecutionContext, McpToolCallRequest, McpToolCallResult } from './types';
 import { ConnectorRegistry } from './connector-registry';
@@ -266,9 +269,7 @@ export class EnvConnectorSecrets implements ConnectorSecrets {
   }
 }
 
-export function createDefaultMcpGateway(
-  connectors: import('@onecare/connector-sdk').EnterpriseConnector[],
-): {
+export function createDefaultMcpGateway(connectors: EnterpriseConnector[]): {
   registry: ConnectorRegistry;
   gateway: McpGatewayService;
 } {
