@@ -42,8 +42,7 @@ export const APP_NAV: readonly NavItem[] = [
     label: 'Employee Services',
     href: '/app/employee',
     icon: Briefcase,
-    permissions: ['employee.read'],
-    placeholder: true,
+    permissions: ['employee.read', 'leave.read', 'attendance.read'],
   },
   {
     id: 'manager',
@@ -56,10 +55,9 @@ export const APP_NAV: readonly NavItem[] = [
   {
     id: 'knowledge',
     label: 'Knowledge',
-    href: '/app/knowledge',
+    href: '/app/employee/knowledge',
     icon: BookOpen,
     permissions: ['knowledge.search'],
-    placeholder: true,
   },
   {
     id: 'approvals',

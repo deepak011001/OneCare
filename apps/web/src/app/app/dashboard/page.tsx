@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { PageContainer, PageHeader } from '@/components/ui/page';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/ui/error-state';
+import { LeaveDashboardWidgets } from '@/features/leave/leave-dashboard-widgets';
+import { AttendanceDashboardWidgets } from '@/features/attendance/attendance-dashboard-widgets';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 
 export default function DashboardPage() {
@@ -117,6 +119,11 @@ export default function DashboardPage() {
           </Card>
         </div>
       ) : null}
+
+      <div className="mt-8 space-y-8">
+        <LeaveDashboardWidgets />
+        <AttendanceDashboardWidgets />
+      </div>
     </PageContainer>
   );
 }

@@ -12,6 +12,13 @@
     { "path": "../prompts" },
     { "path": "../memory" },
     { "path": "../planner" },
-    { "path": "../tools" }
+    { "path": "../tools" },
+    { "path": "../confirmations" },
+    { "path": "../policies" },
+    { "path": "../ess-capability" },
+    { "path": "../ess-leave" },
+    { "path": "../ess-attendance" },
+    { "path": "../ess-knowledge" },
+    { "path": "../ess-orchestration" }
   ]
 }

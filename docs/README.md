@@ -8,6 +8,10 @@ Living **source of truth** for product, architecture, and engineering. Cursor ru
 | [PRD.md](./PRD.md) | Product requirements & journeys |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture & folder layout |
 | [AI_AGENTS.md](./AI_AGENTS.md) | Multi-agent platform |
+| [EMPLOYEE_AGENT.md](./EMPLOYEE_AGENT.md) | Employee (ESS) agent contract — intents, tools, confirmations |
+| [EMPLOYEE_CAPABILITY_FRAMEWORK.md](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) | Reusable ESS capability interface, registry, pipelines |
+| [KNOWLEDGE_CAPABILITY.md](./KNOWLEDGE_CAPABILITY.md) | Employee knowledge capability — retrieval abstraction, intents, APIs |
+| [CROSS_CAPABILITY_ORCHESTRATION.md](./CROSS_CAPABILITY_ORCHESTRATION.md) | Multi-intent Employee Agent orchestration — graph, merge, partial failure |
 | [MCP.md](./MCP.md) | Model Context Protocol & tool contracts |
 | [DATABASE.md](./DATABASE.md) | PostgreSQL / Prisma / pgvector |
 | [API_STANDARDS.md](./API_STANDARDS.md) | HTTP/WS API conventions |

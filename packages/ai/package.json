@@ -24,6 +24,11 @@
   "dependencies": {
     "@onecare/confirmations": "workspace:*",
     "@onecare/conversations": "workspace:*",
+    "@onecare/ess-attendance": "workspace:*",
+    "@onecare/ess-capability": "workspace:*",
+    "@onecare/ess-knowledge": "workspace:*",
+    "@onecare/ess-leave": "workspace:*",
+    "@onecare/ess-orchestration": "workspace:*",
     "@onecare/mcp": "workspace:*",
     "@onecare/memory": "workspace:*",
     "@onecare/planner": "workspace:*",

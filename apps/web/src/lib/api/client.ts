@@ -174,6 +174,51 @@ export const api = {
         body: JSON.stringify(body),
       },
     ),
+  getLeaveDashboard: () => request<ApiEnvelope<unknown>>('/v1/leave/dashboard'),
+  getLeaveHistory: (status?: string) =>
+    request<ApiEnvelope<unknown>>(
+      `/v1/leave/history${status ? `?status=${encodeURIComponent(status)}` : ''}`,
+    ),
+  getLeaveRequest: (id: string) => request<ApiEnvelope<unknown>>(`/v1/leave/requests/${id}`),
+  getLeaveHolidays: (month?: string) =>
+    request<ApiEnvelope<unknown>>(
+      `/v1/leave/holidays${month ? `?month=${encodeURIComponent(month)}` : ''}`,
+    ),
+  getLeaveTypes: () => request<ApiEnvelope<unknown>>('/v1/leave/types'),
+  getLeaveBalance: () => request<ApiEnvelope<unknown>>('/v1/leave/balance'),
+  getAttendanceDashboard: () => request<ApiEnvelope<unknown>>('/v1/attendance/dashboard'),
+  getAttendanceToday: () => request<ApiEnvelope<unknown>>('/v1/attendance/today'),
+  getAttendanceHistory: (status?: string) =>
+    request<ApiEnvelope<unknown>>(
+      `/v1/attendance/history${status ? `?status=${encodeURIComponent(status)}` : ''}`,
+    ),
+  getAttendanceSummary: (month?: string) =>
+    request<ApiEnvelope<unknown>>(
+      `/v1/attendance/summary${month ? `?month=${encodeURIComponent(month)}` : ''}`,
+    ),
+  getKnowledgeDashboard: () => request<ApiEnvelope<unknown>>('/v1/knowledge/dashboard'),
+  getKnowledgeSearch: (q: string, domain?: string, category?: string) => {
+    const params = new URLSearchParams({ q });
+    if (domain) params.set('domain', domain);
+    if (category) params.set('category', category);
+    return request<ApiEnvelope<unknown>>(`/v1/knowledge/search?${params.toString()}`);
+  },
+  askKnowledge: (message: string) =>
+    request<ApiEnvelope<unknown>>('/v1/knowledge/ask', {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+    }),
+  getKnowledgePopular: () => request<ApiEnvelope<unknown>>('/v1/knowledge/popular'),
+  getKnowledgeCategories: () => request<ApiEnvelope<unknown>>('/v1/knowledge/categories'),
+  getKnowledgeHelp: () => request<ApiEnvelope<unknown>>('/v1/knowledge/help'),
+  getKnowledgeDocument: (id: string) =>
+    request<ApiEnvelope<unknown>>(`/v1/knowledge/documents/${id}`),
+  getEmployeeCapabilities: () => request<ApiEnvelope<unknown>>('/v1/employee/capabilities'),
+  getEmployeeCapabilityWidgets: () =>
+    request<ApiEnvelope<unknown>>('/v1/employee/capabilities/widgets'),
+  getEmployeeCapabilityPrompts: () =>
+    request<ApiEnvelope<unknown>>('/v1/employee/capabilities/prompts'),
+  getEmployeeCapabilityHelp: () => request<ApiEnvelope<unknown>>('/v1/employee/capabilities/help'),
 };
 
 export function getApiBaseUrl(): string {

@@ -13,6 +13,23 @@ export const AUDIT_ACTIONS = {
   AI_PLAN: 'ai.plan',
   AI_STREAM: 'ai.stream',
   MCP_TOOL_EXECUTE: 'mcp.tool.execute',
+  LEAVE_BALANCE_VIEW: 'leave.balance.view',
+  LEAVE_HISTORY_VIEW: 'leave.history.view',
+  LEAVE_READ: 'leave.read',
+  LEAVE_VIEW_DENIED: 'leave.view.denied',
+  LEAVE_APPLY: 'leave.apply',
+  LEAVE_CANCEL: 'leave.cancel',
+  LEAVE_CONFIRMATION_REJECTED: 'leave.confirmation.rejected',
+  ATTENDANCE_VIEW: 'attendance.view',
+  ATTENDANCE_CLOCK_IN: 'attendance.clock_in',
+  ATTENDANCE_CLOCK_OUT: 'attendance.clock_out',
+  ATTENDANCE_REGULARIZE: 'attendance.regularize',
+  ATTENDANCE_VIEW_DENIED: 'attendance.view.denied',
+  ATTENDANCE_CONFIRMATION_REJECTED: 'attendance.confirmation.rejected',
+  KNOWLEDGE_SEARCH: 'knowledge.search',
+  KNOWLEDGE_VIEW: 'knowledge.view',
+  KNOWLEDGE_VIEW_DENIED: 'knowledge.view.denied',
+  AI_ORCHESTRATION: 'ai.orchestration',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];

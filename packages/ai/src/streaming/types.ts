@@ -7,6 +7,9 @@ export type StreamEventType =
   | 'delta'
   | 'tool'
   | 'confirmation_required'
+  | 'clarification'
+  | 'suggested_replies'
+  | 'orchestration_progress'
   | 'done'
   | 'error'
   | 'cancelled';

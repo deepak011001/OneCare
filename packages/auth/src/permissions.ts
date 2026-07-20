@@ -6,6 +6,9 @@ export const PERMISSIONS = {
   LEAVE_APPROVE: 'leave.approve',
   LEAVE_CANCEL: 'leave.cancel',
   ATTENDANCE_VIEW: 'attendance.view',
+  ATTENDANCE_READ: 'attendance.read',
+  ATTENDANCE_CLOCKIN: 'attendance.clockin',
+  ATTENDANCE_CLOCKOUT: 'attendance.clockout',
   ATTENDANCE_REGULARIZE: 'attendance.regularize',
   PAYROLL_VIEW: 'payroll.view',
   KNOWLEDGE_SEARCH: 'knowledge.search',
@@ -26,6 +29,7 @@ export const PERMISSIONS = {
   AI_AGENTS_READ: 'ai.agents.read',
   AI_TOOLS_READ: 'ai.tools.read',
   AI_MODELS_READ: 'ai.models.read',
+  AI_ORCHESTRATION_DIAGNOSTICS: 'ai.orchestration.diagnostics',
 } as const;
 
 export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

@@ -12,6 +12,11 @@ import {
 import type { McpGatewayService } from '@onecare/mcp';
 import type { InMemoryConfirmationStore } from '@onecare/confirmations';
 import type { PolicyEngine } from '@onecare/policies';
+import type { CapabilityRegistry } from '@onecare/ess-capability';
+import type { OrchestrationDiagnostics } from '@onecare/ess-orchestration';
+import { createEmployeeCapabilityRegistry, createLeaveCapability } from '@onecare/ess-leave';
+import { createAttendanceCapability } from '@onecare/ess-attendance';
+import { createKnowledgeCapability } from '@onecare/ess-knowledge';
 import { createDefaultAgentRegistry } from './agents/registry';
 import { InMemoryAiObservability } from './observability';
 import {
@@ -29,6 +34,8 @@ export interface AiRuntime {
   readonly providers: ReturnType<typeof createDefaultLlmProviderRegistry>;
   readonly observability: InMemoryAiObservability;
   readonly conversations: InMemoryConversationStore;
+  readonly employeeCapabilities: CapabilityRegistry;
+  getLastOrchestrationDiagnostics(): OrchestrationDiagnostics | null;
 }
 
 export interface AiRuntimeIntegrationOptions {
@@ -66,6 +73,21 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
   const conversations = new InMemoryConversationStore();
   const memory = createInMemoryFacade();
   const observability = new InMemoryAiObservability();
+  const knowledgeCapability = createKnowledgeCapability();
+  const employeeCapabilities = createEmployeeCapabilityRegistry(undefined, [
+    createAttendanceCapability(),
+    knowledgeCapability,
+  ]);
+  const leaveCapability =
+    (employeeCapabilities.get('ess.leave') as
+      | ReturnType<typeof createLeaveCapability>
+      | undefined) ?? createLeaveCapability();
+  const attendanceCapability =
+    (employeeCapabilities.get('ess.attendance') as
+      | ReturnType<typeof createAttendanceCapability>
+      | undefined) ?? createAttendanceCapability();
+
+  let lastOrchestrationDiagnostics: OrchestrationDiagnostics | null = null;
 
   const toolExecutor =
     options?.integration &&
@@ -87,43 +109,38 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
       }
     : undefined;
 
+  const baseDeps = {
+    conversations,
+    memory,
+    planner: new HeuristicPlanner(),
+    agents,
+    tools,
+    prompts,
+    llm,
+    observability,
+    employeeCapabilities,
+    leaveCapability,
+    attendanceCapability,
+    knowledgeCapability,
+    onOrchestrationDiagnostics: (diagnostics: OrchestrationDiagnostics) => {
+      lastOrchestrationDiagnostics = diagnostics;
+    },
+  };
+
   let orchestrator: MasterOrchestrator;
   if (toolExecutor && resolveConfirmationApproved) {
     orchestrator = createMasterOrchestrator({
-      conversations,
-      memory,
-      planner: new HeuristicPlanner(),
-      agents,
-      tools,
-      prompts,
-      llm,
-      observability,
+      ...baseDeps,
       toolExecutor,
       resolveConfirmationApproved,
     });
   } else if (toolExecutor) {
     orchestrator = createMasterOrchestrator({
-      conversations,
-      memory,
-      planner: new HeuristicPlanner(),
-      agents,
-      tools,
-      prompts,
-      llm,
-      observability,
+      ...baseDeps,
       toolExecutor,
     });
   } else {
-    orchestrator = createMasterOrchestrator({
-      conversations,
-      memory,
-      planner: new HeuristicPlanner(),
-      agents,
-      tools,
-      prompts,
-      llm,
-      observability,
-    });
+    orchestrator = createMasterOrchestrator(baseDeps);
   }
 
   return {
@@ -134,5 +151,7 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
     providers,
     observability,
     conversations,
+    employeeCapabilities,
+    getLastOrchestrationDiagnostics: () => lastOrchestrationDiagnostics,
   };
 }

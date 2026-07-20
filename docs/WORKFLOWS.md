@@ -107,6 +107,7 @@ Transitions persist:
 | Concern | Owner |
 |---------|-------|
 | Intent understanding | Orchestrator / Domain Agent |
+| Multi-capability coordination | Cross Capability Orchestrator ([`CROSS_CAPABILITY_ORCHESTRATION.md`](./CROSS_CAPABILITY_ORCHESTRATION.md)) |
 | Policy confirmation | Confirmation policy engine |
 | Long-running state | Workflow Engine |
 | Side effects | MCP tools |

@@ -10,8 +10,12 @@ export type StreamHandlers = {
     connectorId: string;
     confirmationId?: string;
     summary?: string;
+    confirmationIds?: Record<string, string>;
   }) => void;
+  onClarification?: (data: { question: string; missing?: string[] }) => void;
+  onSuggestedReplies?: (replies: string[]) => void;
   onTool?: (data: Record<string, unknown>) => void;
+  onOrchestrationProgress?: (data: { phase?: string; message?: string }) => void;
   onDone?: (data: { conversationId: string }) => void;
   onError?: (message: string) => void;
 };
@@ -99,11 +103,29 @@ export async function streamAiChat(input: {
               connectorId: String(payload.connectorId ?? ''),
               confirmationId: payload.confirmationId,
               ...(typeof payload.summary === 'string' ? { summary: payload.summary } : {}),
+              ...(payload.confirmationIds && typeof payload.confirmationIds === 'object'
+                ? { confirmationIds: payload.confirmationIds as Record<string, string> }
+                : {}),
             });
           }
         }
         if (evt.event === 'tool') {
           input.handlers.onTool?.(payload);
+        }
+        if (evt.event === 'orchestration_progress') {
+          input.handlers.onOrchestrationProgress?.({
+            ...(typeof payload.phase === 'string' ? { phase: payload.phase } : {}),
+            ...(typeof payload.message === 'string' ? { message: payload.message } : {}),
+          });
+        }
+        if (evt.event === 'clarification') {
+          input.handlers.onClarification?.({
+            question: String(payload.question ?? ''),
+            ...(Array.isArray(payload.missing) ? { missing: payload.missing.map(String) } : {}),
+          });
+        }
+        if (evt.event === 'suggested_replies' && Array.isArray(payload.replies)) {
+          input.handlers.onSuggestedReplies?.(payload.replies.map(String));
         }
         if (evt.event === 'delta' && typeof payload.text === 'string') {
           input.handlers.onDelta?.(payload.text);

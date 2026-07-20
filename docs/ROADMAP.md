@@ -22,13 +22,13 @@ M0 Foundations
  → M1 Identity & Tenancy
  → M2 Platform Shell (API + Web)
  → M3 Agent Runtime + Orchestrator
- → M4 First Domain (ESS Leave) + MCP
- → M5 Knowledge / RAG
- → M6 Workflows & Approvals (MSS)
- → M7 Admin Portal
- → M8 Observability & Hardening
- → M9 Additional Domains & Connectors
- → M10 Scale, Eval, Enterprise Packaging
+ → M4 Enterprise MCP Platform
+ → M5 Employee Agent (Leave first) → Attendance / Payroll later
+ → M6 Knowledge / RAG
+ → M7 Workflows & Approvals (MSS)
+ → M8 Admin Portal
+ → M9 Observability & Hardening
+ → M10 Additional Domains, Scale & Packaging
 ```
 
 ---
@@ -135,9 +135,47 @@ M0 Foundations
 
 **Exit criteria:** Employee can check balance and apply leave end-to-end in a tenant.
 
-**Note:** ESS leave UI and notifications deferred — see M5+ in product backlog.
+**Note:** ESS leave UI and multi-turn capability delivered in M5 Slice 1 (`@onecare/ess-leave`).
 
-### M5 — Knowledge Platform (Enterprise RAG)
+### M5 — Employee Agent (ESS Leave Capability)
+
+**Outcome:** Production Employee Agent leave capability on top of M3 runtime + M4 MCP — no architecture rewrite.
+
+- `@onecare/ess-leave`: intents, relative dates, entities, validation, clarification, confirmation summaries
+- Tools via Tool Registry → MCP → Keka: `leaveBalance`, `leaveHistory`, `applyLeave`, `cancelLeave`, `leaveTypes`, `holidayCalendar`
+- Leave dashboard APIs + web widgets / history / holidays
+- Chat: multi-turn clarify, confirmation cards, suggested replies
+- Contract: [`EMPLOYEE_AGENT.md`](./EMPLOYEE_AGENT.md)
+
+**Exit criteria:** Employee can check balance, clarify apply/cancel, confirm writes, and see leave widgets; lint/typecheck/tests green.
+
+**Status:** Slice 1 (Leave) + Framework + Attendance + Slice 3 (Knowledge) + Slice 4 (Cross Capability Orchestration) on M5 release line.
+
+### M5 Slice 3 — Employee Knowledge Capability
+
+**Outcome:** Enterprise knowledge intelligence on the Employee Capability Framework — **not** production RAG.
+
+- `@onecare/ess-knowledge`: hierarchical classification, multi-intent, entities, clarification, structured answers + attribution
+- `KnowledgeRetrievalPort` + stub store (markdown/JSON/memory); swappable for M6 engines
+- APIs `/v1/knowledge/*`, dashboard widgets, help system
+- Contract: [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md)
+
+**Exit criteria:** Natural-language policy/how-to questions answer with sources (or explicit no-source); follow-ups and multi-question prompts work; lint/typecheck/tests green.
+
+### M5 Slice 4 — Cross Capability Orchestration
+
+**Outcome:** One AI that coordinates unlimited ESS capabilities in a single conversation.
+
+- `@onecare/ess-orchestration`: intent split, registry selection, execution graph, merged clarify/confirm/respond
+- Master Orchestrator bridge; admin diagnostics `GET /v1/ai/orchestration/diagnostics`
+- Chat progress + merged confirmation UX (no capability leakage)
+- Contract: [`CROSS_CAPABILITY_ORCHESTRATION.md`](./CROSS_CAPABILITY_ORCHESTRATION.md)
+
+**Exit criteria:** Multi-intent leave+attendance+knowledge turns work with parallel reads, sequential writes, partial failure, and merged responses; framework/MCP/planner unchanged; lint/typecheck/tests green.
+
+---
+
+### M6 — Knowledge Platform (Enterprise RAG)
 
 **Outcome:** Permission-aware answers with citations.
 
@@ -152,7 +190,7 @@ M0 Foundations
 
 ---
 
-### M6 — Workflows & Manager Approvals
+### M7 — Workflows & Manager Approvals
 
 **Outcome:** Human-in-the-loop enterprise workflows.
 
@@ -166,7 +204,7 @@ M0 Foundations
 
 ---
 
-### M7 — Admin Portal
+### M8 — Admin Portal
 
 **Outcome:** Tenant operators can configure without deploys.
 
@@ -183,7 +221,7 @@ M0 Foundations
 
 ---
 
-### M8 — Observability & Hardening
+### M9 — Observability & Hardening
 
 **Outcome:** Production operations readiness.
 
@@ -199,7 +237,7 @@ M0 Foundations
 
 ---
 
-### M9 — Domain Expansion Pack
+### M10 — Domain Expansion, Scale & Packaging
 
 **Priority order (adjust per customer):**
 
@@ -211,9 +249,7 @@ M0 Foundations
 
 Each domain: Agent + MCP tools + tests + feature flag.
 
----
-
-### M10 — Enterprise Packaging
+Also:
 
 - Multi-region readiness notes
 - Eval harness for agents (golden datasets)
@@ -227,9 +263,9 @@ Each domain: Agent + MCP tools + tests + feature flag.
 ## 4. Dependency Graph (Simplified)
 
 ```
-M0 → M1 → M2 → M3 → M4
-                ↘ M5
-           M4 + M3 → M6 → M7 → M8 → M9 → M10
+M0 → M1 → M2 → M3 → M4 → M5 (Employee Leave)
+                ↘ M6 (Knowledge)
+           M4 + M3 → M7 → M8 → M9 → M10
 ```
 
 ---

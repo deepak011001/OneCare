@@ -8,11 +8,21 @@ import type { MemoryFacade } from '@onecare/memory';
 import type { ExecutionPlan, PlannerPort } from '@onecare/planner';
 import type { PromptRegistryPort } from '@onecare/prompts';
 import type { ToolRegistryPort, ToolExecutorPort } from '@onecare/tools';
+import type { CapabilityRegistry, SlotBag } from '@onecare/ess-capability';
+import type { LeaveCapability } from '@onecare/ess-leave';
+import type { AttendanceCapability } from '@onecare/ess-attendance';
+import type { KnowledgeCapability } from '@onecare/ess-knowledge';
+import type { OrchestrationDiagnostics } from '@onecare/ess-orchestration';
 import type { AgentRegistryPort } from '../agents/registry';
 import { estimateCostUsd, type AiObservabilityPort, type AiObservation } from '../observability';
 import type { LlmProviderPort } from '../providers/types';
 import type { StreamEvent } from '../streaming/types';
 import type { ChatRequest, ChatResult, OrchestratorPort, PlanRequest } from './types';
+import {
+  ESS_SLOTS_MEMORY_KEY,
+  runCrossCapabilityTurn,
+  shouldUseCrossCapability,
+} from './cross-capability-bridge';
 
 export interface MasterOrchestratorDeps {
   readonly conversations: ConversationStorePort;
@@ -24,15 +34,23 @@ export interface MasterOrchestratorDeps {
   readonly llm: LlmProviderPort;
   readonly observability: AiObservabilityPort;
   readonly toolExecutor?: ToolExecutorPort;
+  readonly employeeCapabilities?: CapabilityRegistry;
+  /** @deprecated Prefer employeeCapabilities + CrossCapabilityOrchestrator */
+  readonly leaveCapability?: LeaveCapability;
+  /** @deprecated Prefer employeeCapabilities + CrossCapabilityOrchestrator */
+  readonly attendanceCapability?: AttendanceCapability;
+  /** @deprecated Prefer employeeCapabilities + CrossCapabilityOrchestrator */
+  readonly knowledgeCapability?: KnowledgeCapability;
   readonly resolveConfirmationApproved?: (
     tenantId: string,
     userId: string,
     confirmationId: string,
   ) => Promise<boolean>;
+  readonly onOrchestrationDiagnostics?: (diagnostics: OrchestrationDiagnostics) => void;
 }
 
 /**
- * Master Orchestrator — runtime only.
+ * Master Orchestrator ??? runtime only.
  * No domain business logic, no MCP calls, no vendor SDKs.
  */
 export class MasterOrchestrator implements OrchestratorPort {
@@ -179,84 +197,152 @@ export class MasterOrchestrator implements OrchestratorPort {
         .join(', ') ?? 'none';
 
     const toolResultSummaries: string[] = [];
+    let assistantOverride: string | null = null;
+    let skipLlm = false;
 
-    for (const toolName of primary?.toolNames ?? []) {
-      const tool = this.deps.tools.get(toolName);
-      if (!tool || !tool.implemented || !this.deps.toolExecutor) {
-        onEvent({
-          type: 'tool',
-          sequence: 0,
-          data: {
-            name: toolName,
-            status: 'skipped',
-            reason: tool?.implemented === false ? 'placeholder_only' : 'unavailable',
+    const registry = this.deps.employeeCapabilities;
+    if (registry) {
+      const priorRecord = await this.deps.memory.conversation.load(
+        {
+          tenantId: String(input.context.tenantId),
+          conversationId: String(conversation.id),
+        },
+        ESS_SLOTS_MEMORY_KEY,
+      );
+      const priorSlotsByCapability =
+        (priorRecord?.value as Record<string, SlotBag> | null) ?? {};
+
+      const useCross = shouldUseCrossCapability({
+        registry,
+        message: input.message,
+        ...(primary?.agentId ? { agentId: primary.agentId } : {}),
+        ...(primary?.intent ? { intent: primary.intent } : {}),
+        hasApprovedConfirmations: Boolean(input.approvedToolConfirmations),
+        hasPriorSlots: Object.keys(priorSlotsByCapability).length > 0,
+        planIntents: plan.steps.map((s) => s.intent),
+      });
+
+      if (useCross) {
+        const cross = await runCrossCapabilityTurn({
+          deps: {
+            registry,
+            tools: this.deps.tools,
+            ...(this.deps.toolExecutor ? { toolExecutor: this.deps.toolExecutor } : {}),
+            ...(this.deps.resolveConfirmationApproved
+              ? { resolveConfirmationApproved: this.deps.resolveConfirmationApproved }
+              : {}),
           },
+          message: input.message,
+          context: input.context,
+          priorSlotsByCapability,
+          ...(input.approvedToolConfirmations
+            ? { approvedToolConfirmations: input.approvedToolConfirmations }
+            : {}),
+          ...(signal ? { signal } : {}),
+          onEvent,
         });
-        continue;
-      }
 
-      const confirmationId = input.approvedToolConfirmations?.[toolName];
-      let confirmationApproved = false;
-      if (confirmationId && this.deps.resolveConfirmationApproved) {
-        confirmationApproved = await this.deps.resolveConfirmationApproved(
-          String(input.context.tenantId),
-          String(input.context.userId),
-          confirmationId,
+        this.deps.onOrchestrationDiagnostics?.(cross.diagnostics);
+        await this.deps.memory.conversation.save(
+          {
+            tenantId: String(input.context.tenantId),
+            conversationId: String(conversation.id),
+          },
+          ESS_SLOTS_MEMORY_KEY,
+          cross.slotsByCapability,
         );
+
+        if (cross.kind !== 'unsupported') {
+          assistantOverride = cross.text;
+          skipLlm = true;
+          for (const node of cross.graph.nodes) {
+            if (node.plan && node.status === 'completed') {
+              toolResultSummaries.push(`${node.plan.toolName}: ok`);
+            }
+          }
+        }
       }
+    }
 
-      const execution = await this.deps.toolExecutor.execute({
-        toolName,
-        connectorId: tool.connectorId,
-        arguments: {},
-        context: {
-          tenantId: input.context.tenantId,
-          userId: input.context.userId,
-          correlationId: input.context.correlationId,
-          roles: input.context.roles,
-          permissions: input.context.permissions,
-          attributes: input.context.attributes,
-        },
-        confirmationApproved,
-      });
+    if (!skipLlm) {
+      for (const toolName of primary?.toolNames ?? []) {
+        const tool = this.deps.tools.get(toolName);
+        if (!tool || !tool.implemented || !this.deps.toolExecutor) {
+          onEvent({
+            type: 'tool',
+            sequence: 0,
+            data: {
+              name: toolName,
+              status: 'skipped',
+              reason: tool?.implemented === false ? 'placeholder_only' : 'unavailable',
+            },
+          });
+          continue;
+        }
 
-      if (execution.decision === 'confirmation_required') {
-        onEvent({
-          type: 'confirmation_required',
-          sequence: 0,
-          data: {
-            toolName,
-            connectorId: tool.connectorId,
-            confirmationId: execution.confirmationId,
-            summary: execution.errorMessage,
+        const confirmationId = input.approvedToolConfirmations?.[toolName];
+        let confirmationApproved = false;
+        if (confirmationId && this.deps.resolveConfirmationApproved) {
+          confirmationApproved = await this.deps.resolveConfirmationApproved(
+            String(input.context.tenantId),
+            String(input.context.userId),
+            confirmationId,
+          );
+        }
+
+        const execution = await this.deps.toolExecutor.execute({
+          toolName,
+          connectorId: tool.connectorId,
+          arguments: {},
+          context: {
+            tenantId: input.context.tenantId,
+            userId: input.context.userId,
+            correlationId: input.context.correlationId,
+            roles: input.context.roles,
+            permissions: input.context.permissions,
+            attributes: input.context.attributes,
           },
+          confirmationApproved,
         });
+
+        if (execution.decision === 'confirmation_required') {
+          onEvent({
+            type: 'confirmation_required',
+            sequence: 0,
+            data: {
+              toolName,
+              connectorId: tool.connectorId,
+              confirmationId: execution.confirmationId,
+              summary: execution.errorMessage,
+            },
+          });
+          onEvent({
+            type: 'tool',
+            sequence: 0,
+            data: {
+              name: toolName,
+              status: 'pending_confirmation',
+              confirmationId: execution.confirmationId,
+            },
+          });
+          continue;
+        }
+
         onEvent({
           type: 'tool',
           sequence: 0,
           data: {
             name: toolName,
-            status: 'pending_confirmation',
-            confirmationId: execution.confirmationId,
+            status: execution.ok ? 'completed' : 'failed',
+            ...(execution.data !== undefined ? { result: execution.data } : {}),
+            ...(execution.errorMessage ? { errorMessage: execution.errorMessage } : {}),
+            latencyMs: execution.latencyMs,
           },
         });
-        continue;
-      }
 
-      onEvent({
-        type: 'tool',
-        sequence: 0,
-        data: {
-          name: toolName,
-          status: execution.ok ? 'completed' : 'failed',
-          ...(execution.data !== undefined ? { result: execution.data } : {}),
-          ...(execution.errorMessage ? { errorMessage: execution.errorMessage } : {}),
-          latencyMs: execution.latencyMs,
-        },
-      });
-
-      if (execution.ok && execution.data !== undefined) {
-        toolResultSummaries.push(`${toolName}: ${JSON.stringify(execution.data)}`);
+        if (execution.ok && execution.data !== undefined) {
+          toolResultSummaries.push(`${toolName}: ${JSON.stringify(execution.data)}`);
+        }
       }
     }
 
@@ -282,26 +368,35 @@ export class MasterOrchestrator implements OrchestratorPort {
     });
 
     try {
-      for await (const chunk of this.deps.llm.stream({
-        model,
-        messages: completionMessages,
-        ...(signal ? { signal } : {}),
-      })) {
-        if (signal?.aborted) {
-          onEvent({ type: 'cancelled', sequence: 0, data: { reason: 'client_aborted' } });
-          break;
+      if (skipLlm && assistantOverride) {
+        assistantText = assistantOverride;
+        for (const word of assistantText.split(/(\s+)/)) {
+          if (!word) continue;
+          onEvent({ type: 'delta', sequence: 0, data: { text: word } });
         }
-        if (chunk.type === 'delta' && chunk.text) {
-          assistantText += chunk.text;
-          onEvent({ type: 'delta', sequence: 0, data: { text: chunk.text } });
-        }
-        if (chunk.type === 'done') {
-          model = chunk.model ?? model;
-          promptTokens = chunk.usage?.promptTokens ?? promptTokens;
-          completionTokens = chunk.usage?.completionTokens ?? completionTokens;
-        }
-        if (chunk.type === 'error') {
-          throw new Error(chunk.errorMessage ?? 'LLM stream error');
+        completionTokens = Math.ceil(assistantText.length / 4);
+      } else {
+        for await (const chunk of this.deps.llm.stream({
+          model,
+          messages: completionMessages,
+          ...(signal ? { signal } : {}),
+        })) {
+          if (signal?.aborted) {
+            onEvent({ type: 'cancelled', sequence: 0, data: { reason: 'client_aborted' } });
+            break;
+          }
+          if (chunk.type === 'delta' && chunk.text) {
+            assistantText += chunk.text;
+            onEvent({ type: 'delta', sequence: 0, data: { text: chunk.text } });
+          }
+          if (chunk.type === 'done') {
+            model = chunk.model ?? model;
+            promptTokens = chunk.usage?.promptTokens ?? promptTokens;
+            completionTokens = chunk.usage?.completionTokens ?? completionTokens;
+          }
+          if (chunk.type === 'error') {
+            throw new Error(chunk.errorMessage ?? 'LLM stream error');
+          }
         }
       }
     } catch (error) {
