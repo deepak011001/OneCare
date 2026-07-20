@@ -55,10 +55,9 @@ export const APP_NAV: readonly NavItem[] = [
   {
     id: 'knowledge',
     label: 'Knowledge',
-    href: '/app/knowledge',
+    href: '/app/employee/knowledge',
     icon: BookOpen,
     permissions: ['knowledge.search'],
-    placeholder: true,
   },
   {
     id: 'approvals',

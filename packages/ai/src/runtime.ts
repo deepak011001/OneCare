@@ -15,6 +15,7 @@ import type { PolicyEngine } from '@onecare/policies';
 import type { CapabilityRegistry } from '@onecare/ess-capability';
 import { createEmployeeCapabilityRegistry, createLeaveCapability } from '@onecare/ess-leave';
 import { createAttendanceCapability } from '@onecare/ess-attendance';
+import { createKnowledgeCapability } from '@onecare/ess-knowledge';
 import { createDefaultAgentRegistry } from './agents/registry';
 import { InMemoryAiObservability } from './observability';
 import {
@@ -70,15 +71,19 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
   const conversations = new InMemoryConversationStore();
   const memory = createInMemoryFacade();
   const observability = new InMemoryAiObservability();
+  const knowledgeCapability = createKnowledgeCapability();
   const employeeCapabilities = createEmployeeCapabilityRegistry(undefined, [
     createAttendanceCapability(),
+    knowledgeCapability,
   ]);
   const leaveCapability =
     (employeeCapabilities.get('ess.leave') as
-      ReturnType<typeof createLeaveCapability> | undefined) ?? createLeaveCapability();
+      | ReturnType<typeof createLeaveCapability>
+      | undefined) ?? createLeaveCapability();
   const attendanceCapability =
     (employeeCapabilities.get('ess.attendance') as
-      ReturnType<typeof createAttendanceCapability> | undefined) ?? createAttendanceCapability();
+      | ReturnType<typeof createAttendanceCapability>
+      | undefined) ?? createAttendanceCapability();
 
   const toolExecutor =
     options?.integration &&
@@ -111,6 +116,7 @@ export function createAiRuntime(options?: CreateAiRuntimeOptions): AiRuntime {
     observability,
     leaveCapability,
     attendanceCapability,
+    knowledgeCapability,
   };
 
   let orchestrator: MasterOrchestrator;

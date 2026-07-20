@@ -26,6 +26,9 @@ export const AUDIT_ACTIONS = {
   ATTENDANCE_REGULARIZE: 'attendance.regularize',
   ATTENDANCE_VIEW_DENIED: 'attendance.view.denied',
   ATTENDANCE_CONFIRMATION_REJECTED: 'attendance.confirmation.rejected',
+  KNOWLEDGE_SEARCH: 'knowledge.search',
+  KNOWLEDGE_VIEW: 'knowledge.view',
+  KNOWLEDGE_VIEW_DENIED: 'knowledge.view.denied',
 } as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];

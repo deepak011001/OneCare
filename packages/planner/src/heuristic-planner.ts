@@ -12,7 +12,7 @@ interface RouteRule {
 }
 
 /**
- * Routing table only â€” domain validation/clarification lives in capabilities (e.g. ess-leave).
+ * Routing table only ?Çö domain validation/clarification lives in capabilities (e.g. ess-leave).
  * More specific leave rules are listed first (higher priority wins when multiple match).
  */
 const ROUTES: readonly RouteRule[] = [
@@ -72,13 +72,20 @@ const ROUTES: readonly RouteRule[] = [
     intent: 'employee.leave.balance',
     patterns: [
       /\bleave balance\b/i,
-      /\bhow many leaves?\b/i,
       /\bhow much leave\b/i,
       /\benough\b.*\bleave\b/i,
       /\bleaves? (do i|i) have\b/i,
+      /\bhow many leaves?\b(?!.*\b(maternity|paternity|policy|carry)\b)/i,
     ],
     toolNames: ['leaveBalance'],
     priority: 80,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.knowledge.ask',
+    patterns: [/\bmaternity\b/i, /\bpaternity\b/i],
+    toolNames: ['knowledge.search'],
+    priority: 82,
   },
   {
     agentId: 'employee',
@@ -128,6 +135,60 @@ const ROUTES: readonly RouteRule[] = [
   },
   {
     agentId: 'employee',
+    intent: 'employee.knowledge.help',
+    patterns: [
+      /\bwhat can you (help|answer)\b/i,
+      /\bknowledge help\b/i,
+      /\bsupported topics\b/i,
+      /\bsearch tips\b/i,
+    ],
+    toolNames: ['knowledge.search'],
+    priority: 78,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.knowledge.popular',
+    patterns: [
+      /\bpopular (questions|policies)\b/i,
+      /\btrending\b.*\b(question|policy|knowledge)\b/i,
+      /\bfrequently asked\b/i,
+      /\bmost viewed\b/i,
+    ],
+    toolNames: ['knowledge.search'],
+    priority: 77,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.knowledge.categories',
+    patterns: [/\bknowledge categories\b/i, /\bbrowse (policies|knowledge)\b/i],
+    toolNames: ['knowledge.search'],
+    priority: 76,
+  },
+  {
+    agentId: 'employee',
+    intent: 'employee.knowledge.ask',
+    patterns: [
+      /\b(leave|attendance|travel|expense|reimbursement)?\s*policy\b/i,
+      /\bhandbook\b/i,
+      /\bcode of conduct\b/i,
+      /\bwork from home\b/i,
+      /\breimburs/i,
+      /\ballowance\b/i,
+      /\bprobation\b/i,
+      /\brelocati/i,
+      /\bhow (do|does) .{0,40} work\b/i,
+      /\bwhere (can|do|is) .{0,40} (find|documented|policy)\b/i,
+      /\bwhat (is|are|happens) .{0,60}(policy|leave|benefit|probation)\b/i,
+      /\bcan i claim\b/i,
+      /\bdo we have\b/i,
+      /\bin the wiki\b/i,
+      /\bsearch knowledge\b/i,
+    ],
+    toolNames: ['knowledge.search'],
+    priority: 75,
+  },
+  {
+    agentId: 'employee',
     intent: 'employee.self_service',
     patterns: [/leave/i, /balance/i, /attendance/i, /payslip/i, /my profile/i],
     toolNames: ['leaveBalance', 'attendanceToday'],
@@ -145,26 +206,19 @@ const ROUTES: readonly RouteRule[] = [
   {
     agentId: 'hr',
     intent: 'hr.case',
-    patterns: [/hr policy/i, /hr case/i, /onboarding/i],
+    patterns: [/hr case/i, /onboarding case/i],
     priority: 50,
-  },
-  {
-    agentId: 'knowledge',
-    intent: 'knowledge.search',
-    patterns: [/policy/i, /handbook/i, /how do i/i, /search knowledge/i, /in the wiki/i],
-    toolNames: ['searchKnowledge'],
-    priority: 45,
   },
   {
     agentId: 'finance',
     intent: 'finance.query',
-    patterns: [/expense/i, /invoice/i, /reimburse/i],
+    patterns: [/invoice/i, /\bexpense report\b/i],
     priority: 40,
   },
   {
     agentId: 'it',
     intent: 'it.support',
-    patterns: [/password/i, /laptop/i, /ticket/i, /access request/i],
+    patterns: [/password reset ticket/i, /laptop request/i, /access request/i],
     risk: 'medium',
     requiresConfirmation: true,
     priority: 40,
@@ -178,7 +232,7 @@ const ROUTES: readonly RouteRule[] = [
   {
     agentId: 'learning',
     intent: 'learning.query',
-    patterns: [/course/i, /training/i, /learning/i],
+    patterns: [/course catalog/i, /\blms\b/i],
     priority: 40,
   },
   {
@@ -200,24 +254,41 @@ const ROUTES: readonly RouteRule[] = [
   },
 ];
 
-/** Intent router only â€” no domain business rules. */
+/** Intent router only ? no domain business rules. */
 export class HeuristicPlanner implements PlannerPort {
   async plan(input: PlannerInput): Promise<ExecutionPlan> {
     const matched = ROUTES.filter((route) =>
       route.patterns.some((pattern) => pattern.test(input.message)),
     ).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
-    // Prefer single best employee domain route when multiple ESS signals fire
-    const primary = matched[0];
-    const stepsSource =
-      primary &&
-      primary.agentId === 'employee' &&
-      (primary.intent.startsWith('employee.leave.') ||
-        primary.intent.startsWith('employee.attendance.'))
-        ? [primary]
-        : matched.length > 0
-          ? matched
-          : null;
+    const leavePrimary = matched.find((r) => r.intent.startsWith('employee.leave.'));
+    const attendancePrimary = matched.find((r) =>
+      r.intent.startsWith('employee.attendance.'),
+    );
+    const knowledgePrimary = matched.find((r) => r.intent.startsWith('employee.knowledge.'));
+
+    let stepsSource: RouteRule[] | null = null;
+    if (leavePrimary && knowledgePrimary) {
+      stepsSource = [leavePrimary, knowledgePrimary];
+    } else if (attendancePrimary && knowledgePrimary) {
+      stepsSource = [attendancePrimary, knowledgePrimary];
+    } else if (leavePrimary) {
+      stepsSource = [leavePrimary];
+    } else if (attendancePrimary) {
+      stepsSource = [attendancePrimary];
+    } else if (knowledgePrimary) {
+      stepsSource = [knowledgePrimary];
+    } else if (matched.length > 1) {
+      const seen = new Set<string>();
+      stepsSource = matched.filter((route) => {
+        const key = `${route.agentId}:${route.intent}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    } else if (matched.length > 0) {
+      stepsSource = [matched[0]!];
+    }
 
     const steps: PlanStep[] =
       stepsSource !== null
@@ -230,18 +301,19 @@ export class HeuristicPlanner implements PlannerPort {
             risk: route.risk ?? 'low',
             status: 'pending' as const,
             ...(route.toolNames ? { toolNames: route.toolNames } : {}),
-            ...(stepsSource.length > 1 ? { parallelGroup: 'future' } : {}),
+            ...(stepsSource!.length > 1 ? { parallelGroup: 'future' } : {}),
           }))
         : [
             {
               id: 'step-1',
-              agentId: 'knowledge',
-              intent: 'general.assist',
-              rationale: 'Default safe route when no strong domain signal is present',
+              agentId: 'employee',
+              intent: 'employee.knowledge.ask',
+              rationale:
+                'Default employee knowledge-safe route when no strong domain signal is present',
               requiresConfirmation: false,
               risk: 'low' as const,
               status: 'pending' as const,
-              toolNames: ['searchKnowledge'],
+              toolNames: ['knowledge.search'],
             },
           ];
 

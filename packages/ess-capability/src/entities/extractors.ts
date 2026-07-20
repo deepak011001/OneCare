@@ -90,6 +90,86 @@ registerEntityExtractor('ticket', (message) => {
 
 registerEntityExtractor('text', (message) => message.trim() || undefined);
 
+registerEntityExtractor('policyName', (message) => {
+  const match = message.match(
+    /\b((?:leave|attendance|wfh|work[\s-]?from[\s-]?home|maternity|paternity|travel|reimbursement|expense|code of conduct|relocation|probation|internet)\s*(?:policy|allowance|support)?)\b/i,
+  );
+  return match?.[1]?.trim();
+});
+
+registerEntityExtractor('document', (message) => {
+  const match = message.match(
+    /\b((?:employee\s+)?handbook|code of conduct|sop|policy document|onboarding guide)\b/i,
+  );
+  return match?.[1]?.trim();
+});
+
+registerEntityExtractor('department', (message) => {
+  const match = message.match(/\b(hr|it|finance|legal|compliance|learning|recruitment)\b/i);
+  return match?.[1] ? match[1].toUpperCase() : undefined;
+});
+
+registerEntityExtractor('location', (message) => {
+  const match = message.match(/\b(bangalore|bengaluru|hyderabad|mumbai|delhi|pune|remote)\b/i);
+  return match?.[1] ? capitalize(match[1]) : undefined;
+});
+
+registerEntityExtractor('country', (message) => {
+  const aliases: Record<string, string> = {
+    india: 'India',
+    in: 'India',
+    us: 'US',
+    usa: 'US',
+    'united states': 'US',
+    uk: 'UK',
+    'united kingdom': 'UK',
+  };
+  const lower = message.toLowerCase();
+  for (const [alias, canonical] of Object.entries(aliases)) {
+    if (new RegExp(`\\b${alias}\\b`, 'i').test(lower)) return canonical;
+  }
+  return undefined;
+});
+
+registerEntityExtractor('benefit', (message) => {
+  const aliases: Record<string, string> = {
+    health: 'Health',
+    medical: 'Health',
+    insurance: 'Insurance',
+    travel: 'Travel',
+    learning: 'Learning',
+    internet: 'Internet',
+    relocation: 'Relocation',
+  };
+  const lower = message.toLowerCase();
+  for (const [alias, canonical] of Object.entries(aliases)) {
+    if (new RegExp(`\\b${alias}\\b`, 'i').test(lower)) return canonical;
+  }
+  return undefined;
+});
+
+registerEntityExtractor('office', (message) => {
+  const match = message.match(/\b(?:office|campus)\s+(?:in\s+)?([A-Za-z]+)\b/i);
+  return match?.[1] ? capitalize(match[1]) : undefined;
+});
+
+registerEntityExtractor('role', (message) => {
+  const match = message.match(/\b(manager|employee|intern|contractor|hrbp)\b/i);
+  return match?.[1] ? capitalize(match[1]) : undefined;
+});
+
+registerEntityExtractor('manager', (message) => {
+  if (/\bmy manager\b/i.test(message)) return 'manager';
+  return undefined;
+});
+
+registerEntityExtractor('keyword', (message) => {
+  const cleaned = message.replace(/[^\w\s]/g, ' ').trim();
+  return cleaned.slice(0, 200) || undefined;
+});
+
+registerEntityExtractor('employee', () => undefined);
+
 /**
  * Extract slots from declared entities. Capabilities may merge domain-specific overrides.
  */

@@ -189,9 +189,21 @@ User message
   → Emit domain events (Notification, Analytics)
 ```
 
-ESS domain logic lives in `@onecare/ess-capability` + capability packages (e.g. `@onecare/ess-leave`) — see [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md).
+ESS domain logic lives in `@onecare/ess-capability` + capability packages (e.g. `@onecare/ess-leave`, `@onecare/ess-knowledge`) — see [`EMPLOYEE_CAPABILITY_FRAMEWORK.md`](./EMPLOYEE_CAPABILITY_FRAMEWORK.md) and [`KNOWLEDGE_CAPABILITY.md`](./KNOWLEDGE_CAPABILITY.md).
 
 ### 6.2 Knowledge Query
+
+**Near-term (M5 Knowledge Capability — not production RAG):**
+
+```
+User question
+  → Orchestrator → Employee Agent → ess.knowledge
+  → KnowledgeRetrievalPort (stub store today; swappable)
+  → Structured answer + source attribution (+ related / follow-ups)
+  → Audit query metadata (no invented sources)
+```
+
+**Target (M6 Enterprise RAG):**
 
 ```
 User question
@@ -202,6 +214,8 @@ User question
   → Answer + citations
   → Audit retrieval set (doc IDs only; no raw PII leakage)
 ```
+
+M6 adapters implement the same `KnowledgeRetrievalPort` so ESS capability stays engine-agnostic.
 
 ---
 

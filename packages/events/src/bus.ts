@@ -49,4 +49,6 @@ export const DOMAIN_EVENTS = {
   ATTENDANCE_CLOCKED_IN: 'AttendanceClockedIn',
   ATTENDANCE_CLOCKED_OUT: 'AttendanceClockedOut',
   ATTENDANCE_REGULARIZED: 'AttendanceRegularized',
+  KNOWLEDGE_SEARCHED: 'KnowledgeSearched',
+  KNOWLEDGE_ANSWERED: 'KnowledgeAnswered',
 } as const;

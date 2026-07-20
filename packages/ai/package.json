@@ -26,6 +26,7 @@
     "@onecare/conversations": "workspace:*",
     "@onecare/ess-attendance": "workspace:*",
     "@onecare/ess-capability": "workspace:*",
+    "@onecare/ess-knowledge": "workspace:*",
     "@onecare/ess-leave": "workspace:*",
     "@onecare/mcp": "workspace:*",
     "@onecare/memory": "workspace:*",
