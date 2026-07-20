@@ -28,7 +28,8 @@ import { RateLimitMiddleware } from './shared/presentation/rate-limit.middleware
   controllers: [HealthController],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
-    { provide: APP_GUARD, useClass: AuthGuard },
+    // Reuse CoreModule's AuthGuard so Reflector + ports inject correctly.
+    { provide: APP_GUARD, useExisting: AuthGuard },
     RateLimitMiddleware,
   ],
 })

@@ -26,8 +26,9 @@ import { IdentityService } from '../application/identity.service';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private readonly reflector: Reflector,
-    private readonly identity: IdentityService,
+    // Explicit @Inject — tsx/esbuild does not emit design:paramtypes metadata.
+    @Inject(Reflector) private readonly reflector: Reflector,
+    @Inject(IdentityService) private readonly identity: IdentityService,
     @Inject(APP_TOKENS.TOKEN_PORT) private readonly tokens: TokenPort,
     @Inject(APP_TOKENS.SESSION_PORT) private readonly sessions: SessionPort,
     @Inject(APP_TOKENS.ENV) private readonly env: OneCareEnv,
@@ -117,8 +118,8 @@ export class AuthGuard implements CanActivate {
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(
-    private readonly reflector: Reflector,
-    private readonly identity: IdentityService,
+    @Inject(Reflector) private readonly reflector: Reflector,
+    @Inject(IdentityService) private readonly identity: IdentityService,
     @Inject(APP_TOKENS.AUDIT_PORT) private readonly audit: AuditPort,
   ) {}
 

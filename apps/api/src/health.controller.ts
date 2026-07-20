@@ -31,8 +31,7 @@ export class HealthController {
 
   /** Liveness — process is up (no dependency checks). */
   @Public()
-  @Get('v1/health')
-  @Get('v1/health/live')
+  @Get(['v1/health', 'v1/health/live'])
   health() {
     return {
       data: {
@@ -47,8 +46,7 @@ export class HealthController {
 
   /** Readiness — critical dependencies must be healthy. */
   @Public()
-  @Get('v1/ready')
-  @Get('v1/health/ready')
+  @Get(['v1/ready', 'v1/health/ready'])
   async ready() {
     const dependencies = await this.collectDependencies({ includeOptional: false });
     const criticalDown = dependencies.filter((d) => d.name === 'database' && d.status === 'down');
