@@ -32,6 +32,7 @@
     { "path": "../../packages/workflows" },
     { "path": "../../packages/ess-knowledge" },
     { "path": "../../packages/knowledge-platform" },
+    { "path": "../../packages/knowledge-admin" },
     { "path": "../../packages/agent-framework" }
   ]
 }

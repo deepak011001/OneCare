@@ -1,16 +1,16 @@
-import Link from 'next/link';
+import { KnowledgeWorkspaceShell } from '@/components/knowledge-workspace-shell';
 
 export default function IndexHealthPage() {
   return (
-    <main className="shell">
-      <p className="eyebrow">
-        <Link href="/">Admin</Link> · Knowledge
-      </p>
-      <h1>Index Health</h1>
-      <p className="muted">
-        Document/chunk counts, embedding provider, vector store id, and platform metrics. API:
-        <code> /v1/knowledge-platform/index/health</code>.
-      </p>
-    </main>
+    <KnowledgeWorkspaceShell
+      title="Index Health"
+      subtitle="Vector / document index stats from Knowledge Platform."
+    >
+      <section className="panel">
+        <p>
+          API: <code>/v1/knowledge-platform/index/health</code>
+        </p>
+      </section>
+    </KnowledgeWorkspaceShell>
   );
 }

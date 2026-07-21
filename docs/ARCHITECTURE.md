@@ -107,6 +107,8 @@ onecare/
 │   ├── confirmations/       # Confirmation tokens / store
 │   ├── workflows/           # Workflow engine ports
 │   ├── integrations/        # Connector registry ports
+│   ├── knowledge-platform/  # Enterprise knowledge / RAG platform (M6)
+│   ├── knowledge-admin/     # Knowledge CMS admin domain (M6.8)
 │   ├── telemetry/           # Structured logging, PII redaction, OTel hooks
 │   └── config/              # Zod-validated environment config
 ├── docs/                    # Architecture source of truth

@@ -1,16 +1,19 @@
-import Link from 'next/link';
+import { KnowledgeWorkspaceShell } from '@/components/knowledge-workspace-shell';
 
-export default function ConnectorStatusPage() {
+export default function ConnectorsPage() {
   return (
-    <main className="shell">
-      <p className="eyebrow">
-        <Link href="/">Admin</Link> · Knowledge
-      </p>
-      <h1>Connector Status</h1>
-      <p className="muted">
-        Registered knowledge connectors (SharePoint, Confluence, Drive, Notion, files, …). API:
-        <code> /v1/knowledge-platform/connectors</code>.
-      </p>
-    </main>
+    <KnowledgeWorkspaceShell
+      title="Connectors"
+      subtitle="Enable, disable, health, last sync, failures, retries."
+    >
+      <section className="panel">
+        <p>
+          Platform API: <code>/v1/knowledge-platform/connectors</code>
+        </p>
+        <p className="muted">
+          Credential status uses secretRef patterns — secrets never appear in the UI or prompts.
+        </p>
+      </section>
+    </KnowledgeWorkspaceShell>
   );
 }
