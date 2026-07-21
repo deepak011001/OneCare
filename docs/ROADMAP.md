@@ -232,6 +232,20 @@ M0 Foundations
 
 **Exit criteria:** Feature matrix documented; typecheck/lint/tests green; Employee capabilities + cross-orchestration + grounded knowledge validated; MSS unblocked with known High warnings accepted.
 
+### M6.8 — Enterprise Knowledge Administration Portal
+
+**Outcome:** HR admins manage knowledge through UI — library, documents, taxonomy, approvals, versions, AI playground, analytics — without redesigning Knowledge Platform / AI Runtime.
+
+**Status:** Implemented (`@onecare/knowledge-admin` + `/v1/admin/knowledge` + admin Knowledge Workspace).
+
+- Nested folders, documents, categories, tags, collections
+- Draft → review → approve → publish + version history
+- Draft-scoped AI playground (no invented answers)
+- Analytics / health / duplicate diagnostics
+- Docs: KNOWLEDGE_ADMINISTRATION + library/document/publishing/playground/analytics
+
+**Exit criteria:** Admin can author and publish knowledge via UI; playground validates drafts; lint/typecheck/tests green; Knowledge Platform retrieval unchanged.
+
 ---
 
 ### M7 — Workflows & Manager Approvals

@@ -28,6 +28,12 @@ Living **source of truth** for product, architecture, and engineering. Cursor ru
 | [CROSS_CAPABILITY_ORCHESTRATION.md](./CROSS_CAPABILITY_ORCHESTRATION.md) | Multi-intent Employee Agent orchestration — graph, merge, partial failure |
 | [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md) | M5.5 production hardening overview |
 | [PLATFORM_VALIDATION.md](./PLATFORM_VALIDATION.md) | M6.6 ESS validation matrix, debt, prioritized fixes |
+| [KNOWLEDGE_ADMINISTRATION.md](./KNOWLEDGE_ADMINISTRATION.md) | M6.8 Knowledge Admin Portal |
+| [KNOWLEDGE_LIBRARY.md](./KNOWLEDGE_LIBRARY.md) | Admin folder library |
+| [DOCUMENT_MANAGEMENT.md](./DOCUMENT_MANAGEMENT.md) | Admin document model |
+| [PUBLISHING_WORKFLOW.md](./PUBLISHING_WORKFLOW.md) | Draft → publish workflow |
+| [AI_PLAYGROUND.md](./AI_PLAYGROUND.md) | Draft AI preview |
+| [KNOWLEDGE_ANALYTICS.md](./KNOWLEDGE_ANALYTICS.md) | Knowledge admin analytics |
 | [OPERATIONS.md](./OPERATIONS.md) | Runtime ops, probes, playbooks |
 | [OBSERVABILITY.md](./OBSERVABILITY.md) | Logs, metrics, tracing ports |
 | [TESTING_STRATEGY.md](./TESTING_STRATEGY.md) | Test layers and critical paths |

@@ -25,9 +25,13 @@
 
 Permission: `knowledge.admin`.
 
-## Admin UI (shell)
+## Knowledge Admin Portal (M6.8)
 
-`/knowledge/sources` · sync-jobs · documents · diagnostics · connectors · index-health
+CMS-style admin APIs under `/v1/admin/knowledge/*` (library, documents, publishing, playground, analytics). See [`KNOWLEDGE_ADMINISTRATION.md`](./KNOWLEDGE_ADMINISTRATION.md).
+
+## Admin UI
+
+`/knowledge` workspace — dashboard, library, documents, collections, categories, tags, approvals, playground, analytics, diagnostics, settings, plus platform sources/connectors/sync/index-health.
 
 ## Playbooks
 

@@ -18,7 +18,7 @@ import type { AuthPrincipal } from '@onecare/auth';
 @Controller('v1/auth')
 export class AuthController {
   constructor(
-    private readonly identity: IdentityService,
+    @Inject(IdentityService) private readonly identity: IdentityService,
     @Inject(APP_TOKENS.ENV) private readonly env: OneCareEnv,
   ) {}
 

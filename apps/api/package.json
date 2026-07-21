@@ -23,6 +23,7 @@
     "@onecare/ess-leave": "workspace:*",
     "@onecare/ess-knowledge": "workspace:*",
     "@onecare/knowledge-platform": "workspace:*",
+    "@onecare/knowledge-admin": "workspace:*",
     "@onecare/events": "workspace:*",
     "@onecare/feature-flags": "workspace:*",
     "@onecare/mcp": "workspace:*",
