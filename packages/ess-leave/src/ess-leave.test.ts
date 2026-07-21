@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { resolveRelativeDatePhrase, toIsoDate } from './dates';
-import { detectLeaveIntent } from './intents';
+import { detectLeaveIntent, isLeaveRelatedMessage } from './intents';
 import { extractLeaveEntities } from './entities';
 import { createLeaveCapability } from './capability';
 import { validateLeaveSlots } from './validation';
@@ -24,8 +24,17 @@ describe('date parsing', () => {
 describe('intent detection', () => {
   it('detects balance and apply intents', () => {
     assert.equal(detectLeaveIntent('What is my leave balance?')?.intent, 'employee.leave.balance');
+    assert.equal(detectLeaveIntent('How many leaves do I have?')?.intent, 'employee.leave.balance');
     assert.equal(detectLeaveIntent('Apply casual leave tomorrow')?.toolName, 'applyLeave');
     assert.equal(detectLeaveIntent('Which leave types are available?')?.toolName, 'leaveTypes');
+    assert.equal(detectLeaveIntent('Cancel my leave')?.intent, 'employee.leave.cancel');
+  });
+
+  it('does not claim leave policy questions (knowledge owns them)', () => {
+    assert.equal(detectLeaveIntent('What is the leave policy?'), null);
+    assert.equal(isLeaveRelatedMessage('What is the leave policy?'), false);
+    assert.equal(isLeaveRelatedMessage('Explain our leave handbook'), false);
+    assert.equal(isLeaveRelatedMessage('How many leaves do I have?'), true);
   });
 });
 

@@ -126,7 +126,7 @@ describe('ess-orchestration', () => {
     id: 'ess.leave',
     name: 'Leave',
     intents: ['employee.leave.balance', 'employee.leave.apply'],
-    keywords: /leave|holiday/i,
+    keywords: /leave(?!\s+policy)|holiday|how many leaves/i,
     priority: 100,
   });
   const attendance = stubCapability({
@@ -140,7 +140,7 @@ describe('ess-orchestration', () => {
     id: 'ess.knowledge',
     name: 'Knowledge',
     intents: ['employee.knowledge.ask'],
-    keywords: /policy|handbook|wfh|reimburs/i,
+    keywords: /policy|handbook|wfh|reimburs|work from home/i,
     priority: 80,
   });
   const leaveWrite = stubCapability({
@@ -156,6 +156,10 @@ describe('ess-orchestration', () => {
   it('splits multi-intent messages', () => {
     const segments = splitIntentSegments('How many leaves do I have and show today attendance');
     assert.ok(segments.length >= 2);
+    const nounSplit = splitIntentSegments('Show my leave balance and attendance.');
+    assert.ok(nounSplit.length >= 2, JSON.stringify(nounSplit));
+    const plusSplit = splitIntentSegments('Attendance summary plus WFH policy.');
+    assert.ok(plusSplit.length >= 2, JSON.stringify(plusSplit));
   });
 
   it('selects multiple capabilities from the registry', () => {
@@ -605,5 +609,31 @@ describe('ess-orchestration', () => {
       priorSlotsByCapability: clarify.slotsByCapability,
     });
     assert.notEqual(follow.kind, 'unsupported');
+  });
+
+  it('M6.6: routes ESS conversation phrases to expected capabilities', () => {
+    const registry = createCapabilityRegistry([leave, attendance, knowledge]);
+    const cases: Array<{ message: string; expectIds: string[] }> = [
+      { message: 'How many leaves do I have?', expectIds: ['ess.leave'] },
+      { message: 'Show my attendance.', expectIds: ['ess.attendance'] },
+      { message: 'What is the leave policy?', expectIds: ['ess.knowledge'] },
+      { message: 'Explain the work from home policy.', expectIds: ['ess.knowledge'] },
+      {
+        message: 'Show my leave balance and attendance.',
+        expectIds: ['ess.leave', 'ess.attendance'],
+      },
+      {
+        message: 'Attendance summary plus WFH policy.',
+        expectIds: ['ess.attendance', 'ess.knowledge'],
+      },
+    ];
+    for (const c of cases) {
+      const segments = splitIntentSegments(c.message);
+      const selected = selectCapabilities({ registry, segments });
+      const ids = selected.map((s) => s.capabilityId);
+      for (const id of c.expectIds) {
+        assert.ok(ids.includes(id), `expected ${id} for "${c.message}", got ${ids.join(',')}`);
+      }
+    }
   });
 });

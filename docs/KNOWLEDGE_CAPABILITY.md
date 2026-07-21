@@ -13,12 +13,15 @@ The **Knowledge Capability** is the intelligent knowledge layer of OneCare for e
 
 It is **not** a simple FAQ chatbot. Production retrieval is provided by the **Enterprise Knowledge Platform** (M6) behind `KnowledgeRetrievalPort`.
 
-Employees ask naturally. The capability:
+Employees ask naturally — including **many phrasings of the same question**. Before retrieval, `understandKnowledgeQuery()` normalizes filler language and expands HR synonyms (PTO → leave, remote → WFH, quit → resignation, …). Answers are composed in a **professional HR tone** with source attribution; the capability never invents policy text.
 
+The capability:
+
+- Understands varied phrasing via query understanding + taxonomy keywords + FAQ aliases
 - Classifies hierarchical domains/categories (not hundreds of hardcoded intents)
 - Parses multi-question prompts
-- Retrieves via a **replaceable retrieval abstraction**
-- Returns structured answers with **source attribution**
+- Retrieves via a **replaceable retrieval abstraction** (with domain fallback for paraphrase recall)
+- Returns structured **professional** answers with **source attribution**
 - Supports follow-ups and selective clarification
 - Consumes `@onecare/knowledge-platform` without coupling to any vector vendor SDK
 
@@ -46,6 +49,7 @@ Platform concerns (connectors, embeddings, vector DBs) live in `@onecare/knowled
 |------|------|
 | `packages/ess-knowledge/src/capability.ts` | `EmployeeCapability` + `process()` |
 | `packages/ess-knowledge/src/intents.ts` | Hierarchical classification, multi-question split |
+| `packages/ess-knowledge/src/query-understanding.ts` | Phrasing normalize + synonym expansion for retrieval |
 | `packages/ess-knowledge/src/taxonomy.ts` | HR / IT / Finance / Company / Learning / Recruitment / General |
 | `packages/ess-knowledge/src/retrieval/` | `KnowledgeRetrievalPort`, stub store + seed corpus |
 | `packages/ess-knowledge/src/answer.ts` | Structured answers + attribution |

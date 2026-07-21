@@ -85,7 +85,7 @@ export const PLACEHOLDER_AGENTS: readonly RegisteredAgent[] = [
       'workingHours',
       'searchKnowledge',
     ],
-    systemPromptRef: 'agent.placeholder',
+    systemPromptRef: 'agent.employee.system',
     enabled: true,
   },
   {

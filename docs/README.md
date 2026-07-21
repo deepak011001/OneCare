@@ -27,6 +27,7 @@ Living **source of truth** for product, architecture, and engineering. Cursor ru
 | [KNOWLEDGE_OPERATIONS.md](./KNOWLEDGE_OPERATIONS.md) | Knowledge ops & admin APIs |
 | [CROSS_CAPABILITY_ORCHESTRATION.md](./CROSS_CAPABILITY_ORCHESTRATION.md) | Multi-intent Employee Agent orchestration — graph, merge, partial failure |
 | [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md) | M5.5 production hardening overview |
+| [PLATFORM_VALIDATION.md](./PLATFORM_VALIDATION.md) | M6.6 ESS validation matrix, debt, prioritized fixes |
 | [OPERATIONS.md](./OPERATIONS.md) | Runtime ops, probes, playbooks |
 | [OBSERVABILITY.md](./OBSERVABILITY.md) | Logs, metrics, tracing ports |
 | [TESTING_STRATEGY.md](./TESTING_STRATEGY.md) | Test layers and critical paths |

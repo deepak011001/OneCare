@@ -96,6 +96,9 @@ export interface DetectedLeaveIntent {
 }
 
 export function detectLeaveIntent(message: string): DetectedLeaveIntent | null {
+  if (isLeavePolicyKnowledgeQuestion(message)) {
+    return null;
+  }
   const matches = RULES.filter((rule) => rule.patterns.some((p) => p.test(message))).sort(
     (a, b) => b.priority - a.priority,
   );
@@ -108,7 +111,20 @@ export function detectLeaveIntent(message: string): DetectedLeaveIntent | null {
   };
 }
 
+/** Policy / handbook questions belong to Knowledge, not Leave tools. */
+export function isLeavePolicyKnowledgeQuestion(message: string): boolean {
+  return (
+    /\b(leave|holiday)\b[\s\w-]{0,40}\b(polic(y|ies)|handbook|guideline|sop)\b/i.test(message) ||
+    /\b(polic(y|ies)|handbook|guideline|sop)\b[\s\w-]{0,40}\b(leave|holiday)\b/i.test(message) ||
+    /\bwhat (is|are)\b[\s\w-]{0,40}\bleave\b[\s\w-]{0,20}\bpolic/i.test(message) ||
+    /\bexplain\b[\s\w-]{0,40}\bleave\b[\s\w-]{0,20}\bpolic/i.test(message)
+  );
+}
+
 export function isLeaveRelatedMessage(message: string): boolean {
+  if (isLeavePolicyKnowledgeQuestion(message)) {
+    return false;
+  }
   return (
     detectLeaveIntent(message) !== null ||
     /\bleave\b/i.test(message) ||

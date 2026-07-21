@@ -21,14 +21,30 @@ function scoreDocument(doc: KnowledgeDocument, query: KnowledgeSearchQuery): num
   }
 
   let score = 0;
+  const faqText = (doc.faqs ?? []).join(' ');
   const hay = tokenize(
-    [doc.title, doc.summary, doc.body, ...doc.topics, ...doc.tags, doc.section ?? ''].join(' '),
+    [doc.title, doc.summary, doc.body, ...doc.topics, ...doc.tags, doc.section ?? '', faqText].join(
+      ' ',
+    ),
   );
+  const queryLower = query.text.toLowerCase();
 
   for (const token of qTokens) {
     if (hay.includes(token)) score += 2;
     if (doc.topics.some((t) => t.toLowerCase().includes(token))) score += 3;
     if (doc.title.toLowerCase().includes(token)) score += 4;
+  }
+
+  // FAQ / paraphrase match — employees ask the same question many ways
+  for (const faq of doc.faqs ?? []) {
+    const faqLower = faq.toLowerCase();
+    if (faqLower === queryLower || queryLower.includes(faqLower) || faqLower.includes(queryLower)) {
+      score += 12;
+    } else {
+      const faqTokens = tokenize(faq);
+      const overlap = faqTokens.filter((t) => qTokens.includes(t)).length;
+      if (overlap >= 2) score += overlap * 2;
+    }
   }
 
   if (query.domain && doc.domain === query.domain) score += 5;

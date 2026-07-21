@@ -60,7 +60,7 @@ export const LEGACY_PLACEHOLDER_TOOLS: readonly ToolDefinition[] = [
   },
   {
     name: 'searchKnowledge',
-    description: 'Search enterprise knowledge (placeholder — no RAG)',
+    description: 'Search enterprise knowledge (legacy fallback when MCP knowledge tool is absent)',
     category: 'knowledge',
     version: '0.0.0',
     sideEffect: 'read',

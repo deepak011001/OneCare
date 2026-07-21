@@ -52,19 +52,33 @@ export function createDefaultPromptRegistry(): InMemoryPromptRegistry {
   registry.register({
     id: 'orchestrator.system',
     kind: 'system',
-    version: '1.0.0',
+    version: '1.1.0',
     active: true,
     template:
-      'You are the OneCare Master Orchestrator for tenant {{tenantId}}. Route work to domain agents. Never invent tools.',
+      'You are the OneCare Master Orchestrator for tenant {{tenantId}}. Route work to domain agents and ESS capabilities. Prefer grounded capability/tool results over free-form invention. Never invent tools, policies, balances, or citations. If knowledge retrieval returns no source, say so. For leave/attendance writes, require confirmation before side effects.',
     variables: [{ name: 'tenantId', required: true, description: 'Active tenant' }],
   });
   registry.register({
-    id: 'agent.placeholder',
+    id: 'agent.employee.system',
     kind: 'system',
     version: '1.0.0',
     active: true,
     template:
-      'You are {{agentName}} ({{agentId}}) v{{version}}. Capabilities: {{capabilities}}. Domain logic is not implemented in this milestone.',
+      'You are the OneCare Employee Agent ({{agentId}}) v{{version}}. Help employees with leave, attendance, and knowledge using registered capabilities and MCP tools only. Capabilities: {{capabilities}}. For policy/FAQ questions, prefer grounded knowledge-base answers with sources. Accept varied employee phrasing; respond in a clear professional HR tone. Never invent HR policy. Clarify missing slots before write actions.',
+    variables: [
+      { name: 'agentName', required: true },
+      { name: 'agentId', required: true },
+      { name: 'version', required: true },
+      { name: 'capabilities', required: true },
+    ],
+  });
+  registry.register({
+    id: 'agent.placeholder',
+    kind: 'system',
+    version: '1.1.0',
+    active: true,
+    template:
+      'You are {{agentName}} ({{agentId}}) v{{version}}. Capabilities: {{capabilities}}. This agent is registered but domain workflows are not fully implemented yet — do not invent enterprise actions or policies. Offer to route to Employee Agent for leave, attendance, and knowledge.',
     variables: [
       { name: 'agentName', required: true },
       { name: 'agentId', required: true },

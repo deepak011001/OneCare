@@ -218,6 +218,20 @@ M0 Foundations
 
 **Exit criteria:** Employee behavior unchanged; lint/typecheck/tests green; AI Runtime / MCP / Knowledge / Capability Framework / Orchestration not redesigned.
 
+### M6.6 — Platform Validation, QA, UX & Production Verification
+
+**Outcome:** ESS production-ready validation before MSS — audit, fix polish issues, expand regression tests, document Pass/Warning/Fail. **No new business capabilities; no redesign.**
+
+**Status:** Complete — see [`PLATFORM_VALIDATION.md`](./PLATFORM_VALIDATION.md).
+
+- Full platform audit (architecture, packages, security, UX, AI/RAG, MCP, prod readiness)
+- Prompt grounding (`orchestrator.system` 1.1.0, `agent.employee.system`)
+- Knowledge Sources in assistant text; ESS suggested prompts
+- Expanded conversation / ACL / routing / prompt tests
+- Prioritized Critical/High/Medium/Low fix list for MSS prep
+
+**Exit criteria:** Feature matrix documented; typecheck/lint/tests green; Employee capabilities + cross-orchestration + grounded knowledge validated; MSS unblocked with known High warnings accepted.
+
 ---
 
 ### M7 — Workflows & Manager Approvals

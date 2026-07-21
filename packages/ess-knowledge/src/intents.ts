@@ -20,7 +20,7 @@ const CATEGORIES_HINT = /\b(knowledge categories|what topics|list categories|bro
 const RELATED_HINT = /\b(related (policies|documents|topics)|similar questions)\b/i;
 
 const KNOWLEDGE_SIGNAL =
-  /\b(policy|handbook|sop|code of conduct|work from home|wfh|maternity|paternity|reimburs(?:e|ement)|allowance|probation|relocati|benefits?|insurance|vpn|password|referral|training|certification|how does|how do i|where (can|do|is)|what (is|are|happens)|can i claim|do we have)\b/i;
+  /\b(policy|policies|handbook|sop|code of conduct|work from home|wfh|maternity|paternity|reimburs(?:e|ement)|allowance|probation|relocati|benefits?|insurance|vpn|password|referral|training|certification|how does|how do i|where (can|do|is)|what (is|are|happens)|can i (?:claim|work|take)|do we have|pto|paid time off|time off|vacation|resign|notice period|hybrid|remote work|medical cover|health cover|tell me about|explain)\b/i;
 
 export function isKnowledgeRelatedMessage(message: string): boolean {
   return (
